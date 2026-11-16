@@ -213,6 +213,9 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .tab.on{background:linear-gradient(140deg,#E09383,#BC6354);color:#fff;box-shadow:0 8px 18px rgba(212,121,106,.24)}
 .tab .cnt{font-size:11px;font-weight:800;background:rgba(0,0,0,.06);color:var(--ink-2);padding:1px 7px;border-radius:99px}
 .tab.on .cnt{background:rgba(255,255,255,.22);color:#fff}
+/* 내 매물에 온 제안 배지 — 모바일에서도 숫자가 보이도록 .cnt와 분리한다 */
+.tab .nbadge{font-size:10.5px;font-weight:850;line-height:1;background:#C0453B;color:#fff;padding:3px 6px;border-radius:99px;box-shadow:0 2px 6px rgba(192,69,59,.35);animation:badgePop .3s both}
+@keyframes badgePop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
 
 /* panels + list */
 .panel-head{display:flex;align-items:center;gap:10px;margin-bottom:11px}
@@ -398,6 +401,21 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .match-list{display:flex;flex-direction:column;gap:11px}
 .match{background:#fff;border:1px solid var(--line);border-radius:var(--r-md);padding:14px;box-shadow:var(--shadow-s);animation:rise .3s both}
 .match.past{opacity:.82}
+.match.new{border-color:var(--coral);box-shadow:0 0 0 3px rgba(188,99,84,.14),0 12px 24px rgba(188,99,84,.16);animation:rise .3s both,glowNew 2.4s ease-out 1}
+@keyframes glowNew{0%{box-shadow:0 0 0 0 rgba(188,99,84,.55),0 12px 24px rgba(188,99,84,.16)}100%{box-shadow:0 0 0 3px rgba(188,99,84,.14),0 12px 24px rgba(188,99,84,.16)}}
+.bchips{display:flex;gap:7px;overflow-x:auto;padding:2px 1px 6px;margin:2px 0 8px;scrollbar-width:none}
+.bchips::-webkit-scrollbar{display:none}
+.bchips .chip{padding:8px 12px;font-size:12px}
+.pdir{font-size:9.5px;font-weight:820;padding:2px 5px;border-radius:5px;margin-right:3px;white-space:nowrap;vertical-align:1px}
+.pdir.from{background:#FCEFE9;color:#B26B58}
+.pdir.to{background:var(--mint-soft);color:var(--mint-ink)}
+.mytag{font-size:9.5px;font-weight:820;color:#A95344;background:#FCEFE9;border-radius:5px;padding:2px 5px;margin-left:3px;white-space:nowrap}
+.inctag{font-size:10.5px;font-weight:820;color:#9C3B31;background:#FBE3DE;border-radius:99px;padding:3px 8px;white-space:nowrap}
+.mquick{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:12px;padding:9px 10px;border:1.5px solid #EFD9CE;background:#FDF4EE;border-radius:12px}
+.mquick .mq-lab{flex:1 0 100%;font-size:11px;font-weight:750;color:var(--ink-2);margin-bottom:2px}
+.mquick .sbtn{flex:1;justify-content:center;min-width:0}
+.sbtn.accept{background:linear-gradient(140deg,#7FBFA4,#4E9C7D);color:#fff;box-shadow:0 6px 14px rgba(78,156,125,.22)}
+.sbtn.passq{background:#F1E9E3;color:#6E6058}
 .mhead{display:flex;align-items:center;gap:8px;margin-bottom:12px}
 .mhead .no{font-size:11px;font-weight:800;color:var(--ink-2);background:var(--bg-2);padding:3px 8px;border-radius:6px}
 .mhead .when{font-size:11.5px;color:var(--muted);font-weight:600}
@@ -447,13 +465,15 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .lb-row .nm .metag.mine{color:var(--mint-ink);background:var(--mint-soft)}
 .lb-row .st{font-size:11px;color:var(--muted);font-weight:620;margin-top:3px}
 .lb-row .st b{color:var(--ink-2);font-weight:750}
-.bar{height:5px;border-radius:99px;background:#EFE2DA;margin-top:6px;overflow:hidden}
+.bar{display:block;height:5px;border-radius:99px;background:#EFE2DA;margin-top:6px;overflow:hidden}
 .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#E09383,#D4796A);transition:width .5s}
 .lb-row .rate{flex:0 0 auto;text-align:right;min-width:56px}
 .lb-row .rate b{font-size:16px;font-weight:850;letter-spacing:-.04em}
 .lb-row .rate b small{font-size:10px;font-weight:700;color:var(--muted);margin-left:1px}
 .lb-row .rate span{display:block;font-size:10px;color:var(--muted);font-weight:650}
 .lb-note{margin-top:12px;font-size:11.5px;color:var(--muted);line-height:1.7;background:#fff;border:1px dashed var(--line-2);border-radius:12px;padding:11px 13px}
+.lb-formula{font-size:11.5px;font-weight:700;color:var(--muted);margin:-4px 0 10px;letter-spacing:-.01em}
+.lb-formula b{font-weight:820;color:var(--ink-2)}
 .section-t{display:flex;align-items:center;gap:8px;margin:20px 0 10px;font-size:13px;font-weight:800;color:var(--ink-2);letter-spacing:-.02em}
 .section-t::after{content:'';flex:1;height:1px;background:var(--line)}
 .section-t .n{font-size:11px;font-weight:800;color:var(--muted)}
@@ -566,11 +586,17 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .cand .cc{flex:0 0 auto;font-size:10px;font-weight:750;color:var(--ink-2);background:var(--bg-2);padding:2px 6px;border-radius:5px}
 .cand .pick{width:18px;height:18px;border-radius:50%;border:1.6px solid #E3D2C5;flex:0 0 auto}
 .cand.on .pick{border-color:var(--coral);background:radial-gradient(circle,#BC6354 42%,#fff 46%)}
+.cand .ca img{display:block;width:100%;height:100%;object-fit:cover}
+.cand .ca{background:var(--bg-2)}
+.picked-line{margin-top:10px;font-size:11.5px;font-weight:650;color:var(--ink-2);background:#fff;border:1px dashed #E3CBBE;border-radius:10px;padding:8px 10px;line-height:1.5}
+.picked-line b{color:#A95344;font-weight:820}
 .dfooter{display:flex;gap:7px;margin-top:18px;position:sticky;bottom:0;background:var(--bg);box-shadow:0 -10px 18px rgba(252,249,245,.9);border-top:1px solid var(--line);padding:11px 0 4px;align-items:stretch}
 .dfooter .btn{justify-content:center;padding:13px}
 .dfooter .btn.grow{flex:1.6}
 .dfooter .btn.mid{flex:1}
 .dfooter .btn.icon{padding:13px 14px;flex:0 0 auto}
+.dfooter .btn[disabled]{opacity:.42;box-shadow:none;cursor:not-allowed;filter:grayscale(.25)}
+.dfooter.proposal-foot{background:linear-gradient(180deg,#FDF4EE,var(--bg));border-top-color:#EBCFC2}
 
 .danger-bar{
   margin-top:16px;border:1.5px solid #EBCFC2;background:#FCEFE9;border-radius:16px;padding:13px;animation:rise .2s both;
@@ -770,6 +796,17 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 @media (max-width:430px){
   .tab{font-size:12px;padding:10px 5px;gap:4px}
   .tab .cnt{display:none}
+  .pair{grid-template-columns:minmax(0,1fr) 16px minmax(0,1fr);gap:2px}
+  .person{gap:6px;padding:3px 2px}
+  .person .ava{width:38px;height:38px}
+  .person .pn{font-size:12px}
+  .person .pm{font-size:10px}
+  .person .pa{font-size:9.5px;line-height:1.5}
+  .pdir{font-size:9px;padding:1px 4px}
+  .mhead{flex-wrap:wrap;gap:6px}
+  .steps .step{font-size:9.5px}
+  .bchips{display:grid;grid-template-columns:1fr 1fr;gap:6px;overflow:visible}
+  .bchips .chip{justify-content:center;padding:8px 6px;font-size:11.5px}
 }
 @media (max-width:340px){
   .filters{grid-template-columns:1fr}
@@ -885,7 +922,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 
     <nav class="tabs" role="tablist">
       <button class="tab on" data-tab="list" role="tab" aria-selected="true">🏠 매물 리스트 <span class="cnt" id="tabCntList">30</span></button>
-      <button class="tab" data-tab="board" role="tab" aria-selected="false">💌 매칭 현황판 <span class="cnt" id="tabCntBoard">4</span></button>
+      <button class="tab" data-tab="board" role="tab" aria-selected="false">💌 매칭 현황판 <span class="nbadge" id="tabBadgeBoard" hidden>0</span> <span class="cnt" id="tabCntBoard">4</span></button>
       <button class="tab" data-tab="agents" role="tab" aria-selected="false">🏆 주선자 9명</button>
     </nav>
 
@@ -900,7 +937,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
       <div class="filters">
         <div class="search">
           <span class="ico">🔍</span>
-          <input id="q" type="search" placeholder="번호 · 직업 · 거주지 · 바라는 조건 검색" aria-label="매물 검색">
+          <input id="q" type="search" placeholder="나이 · 직업 · 거주지 · 바라는 조건 검색" aria-label="매물 검색">
           <button class="clr" id="qClear" hidden aria-label="검색어 지우기">✕</button>
         </div>
         <select id="fGender" aria-label="성별 필터">
@@ -957,19 +994,21 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
       <div class="panel-head">
         <h2>💌 매칭 현황판 <small id="boardCount">진행 4쌍</small></h2>
       </div>
-      <div class="section-t">진행 중인 매칭 <span class="n" id="boardLiveN">4</span></div>
+      <div class="bchips" id="boardChips" role="group" aria-label="매칭 필터"></div>
+      <div class="section-t"><span id="boardLiveT">진행 중인 매칭</span> <span class="n" id="boardLiveN">4</span></div>
       <div class="match-list" id="boardLive"></div>
-      <div class="section-t">지난 매칭 <span class="n" id="boardPastN">1</span></div>
+      <div class="section-t" id="boardPastT">지난 매칭 <span class="n" id="boardPastN">1</span></div>
       <div class="match-list" id="boardPast"></div>
     </section>
 
     <!-- TAB 3 -->
     <section class="panel" id="panel-agents" hidden>
       <div class="panel-head">
-        <h2>🏆 주선자 9명 <small>성사율 랭킹</small></h2>
+        <h2>🏆 주선자 9명 <small>활동 점수 랭킹</small></h2>
       </div>
+      <div class="lb-formula" id="lbFormula">점수 기준 · 성사 <b>10점</b> · 진행 <b>3점</b> · 보유 <b>1점</b></div>
       <div class="lb" id="lb"></div>
-      <div class="lb-note">성사율 = 성사된 매물 수 ÷ 보유 매물 수. 두 사람이 한 쌍이 되면 양쪽 주선자 모두 성사 1건으로 계산됩니다.</div>
+      <div class="lb-note">활동 점수 = 성사 × 10 + 진행 × 3 + 보유 × 1. 성사·진행은 담당 매물의 현재 상태 기준이라, 한 쌍이 되면 양쪽 주선자 모두에게 잡힙니다.</div>
     </section>
 
     <div class="appfoot">
@@ -1698,8 +1737,11 @@ function filteredAssets(){
     }
     if(q){
       var extras = (a.extras || []).map(function(e){ return e.label + ' ' + e.value; }).join(' ');
+      /* 나이·출생연도로도 찾을 수 있게 “93년생 / 1993 / 33 / 33세” 형태를 모두 넣는다 */
+      var ageOfA = ageOf(a);
       var hay = [assetTitle(a), assetNo(a), '#' + assetNo(a), a.job, a.company, a.region, a.workArea,
                  a.mbti, a.memo, extras, (a.tags||[]).join(' '), agentName(a.agent), a.smoke, a.drink,
+                 birthLabel(a), String(a.birth || ''), ageOfA + '세', String(ageOfA),
                  wantsOf(a).join(' '),
                  (a.gender === 'M' ? '남성 남' : '여성 여')].join(' ').toLowerCase();
       if(hay.indexOf(q) === -1) return false;
@@ -1837,6 +1879,13 @@ function renderDash(){
   document.getElementById('sRate').innerHTML = rate + '<small>%</small>';
   document.getElementById('tabCntList').textContent = c.all;
   document.getElementById('tabCntBoard').textContent = live.length;
+  var incN = incomingProposalCount();
+  var badge = document.getElementById('tabBadgeBoard');
+  if(badge){
+    badge.textContent = incN;
+    badge.hidden = !incN;
+    badge.setAttribute('aria-label', '내 매물에 온 제안 ' + incN + '건');
+  }
   document.getElementById('headCount').textContent = c.all + '건';
   document.getElementById('boardCount').textContent = '진행 ' + live.length + '쌍';
   if(isGuest()){
@@ -1928,6 +1977,14 @@ function renderList(){
 }
 
 /* ---------------- render: board ---------------- */
+var boardFilter = 'all';      /* all | mine | incoming | outgoing */
+var highlightMid = null;      /* 방금 올린 매칭 — 상단 배치 + 강조 */
+var BOARD_FILTERS = {
+  all:      {live:'진행 중인 매칭'},
+  mine:     {live:'👤 내 매물이 낀 매칭'},
+  incoming: {live:'📩 내 매물에 온 제안'},
+  outgoing: {live:'📤 내가 보낸 제안'}
+};
 function stepsHTML(stage){
   var idx = STAGES.indexOf(stage);
   return '<div class="steps">' + STAGES.slice(0,5).map(function(s, i){
@@ -1936,16 +1993,48 @@ function stepsHTML(stage){
   }).join('') + '</div>';
 }
 
-function personHTML(a){
+function personHTML(a, role, mine){
   var ph = photosOf(a);
+  var roleTag = role === 'from' ? '<span class="pdir from">📤 보낸 쪽</span>'
+              : role === 'to'   ? '<span class="pdir to">📩 받은 쪽</span>' : '';
   return '<div class="person" data-open="' + a.id + '" role="button" tabindex="0">' +
     '<span class="ava">' + (ph.length
       ? '<img src="' + esc(ph[0]) + '" alt="' + esc(assetTitle(a)) + ' 대표 사진">'
       : avatarSVG(a,0)) + '</span>' +
     '<span class="pi"><span class="pn">' + esc(assetTitle(a)) + '</span>' +
     '<span class="pm">' + ageOf(a) + '세 · ' + esc(a.region) + '</span>' +
-    '<span class="pa">' + agentById(a.agent).emoji + ' ' + esc(agentName(a.agent)) + ' 주선</span></span>' +
+    '<span class="pa">' + (roleTag ? roleTag + ' ' : '') +
+      agentById(a.agent).emoji + ' ' + esc(agentName(a.agent)) + (roleTag ? '' : ' 주선') +
+      (mine ? '<b class="mytag">내 매물</b>' : '') + '</span></span>' +
   '</div>';
+}
+
+/* ---------------- 매칭의 보낸 쪽 · 받은 쪽 -------------
+   propose(aId, bId)는 상세 모달의 매물(a)이 후보(b)에게 제안하므로 기본 보낸 쪽은 aId다.
+   m.from이 있으면 그쪽을 따르고, 예전 샘플 데이터(mt1~mt6)처럼 필드가 없으면 aId를 보낸 쪽으로 본다. */
+function matchFromSide(m){ return m && m.from === 'b' ? 'b' : 'a'; }
+function matchFromAsset(m){ if(!m) return null; return getAsset(matchFromSide(m) === 'a' ? m.aId : m.bId); }
+function matchToAsset(m){ if(!m) return null; return getAsset(matchFromSide(m) === 'a' ? m.bId : m.aId); }
+function matchInvolvesMe(m){
+  if(isGuest() || !m) return false;
+  var a = getAsset(m.aId), b = getAsset(m.bId);
+  return !!((a && a.agent === state.session) || (b && b.agent === state.session));
+}
+/* 내 매물에 온 제안: 받는 쪽이 내 담당 매물이고, 보낸 쪽이 내가 아닌 제안중 매칭 */
+function isIncomingProposal(m){
+  if(isGuest() || !m || m.stage !== '제안중') return false;
+  var from = matchFromAsset(m), to = matchToAsset(m);
+  if(!from || !to) return false;
+  return to.agent === state.session && from.agent !== state.session;
+}
+function isOutgoingProposal(m){
+  if(isGuest() || !m) return false;
+  var from = matchFromAsset(m), to = matchToAsset(m);
+  if(!from) return false;
+  return from.agent === state.session && (!to || to.agent !== state.session);
+}
+function incomingProposalCount(){
+  return state.matches.filter(isIncomingProposal).length;
 }
 
 function matchHTML(m){
@@ -1953,39 +2042,101 @@ function matchHTML(m){
   if(!a || !b) return '';
   var isPast = (m.stage === '성사' || m.stage === '패스');
   var tagCls = m.stage === '패스' ? 'pass' : (m.stage === '성사' ? 'done' : '');
+  var fromA = matchFromSide(m) === 'a';
+  var from = fromA ? a : b, to = fromA ? b : a;
   var btns = STAGES.map(function(s){
     var cls = 'sbtn';
     if(m.stage === s){ cls += s === '패스' ? ' pass-on' : (s === '성사' ? ' done-on' : ' on'); }
     return '<button class="' + cls + '" data-mid="' + m.id + '" data-stage="' + s + '">' + s + '</button>';
   }).join('');
-  return '<article class="match' + (isPast?' past':'') + '">' +
+  /* 제안중 카드는 다음 단계를 바로 누를 수 있는 한 줄 액션을 크게 보여 준다 */
+  var quick = (m.stage === '제안중' && !isGuest())
+    ? '<div class="mquick"><span class="mq-lab">' +
+        (isIncomingProposal(m) ? '📩 내 매물에 온 제안이에요' : (isOutgoingProposal(m) ? '📤 내가 보낸 제안이에요' : '제안중')) +
+      '</span>' +
+      '<button class="sbtn accept" data-mid="' + m.id + '" data-stage="일정 조율">✅ 수락 · 일정 조율</button>' +
+      '<button class="sbtn passq" data-mid="' + m.id + '" data-stage="패스">✕ 패스</button></div>'
+    : '';
+  return '<article class="match' + (isPast ? ' past' : '') + (highlightMid === m.id ? ' new' : '') + '" data-mid="' + m.id + '">' +
     '<div class="mhead"><span class="no">매칭 #' + m.id.replace('mt','') + '</span>' +
       '<span class="when">' + fmtDate(m.at) + ' 제안</span>' +
+      (isIncomingProposal(m) ? '<span class="inctag">📩 내게 온 제안</span>' : '') +
       '<span class="stage-tag ' + tagCls + '">' + m.stage + '</span></div>' +
-    '<div class="pair">' + personHTML(a) + '<div class="link">💌</div>' + personHTML(b) + '</div>' +
+    '<div class="pair">' + personHTML(from, 'from', from.agent === state.session && !isGuest()) +
+      '<div class="link">💌</div>' +
+      personHTML(to, 'to', to.agent === state.session && !isGuest()) + '</div>' +
     ((boardReviewHTML(m, a) || boardReviewHTML(m, b))
       ? '<div class="brev-row">' + boardReviewHTML(m, a) + boardReviewHTML(m, b) + '</div>'
       : '') +
     boardReviewPanelHTML(m, a, b) +
     stepsHTML(m.stage) +
-    '<div class="mstage">' + btns + '</div>' +
+    quick +
+    (m.stage === '제안중' ? '' : '<div class="mstage">' + btns + '</div>') +
   '</article>';
 }
 
 function renderBoard(){
-  var live = state.matches.filter(function(m){ return LIVE_STAGES.indexOf(m.stage) !== -1; });
-  var past = state.matches.filter(function(m){ return LIVE_STAGES.indexOf(m.stage) === -1; });
+  if(isGuest()) boardFilter = 'all';
+  var isLive = function(m){ return LIVE_STAGES.indexOf(m.stage) !== -1; };
+  var allLive = state.matches.filter(isLive);
+  var mineAll = state.matches.filter(matchInvolvesMe);
+  var incAll = state.matches.filter(isIncomingProposal);
+  var outAll = state.matches.filter(isOutgoingProposal);
+
+  /* 필터 칩 — 손님 모드는 전체만 보여 준다 */
+  var chipsEl = document.getElementById('boardChips');
+  if(chipsEl){
+    var defs = isGuest()
+      ? [{k:'all', label:'전체', n:allLive.length}]
+      : [{k:'all', label:'전체', n:allLive.length},
+         {k:'mine', label:'👤 내 매물', n:mineAll.length},
+         {k:'incoming', label:'📩 내게 온 제안', n:incAll.length},
+         {k:'outgoing', label:'📤 내가 보낸 제안', n:outAll.length}];
+    chipsEl.innerHTML = defs.map(function(d){
+      return '<button class="chip' + (boardFilter === d.k ? ' on' : '') + '" data-bfilter="' + d.k + '" aria-pressed="' + (boardFilter === d.k) + '">' +
+        d.label + ' <b>' + d.n + '</b></button>';
+    }).join('');
+  }
+
+  var base = boardFilter === 'mine' ? mineAll
+           : boardFilter === 'incoming' ? incAll
+           : boardFilter === 'outgoing' ? outAll
+           : state.matches;
+  var live = base.filter(isLive);
+  /* 방금 올린 매칭은 맨 위에 */
+  if(highlightMid){
+    live.sort(function(x, y){ return (y.id === highlightMid ? 1 : 0) - (x.id === highlightMid ? 1 : 0); });
+  }
+  var past = base.filter(function(m){ return !isLive(m); });
+
+  var label = BOARD_FILTERS[boardFilter] ? BOARD_FILTERS[boardFilter].live : '진행 중인 매칭';
+  var t = document.getElementById('boardLiveT');
+  if(t) t.textContent = label;
+
   document.getElementById('boardLiveN').textContent = live.length;
   document.getElementById('boardPastN').textContent = past.length;
+
+  var emptyLive = boardFilter === 'incoming'
+    ? '<div class="empty"><div class="big">📩</div><p>내 매물에 온 제안이 없어요.</p><small>다른 주선자가 내 담당 매물에게 제안하면 여기에 바로 뜨고, 탭에 숫자 배지가 붙습니다.</small></div>'
+    : boardFilter === 'outgoing'
+    ? '<div class="empty"><div class="big">📤</div><p>내가 보낸 제안이 없어요.</p><small>매물 상세에서 “💌 매칭 제안”을 눌러 시작해 보세요.</small></div>'
+    : boardFilter === 'mine'
+    ? '<div class="empty"><div class="big">👤</div><p>내 담당 매물이 낀 매칭이 없어요.</p><small>매물 상세에서 다른 주선자 매물로 제안을 보내 보세요.</small></div>'
+    : '<div class="empty"><div class="big">💌</div><p>진행 중인 매칭이 없어요.</p><small>매물 상세에서 “매칭 제안하기”를 눌러 시작해 보세요.</small></div>';
+
   document.getElementById('boardLive').innerHTML = live.length
     ? live.map(matchHTML).join('')
-    : '<div class="empty"><div class="big">💌</div><p>진행 중인 매칭이 없어요.</p><small>매물 상세에서 “매칭 제안하기”를 눌러 시작해 보세요.</small></div>';
+    : emptyLive;
+  document.getElementById('boardPastT').hidden = boardFilter !== 'all';
+  document.getElementById('boardPast').hidden = boardFilter !== 'all';
   document.getElementById('boardPast').innerHTML = past.length
     ? past.map(matchHTML).join('')
     : '<div class="empty"><div class="big">🏁</div><p>아직 지난 매칭이 없어요.</p><small>성사되거나 패스된 매칭이 여기에 쌓입니다.</small></div>';
 }
 
-/* ---------------- render: leaderboard ---------------- */
+/* ---------------- render: leaderboard ----------------
+   활동 점수 = 성사 × 10 + 진행 × 3 + 보유 × 1.
+   정렬: 점수 ↓ → 성사 ↓ → 진행 ↓ → 보유 ↓ */
 function renderLeaderboard(){
   var rows = AGENTS.map(function(ag){
     var own = state.assets.filter(function(a){ return a.agent === ag.id; });
@@ -1993,25 +2144,29 @@ function renderLeaderboard(){
     var done = own.filter(function(a){ return a.status === 'matched'; }).length;
     var live = own.filter(function(a){ return a.status === 'progress'; }).length;
     return {ag:ag, total:own.length, avail:avail, done:done, live:live,
-            rate: own.length ? Math.round(done / own.length * 100) : 0};
+            rate: own.length ? Math.round(done / own.length * 100) : 0,
+            score: done * 10 + live * 3 + own.length};
   });
   rows.sort(function(x, y){
+    if(y.score !== x.score) return y.score - x.score;
     if(y.done !== x.done) return y.done - x.done;
-    if(y.rate !== x.rate) return y.rate - x.rate;
+    if(y.live !== x.live) return y.live - x.live;
     return y.total - x.total;
   });
+  var maxScore = rows.reduce(function(mx, r){ return Math.max(mx, r.score); }, 0);
   document.getElementById('lb').innerHTML = rows.map(function(r, i){
     var mine = r.ag.id === state.session;
+    var pct = maxScore > 0 ? Math.round(r.score / maxScore * 100) : 0;
     return '<div class="lb-row' + (mine?' me':'') + '" style="animation-delay:' + (i*30) + 'ms">' +
       '<span class="rk' + (i<3?' top':'') + '">' + (i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)) + '</span>' +
       '<span class="av">' + r.ag.emoji + '</span>' +
       '<span class="info"><span class="nm">' + esc(r.ag.name) +
         (mine ? '<span class="metag mine">나</span>' : '') +
         (r.done > 0 && !mine ? '<span class="metag">성사 ' + r.done + '</span>' : '') + '</span>' +
-        '<span class="st">보유 <b>' + r.total + '</b>명 · 가능 <b>' + r.avail + '</b> · 진행 <b>' + r.live + '</b> · 성사 <b>' + r.done + '</b></span>' +
-        '<span class="bar"><i style="width:' + Math.max(r.rate, r.total?4:0) + '%"></i></span>' +
+        '<span class="st">보유 <b>' + r.total + '</b>명 · 진행 <b>' + r.live + '</b> · 성사 <b>' + r.done + '</b></span>' +
+        '<span class="bar"><i style="width:' + pct + '%"></i></span>' +
       '</span>' +
-      '<span class="rate"><b>' + r.rate + '<small>%</small></b><span>성사율</span></span>' +
+      '<span class="rate"><b>' + r.score + '<small>점</small></b><span>활동 점수</span></span>' +
     '</div>';
   }).join('');
 }
@@ -2395,6 +2550,7 @@ function renderDetail(){
   var proposal = '';
   if(proposalOpen && !guest){
     var cands = candidatesFor(a);
+    var pickedNow = proposalPick ? getAsset(proposalPick) : null;
     if(!cands.length){
       proposal = '<div class="proposal"><h4>💌 매칭 제안하기</h4><p class="hint">제안할 수 있는 이성 매물이 없어요. 먼저 매물을 등록해 주세요.</p></div>';
     } else {
@@ -2403,20 +2559,44 @@ function renderDetail(){
         cands.map(function(c){
           var s = STATUS[c.status];
           var disabled = c.status === 'matched';
+          var cp = photosOf(c);
           return '<button class="cand' + (proposalPick === c.id ? ' on' : '') + (disabled ? ' off' : '') + '" data-action="pick" data-id="' + c.id + '"' + (disabled?' disabled':'') + '>' +
-            '<span class="ca">' + avatarSVG(c,0) + '</span>' +
+            '<span class="ca">' + (cp.length
+              ? '<img src="' + esc(cp[0]) + '" alt="' + esc(assetTitle(c)) + ' 대표 사진">'
+              : avatarSVG(c,0)) + '</span>' +
             '<span class="ci"><span class="cn">' + esc(assetTitle(c)) + ' · ' + ageOf(c) + '세 · ' + c.height + 'cm</span>' +
             '<span class="cm">' + esc(c.region) + ' · ' + esc(c.workArea) + ' · ' + esc(c.job) + '</span></span>' +
             '<span class="cc">' + s.emoji + ' ' + s.label + '</span>' +
             '<span class="pick"></span>' +
           '</button>';
         }).join('') +
-        '<div style="display:flex;gap:6px;margin-top:9px">' +
-          '<button class="btn ghost sm" data-action="proposal-close" style="flex:1;justify-content:center">닫기</button>' +
-          '<button class="btn ghost sm" data-action="proposal-share" style="flex:1.2;justify-content:center"' + (proposalPick?'':' disabled') + '>💬 카톡 문구</button>' +
-          '<button class="btn primary sm" data-action="propose" style="flex:1.4;justify-content:center"' + (proposalPick?'':' disabled') + '>제안 보내기 💌</button>' +
-        '</div></div>';
+        '<div class="picked-line">' + (pickedNow
+          ? '✅ <b>' + esc(assetTitle(pickedNow)) + '</b>에게 제안할 준비가 됐어요. 화면 아래 <b>제안 보내기 💌</b>를 눌러 주세요.'
+          : '소개할 매물을 고르면 화면 아래에 고정된 <b>제안 보내기 💌</b> 버튼이 켜집니다.') + '</div>' +
+        '</div>';
     }
+  }
+
+  /* 하단 고정 바 — 제안 패널이 열린 동안은 제안 전용 바로 바꿔 스크롤 없이 바로 누를 수 있게 한다 */
+  var proposalActive = proposalOpen && !guest && candidatesFor(a).length > 0;
+  var footer;
+  if(guest){
+    footer = '<div class="dfooter"><button class="btn primary grow" data-action="share">💬 주선자에게 이분 물어보기</button></div>';
+  } else if(proposalActive){
+    var pickA = proposalPick ? getAsset(proposalPick) : null;
+    footer = '<div class="dfooter proposal-foot">' +
+        '<button class="btn ghost mid" data-action="proposal-close">닫기</button>' +
+        '<button class="btn ghost mid" data-action="proposal-share"' + (pickA ? '' : ' disabled') + '>💬 카톡 문구</button>' +
+        '<button class="btn primary grow" data-action="propose"' + (pickA ? '' : ' disabled') + '>제안 보내기 💌</button>' +
+      '</div>';
+  } else {
+    footer = '<div class="dfooter">' +
+        '<button class="btn primary grow" data-action="proposal-open">💌 매칭 제안</button>' +
+        (owner
+          ? '<button class="btn mid" data-action="edit">✏️ 수정</button>' +
+            '<button class="btn danger icon" data-action="delete" aria-label="매물 삭제" title="매물 삭제">🗑</button>'
+          : '') +
+      '</div>';
   }
 
   document.getElementById('detailContent').innerHTML =
@@ -2478,15 +2658,7 @@ function renderDetail(){
 
       proposal + (guest ? guestShareBlockHTML(a) : shareBlockHTML(a)) + danger +
 
-      (guest
-        ? '<div class="dfooter"><button class="btn primary grow" data-action="share">💬 주선자에게 이분 물어보기</button></div>'
-        : '<div class="dfooter">' +
-            '<button class="btn primary grow" data-action="proposal-open">💌 매칭 제안</button>' +
-            (owner
-              ? '<button class="btn mid" data-action="edit">✏️ 수정</button>' +
-                '<button class="btn danger icon" data-action="delete" aria-label="매물 삭제" title="매물 삭제">🗑</button>'
-              : '') +
-          '</div>') +
+      footer +
     '</div>';
   bindGallerySwipe(document.getElementById('detailContent'));
 }
@@ -2589,15 +2761,35 @@ function propose(aId, bId){
   if(isGuest()) return;
   var a = getAsset(aId), b = getAsset(bId);
   if(!a || !b) return;
+  /* 매칭 번호는 기존 매칭의 최대 번호 다음으로 발급한다.
+     (저장된 예전 데이터의 seq.match가 밀려 있어도 mt6 같은 번호가 중복되지 않게) */
+  var nextNo = 1;
+  state.matches.forEach(function(mm){
+    var n = parseInt(String(mm.id).replace(/[^0-9]/g, ''), 10);
+    if(!isNaN(n) && n >= nextNo) nextNo = n + 1;
+  });
+  if(typeof state.seq.match !== 'number' || state.seq.match < nextNo) state.seq.match = nextNo;
   var mid = 'mt' + (state.seq.match++);
-  state.matches.push({id:mid, aId:aId, bId:bId, stage:'제안중', at:today()});
+  /* from: 보낸 쪽(a) — 상세 모달에서 보고 있던 매물이 후보에게 제안한다 */
+  state.matches.push({id:mid, aId:aId, bId:bId, from:'a', stage:'제안중', at:today()});
   a.status = 'progress'; b.status = 'progress';
   a.history.unshift({at: today(), by: agentName(state.session), text: assetTitle(b) + '(' + agentName(b.agent) + ' 담당)에게 매칭 제안. 매칭 #' + mid.replace('mt','') + ' 생성.'});
   b.history.unshift({at: today(), by: agentName(state.session), text: assetTitle(a) + '(' + agentName(a.agent) + ' 담당)의 매칭 제안 도착. 매칭 #' + mid.replace('mt','') + '.'});
   save();
   proposalOpen = false; proposalPick = null;
-  renderAll(); renderDetail();
-  toast('매칭 현황판에 추가했어요 💌');
+  /* 방금 만든 매칭이 바로 보이도록 전체 필터 + 상단 배치 + 강조 */
+  boardFilter = 'all';
+  highlightMid = mid;
+  renderAll();
+  if(!document.getElementById('detailOverlay').hidden) closeDetail();
+  switchTab('board');
+  renderBoard();
+  toast('매칭 현황판에 올렸어요 💌');
+  setTimeout(function(){
+    var el = document.querySelector('.match[data-mid="' + mid + '"]');
+    if(el && el.scrollIntoView){ try { el.scrollIntoView({behavior:'smooth', block:'center'}); } catch(e){} }
+  }, 120);
+  setTimeout(function(){ highlightMid = null; }, 6000);
 }
 
 function addMemo(id, text){
@@ -3365,6 +3557,7 @@ function switchTab(t){
   document.getElementById('panel-list').hidden = t !== 'list';
   document.getElementById('panel-board').hidden = t !== 'board';
   document.getElementById('panel-agents').hidden = t !== 'agents';
+  if(t === 'board') renderBoard();
 }
 tabButtons.forEach(function(btn){
   btn.addEventListener('click', function(){ switchTab(btn.getAttribute('data-tab')); });
@@ -3430,6 +3623,8 @@ document.getElementById('cards').addEventListener('click', function(e){
 
 /* board */
 document.getElementById('panel-board').addEventListener('click', function(e){
+  var bchip = e.target.closest('[data-bfilter]');
+  if(bchip){ boardFilter = bchip.getAttribute('data-bfilter'); renderBoard(); return; }
   var revBtn = e.target.closest('[data-action^="rev-"]');
   if(revBtn){ reviewAction(revBtn); return; }
   var sbtn = e.target.closest('.sbtn');
@@ -3473,7 +3668,8 @@ detailOverlay.addEventListener('click', function(e){
     if(!ta) return;
     if(!addMemo(detailId, ta.value)){ ta.focus(); toast('메모 내용을 먼저 입력해 주세요.'); }
   } else if(act === 'proposal-open'){
-    proposalOpen = true; proposalPick = null; deleteArmed = false;
+    if(!proposalOpen) proposalPick = null;
+    proposalOpen = true; deleteArmed = false;
     renderDetail();
     var pr = detailOverlay.querySelector('.proposal');
     if(pr) setTimeout(function(){ try { pr.scrollIntoView({behavior:'smooth', block:'center'}); } catch(err){} }, 60);
