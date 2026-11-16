@@ -3537,6 +3537,9 @@ function openNewAssetPop(id){
   renderNewAssetPop();
   ov.hidden = false;
   document.body.style.overflow = 'hidden';
+  /* 저장 직전에 뜬 토스트(사진 처리 등)가 팝업 문구를 가리지 않게 지운다 */
+  var tw = document.getElementById('toastWrap');
+  if(tw) tw.innerHTML = '';
   histEnter('newasset');   /* 등록 모달이 쌓아 둔 엔트리를 이 팝업이 이어받는다 */
   var b = document.getElementById('naShare');
   if(b) setTimeout(function(){ try { b.focus(); } catch(e){} }, 60);
