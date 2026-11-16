@@ -854,10 +854,10 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 
     <form class="gate-card" id="gateForm" autocomplete="off">
       <div class="code-label">
-        <span>중개사 선택</span>
+        <span>주선자 선택</span>
         <span class="code-note">본인 이름을 먼저 눌러 주세요</span>
       </div>
-      <div class="gate-chips" id="gateChips" aria-label="중개사 선택"></div>
+      <div class="gate-chips" id="gateChips" aria-label="주선자 선택"></div>
       <div class="pw-label">
         <label for="pwInput">비밀번호</label>
         <span class="who-sel none" id="pwWho">이름을 선택해 주세요</span>
@@ -899,7 +899,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
         <span>만나방</span>
       </div>
       <div class="who" id="whoBox">
-        <span class="who-lab">중개사</span>
+        <span class="who-lab">주선자</span>
         <span class="who-name" id="whoName">· 종윤 님</span>
         <span class="ava-dot" id="whoAva">🌿</span>
         <button type="button" class="who-btn" id="whoExit">전환</button>
@@ -909,13 +909,13 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 
   <div class="emoji-pop" id="emojiPop" role="dialog" aria-label="내 이모지 선택" hidden>
     <div class="ep-head">내 이모지 <span class="ep-cur" id="epCur">🌿</span></div>
-    <p class="ep-sub">헤더·입장 화면·매물 카드·중개사 랭킹에 함께 표시돼요. 고르면 바로 저장됩니다.</p>
+    <p class="ep-sub">헤더·입장 화면·매물 카드·주선자 랭킹에 함께 표시돼요. 고르면 바로 저장됩니다.</p>
     <div class="ep-grid" id="epGrid"></div>
     <div class="ep-custom">
       <input id="epInput" type="text" maxlength="8" placeholder="직접 입력 (예: 🍑)" aria-label="이모지 직접 입력" autocomplete="off">
       <button type="button" id="epApply">적용</button>
     </div>
-    <div class="ep-foot">다른 중개사의 이모지는 그분이 직접 바꿀 수 있어요.</div>
+    <div class="ep-foot">다른 주선자의 이모지는 그분이 직접 바꿀 수 있어요.</div>
   </div>
 
   <main class="wrap">
@@ -1346,7 +1346,7 @@ function reviewableMatches(a){
   return out;
 }
 
-/* ---------------- 내 이모지 (중개사 개인화) ---------------- */
+/* ---------------- 내 이모지 (주선자 개인화) ---------------- */
 var EMOJI_KEY = 'mannabang.emoji.v1';
 var EMOJI_SUGGEST = ['🌿','🌸','🍑','🍋','☕','🌙','⭐','🍒','🦋','🐻','🍀','💐','🎬','🎧','🍷','📚','🧭','🕊️','🌻','🐰'];
 
@@ -1801,7 +1801,7 @@ function renderHeader(){
   } else {
     var ag = agentById(state.session);
     box.className = 'who';
-    box.innerHTML = '<span class="who-lab">중개사</span>' +
+    box.innerHTML = '<span class="who-lab">주선자</span>' +
       '<span class="who-name">· ' + esc(ag.name) + ' 님</span>' +
       '<button type="button" class="ava-dot" id="emojiBtn" title="내 이모지 바꾸기" aria-label="내 이모지 바꾸기" aria-haspopup="dialog">' + esc(ag.emoji) + '</button>' +
       '<button type="button" class="who-btn" id="whoExit">전환</button>';
@@ -2389,22 +2389,63 @@ function shareLink(id){
   var base = window.location.href.split('#')[0].split('?')[0];
   return base + '?item=' + encodeURIComponent(id);
 }
+/* ---------------- 공유 문구 (카톡·문자용) ----------------
+   카톡에는 text 하나만 넘긴다(title을 같이 넘기면 '제목 - 본문'으로 이어 붙어 제목이 두 번 보임).
+   한 줄로 뭉치면 읽기 어려우므로 빈 줄로 문단을 나누고 '·' 항목별로 끊는다.
+   '매물 #31'은 카톡에서 해시태그로 잡혀 파랗게 링크처럼 보이므로 문구에서는 '31번 매물'로 쓴다. */
+function oneLine(v){
+  return String(v == null ? '' : v).replace(/\s+/g, ' ').trim();
+}
+function shareAssetNo(a){
+  return assetNo(a) + '번 매물';
+}
+function shareGender(a){
+  return a.gender === 'M' ? '남성' : '여성';
+}
+function shareSpecLines(a){
+  var out = ['📌 ' + shareAssetNo(a) + ' (' + shareGender(a) + ')'];
+  var meta = [];
+  if(a.birth) meta.push(String(a.birth) + '년생 (' + ageOf(a) + '세)');
+  if(a.height) meta.push(a.height + 'cm');
+  if(meta.length) out.push('· ' + meta.join(' · '));
+  var home = oneLine(a.region), work = oneLine(a.workArea), addr = '';
+  if(home) addr = '거주: ' + home;
+  if(work) addr += (addr ? ' / ' : '') + '근무: ' + work;
+  if(addr) out.push('· ' + addr);
+  var job = oneLine(a.job), comp = oneLine(a.company);
+  if(job || comp) out.push('· 직업: ' + [job, comp].filter(Boolean).join(' · '));
+  return out;
+}
+function shareDigest(a){
+  var parts = [];
+  if(a.birth) parts.push(String(a.birth) + '년생');
+  if(a.height) parts.push(a.height + 'cm');
+  if(oneLine(a.region)) parts.push(oneLine(a.region));
+  var job = [oneLine(a.job), oneLine(a.company)].filter(Boolean).join(' ');
+  if(job) parts.push(job);
+  return shareAssetNo(a) + '(' + parts.join(' · ') + ')';
+}
+function shareTpl(head, a, tail){
+  var lines = [head, ''].concat(shareSpecLines(a));
+  lines.push('');
+  lines.push(tail);
+  lines.push('👉 상세 보기');
+  lines.push(shareLink(a.id));
+  return lines.join('\n');
+}
+/* 주선자끼리 주고받는 제안 문구 — 받는 사람은 그 매물을 관리하는 주선자 */
 function shareMessage(target, mine){
   var who = agentName(target.agent);
-  var head = '[만나방 매칭 제안 💘] ' + who + ' 중개사님! ';
-  var spec = assetTitle(target) + '(' + birthLabel(target) + '/' + ageOf(target) + '세·' + target.region + '·' + target.job + ')';
-  var tail;
-  if(mine){
-    tail = '에게 우리 ' + assetTitle(mine) + '(' + birthLabel(mine) + '/' + ageOf(mine) + '세·' + mine.region + '·' + mine.job + ') 소개팅 한번 물어봐 주세요!';
-  } else {
-    tail = '에게 우리 쪽 매물 소개팅 한번 물어봐 주세요!';
-  }
-  return head + spec + tail + '\n' + shareLink(target.id);
+  var tail = mine
+    ? '우리 쪽 ' + shareDigest(mine) + '과 잘 어울릴 것 같아 여쭤봐요 😊'
+    : '우리 쪽 매물과 잘 어울릴 것 같아 여쭤봐요 😊';
+  return shareTpl('💘 ' + who + ' 주선자님, 소개팅 제안드려요!', target, tail);
 }
+/* ?item= 링크로 들어온 손님이 담당 주선자에게 보내는 문의 문구 */
 function guestMessage(target){
-  return '[만나방 💬] ' + agentName(target.agent) + ' 중개사님! ' + assetTitle(target) +
-    '(' + birthLabel(target) + '/' + ageOf(target) + '세·' + target.region + '·' + target.job + ') 소개팅 한번 물어봐 주세요!\n' +
-    shareLink(target.id);
+  var who = agentName(target.agent);
+  return shareTpl('💬 ' + who + ' 주선자님, 이분 소개팅 문의드려요!', target,
+    '혹시 이분 소개팅 한번 여쭤봐 주실 수 있을까요? 😊');
 }
 function guestShareBlockHTML(a){
   var text = guestMessage(a);
@@ -2492,7 +2533,8 @@ function doShare(){
   var text = currentShareText();
   if(!text) return;
   if(navigator.share){
-    navigator.share({ title:'만나방 매칭 제안 💘', text: text }).then(function(){
+    /* title 없이 text만 넘긴다 — 카톡이 '제목 - 본문'으로 붙여 제목이 두 번 보이는 문제 방지 */
+    navigator.share({ text: text }).then(function(){
       toast('공유 창을 열었어요. 카톡을 골라 보내 주세요 💬');
     }).catch(function(err){
       if(err && (err.name === 'AbortError' || err.name === 'NotAllowedError')){
@@ -2925,7 +2967,7 @@ function sharePhoto(idx){
   var file;
   try { file = new File([blob], photoFileName(a, idx), {type: blob.type || 'image/jpeg'}); }
   catch(e){ savePhoto(idx); return; }
-  var data = {files: [file], title: '만나방 · ' + assetTitle(a), text: '이 사람 어때요? 🏠 만나방' };
+  var data = {files: [file], title: '만나방 · ' + shareAssetNo(a), text: '이 사람 어때요? 🏠 만나방' };
   if(!(navigator.canShare && navigator.canShare({files: [file]}))){ savePhoto(idx); return; }
   navigator.share(data).catch(function(err){
     if(err && err.name === 'AbortError') return;
@@ -3407,7 +3449,7 @@ var gateForm = document.getElementById('gateForm');
 var pwInput = document.getElementById('pwInput');
 var gateErr = document.getElementById('gateErr');
 
-/* 비밀번호는 중개사별로만 검증하고 화면에는 어떤 형태로도 표시하지 않는다 */
+/* 비밀번호는 주선자별로만 검증하고 화면에는 어떤 형태로도 표시하지 않는다 */
 function pwOf(agentId){
   for(var i=0;i<AGENTS.length;i++){
     if(AGENTS[i].id === agentId){ var d = String(i + 1); return d + d + d + d; }
@@ -3461,7 +3503,7 @@ function enterApp(deepId, mode, restored){
   } else if(isGuest()){
     toast('👀 손님 모드로 둘러보는 중 · 읽기 전용이에요');
   } else {
-    toast(agentName(state.session) + ' 중개사님, 오늘도 좋은 소개 부탁해요 🌿');
+    toast(agentName(state.session) + ' 주선자님, 오늘도 좋은 소개 부탁해요 🌿');
   }
 }
 
