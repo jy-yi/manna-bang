@@ -60,14 +60,14 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .gate-card{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow-m)}
 .code-label{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--ink-2);margin-bottom:8px}
 .code-row{display:flex;gap:8px}
-#codeInput{
+#pwInput{
   flex:1;min-width:0;background:var(--bg-2);border:1.5px solid #E8DDD0;border-radius:14px;
-  padding:14px 16px;font-size:22px;font-weight:800;letter-spacing:.42em;text-align:center;color:var(--ink);
+  padding:14px 16px;font-size:19px;font-weight:800;letter-spacing:.34em;text-align:center;color:var(--ink);
   outline:none;transition:.16s;
 }
-#codeInput::placeholder{letter-spacing:.02em;font-size:14px;font-weight:600;color:#B6ABA0}
-#codeInput:focus{border-color:var(--mint);background:#fff;box-shadow:0 0 0 4px rgba(15,169,127,.12)}
-#codeInput.shake{animation:shake .38s}
+#pwInput::placeholder{letter-spacing:.01em;font-size:13px;font-weight:600;color:#B6ABA0}
+#pwInput:focus{border-color:var(--mint);background:#fff;box-shadow:0 0 0 4px rgba(15,169,127,.12)}
+#pwInput.shake{animation:shake .38s}
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
 .btn-enter{
   background:linear-gradient(140deg,#12B892,#0F9C8C);color:#fff;font-weight:750;font-size:15px;
@@ -81,11 +81,16 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .gate-foot b{color:var(--ink-2)}
 .code-note{font-size:10.5px;font-weight:650;color:var(--muted)}
 .gate-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:11px}
-.gchip{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 4px;border-radius:10px;background:#fff;
-  border:1px solid var(--line);font-size:11.5px;font-weight:750;color:var(--ink-2);box-shadow:var(--shadow-s);transition:.14s;white-space:nowrap}
-.gchip .em{font-size:12px;line-height:1}
-.gchip b{font-weight:850;color:var(--mint-ink);letter-spacing:.03em}
+.gchip{display:flex;align-items:center;justify-content:center;gap:5px;padding:9px 4px;border-radius:10px;background:#fff;
+  border:1.5px solid var(--line);font-size:12.5px;font-weight:750;color:var(--ink-2);box-shadow:var(--shadow-s);
+  transition:.14s;white-space:nowrap}
+.gchip .em{font-size:12.5px;line-height:1}
 .gchip:hover{border-color:#A8E3D0;background:var(--mint-soft);color:var(--mint-ink);transform:translateY(-1px)}
+.gchip.on{border-color:var(--mint);background:var(--mint-soft);color:var(--mint-ink);box-shadow:0 6px 16px rgba(15,169,127,.16)}
+.gchip.on::after{content:'✓';font-size:10px;font-weight:900;color:var(--mint-ink)}
+.pw-label{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--ink-2);margin:14px 0 8px}
+.pw-label .who-sel{font-size:11.5px;font-weight:750;color:var(--mint-ink)}
+.pw-label .who-sel.none{color:var(--muted);font-weight:650}
 .gate-div{display:flex;align-items:center;gap:9px;margin:14px 0 10px;font-size:10.5px;font-weight:700;color:var(--muted)}
 .gate-div::before,.gate-div::after{content:'';flex:1;height:1px;background:var(--line)}
 .btn-guest{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:13px;
@@ -115,7 +120,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .who.guest .who-name{font-size:11.5px;font-weight:750;color:#4A3BA8}
 .who.guest .who-btn{background:#EFECFD;color:#5A49C0}
 .who.guest .who-btn:hover{background:#E5E1FB}
-@media (max-width:430px){ .who{gap:6px;padding:4px 5px 4px 10px} .who .who-lab{display:none} }
+@media (max-width:430px){ .who{gap:5px;padding:4px 5px 4px 9px} .who .who-lab{font-size:10px} .who .who-name{font-size:12px} .who .who-btn{padding:5px 7px} }
 .wrap{max-width:1080px;margin:0 auto;padding:16px 16px 72px}
 
 /* dashboard */
@@ -227,7 +232,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .result-line b{color:var(--ink);font-weight:750}
 .result-line .clear{font-size:11.5px;font-weight:700;color:var(--mint-ink);text-decoration:underline;text-underline-offset:2px}
 
-.cards{display:grid;grid-template-columns:1fr;gap:10px}
+.cards{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
 .card{
   display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:var(--r-md);padding:11px;
   box-shadow:var(--shadow-s);cursor:pointer;transition:transform .18s, box-shadow .18s, border-color .18s;
@@ -496,6 +501,9 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .extra-row input.val{flex:1;min-width:0;background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:10px 11px;font-size:12.5px;outline:none}
 .extra-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(15,169,127,.1)}
 .extra-row .del{flex:0 0 auto;width:38px;border-radius:11px;background:var(--bg-2);color:var(--muted);font-size:13px}
+.agent-fixed{display:flex;align-items:center;gap:6px;background:var(--bg-2);border:1.5px dashed var(--line-2);border-radius:11px;
+  padding:10px 11px;font-size:13px;font-weight:750;color:var(--ink);min-height:41px}
+.agent-fixed em{font-style:normal;margin-left:auto;font-size:10px;font-weight:800;color:var(--mint-ink);background:var(--mint-soft);border-radius:5px;padding:2px 6px}
 .extra-row .del:hover{background:#FBE7E3;color:#C43A2C}
 .add-extra{
   display:flex;align-items:center;justify-content:center;gap:5px;padding:10px;border-radius:11px;
@@ -590,19 +598,23 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 
     <form class="gate-card" id="gateForm" autocomplete="off">
       <div class="code-label">
-        <span>중개사 입장 코드</span>
-        <span class="code-note">아래 칩을 누르면 바로 입장</span>
+        <span>중개사 선택</span>
+        <span class="code-note">본인 이름을 먼저 눌러 주세요</span>
+      </div>
+      <div class="gate-chips" id="gateChips" aria-label="중개사 선택"></div>
+      <div class="pw-label">
+        <label for="pwInput">비밀번호</label>
+        <span class="who-sel none" id="pwWho">이름을 선택해 주세요</span>
       </div>
       <div class="code-row">
-        <input id="codeInput" inputmode="numeric" maxlength="4" placeholder="4자리 코드" aria-label="입장 코드">
+        <input id="pwInput" type="password" inputmode="numeric" maxlength="8" placeholder="비밀번호 입력" aria-label="비밀번호" autocomplete="current-password">
         <button type="submit" class="btn-enter">입장</button>
       </div>
       <div class="gate-err" id="gateErr" role="status"></div>
-      <div class="gate-chips" id="gateChips" aria-label="주선자별 체험용 입장 코드"></div>
       <div class="gate-div">또는</div>
       <button type="button" class="btn-guest" id="guestBtn">👀 손님으로 둘러보기 <small>(읽기 전용)</small></button>
       <div class="gate-foot">
-        <b>프로토타입</b> · 손님 코드는 <b>0000</b> · 입력한 정보는 이 브라우저에만 저장됩니다.
+        <b>프로토타입</b> · 비밀번호는 각 중개사만 알고 있습니다 · 입력한 정보는 이 브라우저에만 저장됩니다.
       </div>
     </form>
   </div>
@@ -842,8 +854,9 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
         <div class="form-sec"><span>관리</span><small>담당 주선자 · 상태</small></div>
 
         <div class="field">
-          <label for="f-agent">담당 주선자</label>
-          <select id="f-agent"></select>
+          <label>담당 주선자</label>
+          <input type="hidden" id="f-agent" value="">
+          <div class="agent-fixed" id="fAgentFixed"><span id="fAgentEmoji">🌿</span> <span id="fAgentName">종윤</span> <em>고정</em></div>
         </div>
 
         <div class="field">
@@ -872,8 +885,6 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 'use strict';
 
 /* ---------------- constants ---------------- */
-var ENTRY_CODE = '0824';        /* 예전 단일 코드 → 종윤(ag1)으로 연결 */
-var GUEST_CODE = '0000';
 var STORAGE_KEY = 'mannabang.prototype.v3';
 var MODE = 'agent';             /* 'agent' | 'guest' */
 
@@ -1777,7 +1788,6 @@ function fillAgentSelects(){
   var opts = AGENTS.map(function(ag){
     return '<option value="' + ag.id + '">' + ag.emoji + ' ' + ag.name + '</option>';
   }).join('');
-  document.getElementById('f-agent').innerHTML = opts;
   document.getElementById('fAgent').innerHTML = '<option value="all">담당 주선자 전체</option>' + opts;
 }
 
@@ -1835,7 +1845,10 @@ function openForm(id){
   set('f-ideal', a ? a.memo : '');
   set('f-comment', a ? a.comment : '');
   document.getElementById('f-status').value = a ? a.status : 'available';
-  document.getElementById('f-agent').value = a ? a.agent : state.session;
+  document.getElementById('f-agent').value = state.session;
+  var myAg = agentById(state.session);
+  document.getElementById('fAgentEmoji').textContent = myAg.emoji;
+  document.getElementById('fAgentName').textContent = myAg.name + ' 님';
 
   formGender = a ? a.gender : 'M';
   formSmoke = a ? (a.smoke || '') : '';
@@ -1910,25 +1923,40 @@ fillAgentSelects();
 
 /* gate */
 var gateForm = document.getElementById('gateForm');
-var codeInput = document.getElementById('codeInput');
+var pwInput = document.getElementById('pwInput');
 var gateErr = document.getElementById('gateErr');
 
-function codeFor(i){ var d = String(i + 1); return d + d + d + d; }
-function agentByCode(v){
-  if(v === ENTRY_CODE) return 'ag1';
-  for(var i=0;i<AGENTS.length;i++){ if(codeFor(i) === v) return AGENTS[i].id; }
+/* 비밀번호는 중개사별로만 검증하고 화면에는 어떤 형태로도 표시하지 않는다 */
+function pwOf(agentId){
+  for(var i=0;i<AGENTS.length;i++){
+    if(AGENTS[i].id === agentId){ var d = String(i + 1); return d + d + d + d; }
+  }
   return null;
 }
-document.getElementById('gateChips').innerHTML = AGENTS.map(function(ag, i){
-  return '<button type="button" class="gchip" data-code="' + codeFor(i) + '" title="' + esc(ag.name) + ' 님으로 입장">' +
-    '<span class="em">' + ag.emoji + '</span>' + esc(ag.name) + ' <b>' + codeFor(i) + '</b></button>';
-}).join('');
+var gateAgent = null;
+function renderGateChips(){
+  document.getElementById('gateChips').innerHTML = AGENTS.map(function(ag){
+    return '<button type="button" class="gchip' + (gateAgent === ag.id ? ' on' : '') + '" data-agent="' + ag.id + '">' +
+      '<span class="em">' + ag.emoji + '</span>' + esc(ag.name) + '</button>';
+  }).join('');
+  var who = document.getElementById('pwWho');
+  if(gateAgent){
+    who.className = 'who-sel';
+    who.textContent = agentName(gateAgent) + ' 님으로 입장';
+  } else {
+    who.className = 'who-sel none';
+    who.textContent = '이름을 선택해 주세요';
+  }
+}
+renderGateChips();
 document.getElementById('gateChips').addEventListener('click', function(e){
   var chip = e.target.closest('.gchip');
   if(!chip) return;
-  codeInput.value = chip.getAttribute('data-code');
+  gateAgent = chip.getAttribute('data-agent');
   gateErr.textContent = '';
-  loginWith(codeInput.value);
+  renderGateChips();
+  pwInput.value = '';
+  setTimeout(function(){ try { pwInput.focus(); } catch(err){} }, 30);
 });
 
 var DEEP_ITEM = null;
@@ -1954,18 +1982,31 @@ function enterApp(deepId, mode){
   }
 }
 
-function loginWith(v){
-  v = String(v || '').replace(/\s/g, '');
-  if(v === GUEST_CODE){ gateErr.textContent = ''; enterApp(DEEP_ITEM, 'guest'); return true; }
-  var ag = agentByCode(v);
-  if(ag){
-    gateErr.textContent = '';
-    state.session = ag;
-    save();
-    enterApp(DEEP_ITEM, 'agent');
-    return true;
+function tryLogin(){
+  var pw = String(pwInput.value || '').replace(/\s/g, '');
+  if(!gateAgent){
+    gateErr.textContent = '먼저 본인 이름을 선택해 주세요.';
+    return false;
   }
-  return false;
+  if(!pw){
+    gateErr.textContent = '비밀번호를 입력해 주세요.';
+    pwInput.focus();
+    return false;
+  }
+  if(pw !== pwOf(gateAgent)){
+    gateErr.textContent = '비밀번호가 맞지 않아요.';
+    pwInput.classList.remove('shake');
+    void pwInput.offsetWidth;
+    pwInput.classList.add('shake');
+    pwInput.select();
+    return false;
+  }
+  gateErr.textContent = '';
+  pwInput.value = '';
+  state.session = gateAgent;
+  save();
+  enterApp(DEEP_ITEM, 'agent');
+  return true;
 }
 
 function exitToGate(){
@@ -1981,26 +2022,21 @@ function exitToGate(){
   document.getElementById('fGender').value = 'all';
   document.getElementById('fAge').value = 'all';
   document.getElementById('fAgent').value = 'all';
-  codeInput.value = '';
+  pwInput.value = '';
   gateErr.textContent = '';
+  renderGateChips();
   document.body.style.overflow = '';
   try { history.replaceState(null, '', window.location.pathname); } catch(e){}
-  codeInput.focus();
 }
 document.getElementById('guestBtn').addEventListener('click', function(){
-  codeInput.value = '';
+  pwInput.value = '';
+  gateErr.textContent = '';
   enterApp(DEEP_ITEM, 'guest');
 });
 
 gateForm.addEventListener('submit', function(e){
   e.preventDefault();
-  if(loginWith(codeInput.value)) return;
-  var v = codeInput.value.replace(/\s/g,'');
-  gateErr.textContent = v ? '입장 코드가 맞지 않아요. 중개사 코드는 1111~9999, 손님은 0000이에요.' : '입장 코드를 입력해 주세요.';
-  codeInput.classList.remove('shake');
-  void codeInput.offsetWidth;
-  codeInput.classList.add('shake');
-  codeInput.select();
+  tryLogin();
 });
 
 /* tabs */
