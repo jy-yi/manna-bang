@@ -1,0 +1,2138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>&lt;만나방&gt; · 프라이빗 소개팅 중개소</title>
+<meta name="theme-color" content="#FBF7F2">
+<meta name="description" content="<만나방> — 지인 소개를 부동산 매물처럼 한눈에 보는 프라이빗 소개팅 중개 프로토타입">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230FA97F'/%3E%3Cpath d='M17 33 L32 19 L47 33 V47 H17 Z' fill='%23ffffff'/%3E%3Ccircle cx='32' cy='38' r='4' fill='%230FA97F'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{
+  --bg:#FBF7F2; --bg-2:#F5EFE7; --card:#FFFFFF;
+  --ink:#241F1B; --ink-2:#5B5249; --muted:#948A80; --line:#EFE7DD; --line-2:#E3D9CD;
+  --mint:#0FA97F; --mint-2:#12B892; --mint-soft:#E5F7F0; --mint-ink:#0A7C5D;
+  --coral:#FF6B5E; --coral-2:#FF8A7A; --coral-soft:#FFEDEA;
+  --amber:#F2A93B; --amber-soft:#FEF3E0;
+  --violet:#7C6BE0; --violet-soft:#EFECFD;
+  --shadow-s:0 1px 2px rgba(70,45,20,.04), 0 6px 16px rgba(70,45,20,.05);
+  --shadow-m:0 2px 6px rgba(70,45,20,.05), 0 14px 34px rgba(70,45,20,.09);
+  --r-lg:22px; --r-md:16px; --r-sm:12px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink); min-height:100vh;
+  font-family:'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans CJK KR',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','AppleGothic',sans-serif;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  letter-spacing:-.012em; line-height:1.45;
+}
+h1,h2,h3,h4,p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;letter-spacing:inherit}
+input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
+::-webkit-scrollbar{height:8px;width:8px}
+::-webkit-scrollbar-thumb{background:#E1D6C8;border-radius:99px}
+[hidden]{display:none !important}
+
+/* ============ GATE ============ */
+.gate{
+  position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+  padding:24px 20px; overflow:auto;
+  background:
+    radial-gradient(700px 520px at 12% -8%, #DFF6EC 0%, rgba(223,246,236,0) 62%),
+    radial-gradient(620px 480px at 104% 108%, #FFE7E0 0%, rgba(255,231,224,0) 60%),
+    var(--bg);
+}
+.gate-inner{width:100%;max-width:404px;position:relative;z-index:1}
+.gate-badge{
+  width:64px;height:64px;border-radius:20px;display:grid;place-items:center;font-size:30px;
+  background:linear-gradient(140deg,#12B892,#0F9C8C);box-shadow:0 12px 26px rgba(15,169,127,.32);
+  margin-bottom:18px;
+}
+.gate h1{font-size:34px;font-weight:800;letter-spacing:-.045em;line-height:1.15}
+.gate h1 em{font-style:normal;color:var(--mint-ink)}
+.gate .lead{margin-top:12px;color:var(--ink-2);font-size:14.5px;line-height:1.62}
+.gate .lead b{color:var(--ink);font-weight:650}
+.pill-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
+.pill-row span{font-size:12px;font-weight:600;padding:6px 11px;border-radius:99px;background:#fff;border:1px solid var(--line);color:var(--ink-2);box-shadow:var(--shadow-s)}
+.gate-card{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow-m)}
+.code-label{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--ink-2);margin-bottom:8px}
+.code-hint{
+  font-size:12px;font-weight:700;color:var(--mint-ink);background:var(--mint-soft);
+  padding:5px 10px;border-radius:99px;border:1px dashed #A8E3D0;
+}
+.code-hint:hover{background:#D8F3EA}
+.code-row{display:flex;gap:8px}
+#codeInput{
+  flex:1;min-width:0;background:var(--bg-2);border:1.5px solid #E8DDD0;border-radius:14px;
+  padding:14px 16px;font-size:22px;font-weight:800;letter-spacing:.42em;text-align:center;color:var(--ink);
+  outline:none;transition:.16s;
+}
+#codeInput::placeholder{letter-spacing:.02em;font-size:14px;font-weight:600;color:#B6ABA0}
+#codeInput:focus{border-color:var(--mint);background:#fff;box-shadow:0 0 0 4px rgba(15,169,127,.12)}
+#codeInput.shake{animation:shake .38s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.btn-enter{
+  background:linear-gradient(140deg,#12B892,#0F9C8C);color:#fff;font-weight:750;font-size:15px;
+  border-radius:14px;padding:0 22px;white-space:nowrap;box-shadow:0 8px 20px rgba(15,169,127,.28);
+  transition:transform .14s, box-shadow .14s;
+}
+.btn-enter:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(15,169,127,.34)}
+.btn-enter:active{transform:translateY(0)}
+.gate-err{margin-top:10px;font-size:12.5px;font-weight:650;color:#D9432F;min-height:18px}
+.gate-foot{margin-top:16px;font-size:11.5px;color:var(--muted);line-height:1.7;text-align:center}
+.gate-foot b{color:var(--ink-2)}
+
+/* ============ APP SHELL ============ */
+.topbar{
+  position:sticky;top:0;z-index:30;background:rgba(251,247,242,.88);
+  -webkit-backdrop-filter:saturate(160%) blur(14px);backdrop-filter:saturate(160%) blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-in{max-width:1080px;margin:0 auto;padding:11px 16px;display:flex;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:-.04em}
+.brand-mark{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:16px;background:linear-gradient(140deg,#12B892,#0F9C8C);box-shadow:0 6px 14px rgba(15,169,127,.26)}
+.brand .brk{color:#BFB3A5;font-weight:700}
+.who{margin-left:auto;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 6px 5px 12px;box-shadow:var(--shadow-s)}
+.who .who-lab{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.02em}
+.who select{
+  border:0;background:transparent;font-size:13.5px;font-weight:750;padding:4px 2px 4px 0;outline:none;
+  cursor:pointer;max-width:104px;color:var(--ink);
+}
+.who .ava-dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:14px;background:var(--bg-2)}
+.wrap{max-width:1080px;margin:0 auto;padding:16px 16px 72px}
+
+/* dashboard */
+.dash{
+  position:relative;overflow:hidden;border-radius:var(--r-lg);padding:20px;color:#fff;
+  background:linear-gradient(138deg,#12B892 0%,#0FA97F 42%,#0B8E86 100%);
+  box-shadow:0 18px 38px rgba(11,142,134,.22);
+}
+.dash::after{
+  content:'';position:absolute;right:-70px;top:-90px;width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%, rgba(255,255,255,.28), rgba(255,255,255,0) 70%);
+}
+.dash::before{
+  content:'';position:absolute;left:-40px;bottom:-120px;width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle at 50% 50%, rgba(255,255,255,.14), rgba(255,255,255,0) 70%);
+}
+.dash-top{position:relative;display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.eyebrow{font-size:11.5px;font-weight:750;letter-spacing:.1em;text-transform:uppercase;opacity:.82}
+.dash h1{font-size:22px;font-weight:820;letter-spacing:-.045em;margin-top:6px;line-height:1.28}
+.dash h1 b{font-weight:850}
+.dash-sub{margin-top:7px;font-size:12.5px;opacity:.88;line-height:1.55}
+.btn-dash{margin-left:auto;background:rgba(255,255,255,.95);color:#0B7D6E;font-weight:780;font-size:13.5px;border-radius:12px;padding:10px 15px;box-shadow:0 8px 18px rgba(0,0,0,.12);transition:.14s}
+.btn-dash:hover{background:#fff;transform:translateY(-1px)}
+.stat-grid{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:18px}
+.stat{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:11px 12px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;flex-direction:column;justify-content:space-between;min-height:66px}
+.stat span{display:block;font-size:11px;font-weight:650;opacity:.86;letter-spacing:.01em}
+.stat strong{display:block;font-size:22px;font-weight:820;letter-spacing:-.04em;margin-top:3px;line-height:1.1}
+.stat strong small{font-size:11.5px;font-weight:700;opacity:.85;margin-left:2px;letter-spacing:0}
+
+/* tabs */
+.tabs{display:flex;gap:5px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:5px;margin:14px 0 18px;box-shadow:var(--shadow-s);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex:1 0 auto;display:flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap;
+  padding:11px 12px;border-radius:12px;font-size:13.5px;font-weight:720;color:var(--ink-2);transition:.16s;
+}
+.tab:hover{background:var(--bg-2);color:var(--ink)}
+.tab.on{background:linear-gradient(140deg,#12B892,#0F9C8C);color:#fff;box-shadow:0 8px 18px rgba(15,169,127,.24)}
+.tab .cnt{font-size:11px;font-weight:800;background:rgba(0,0,0,.06);color:var(--ink-2);padding:1px 7px;border-radius:99px}
+.tab.on .cnt{background:rgba(255,255,255,.22);color:#fff}
+
+/* panels + list */
+.panel-head{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+.panel-head h2{font-size:16.5px;font-weight:800;letter-spacing:-.035em}
+.panel-head h2 small{font-size:12px;font-weight:700;color:var(--muted);margin-left:5px}
+.panel-head .spacer{margin-left:auto}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;border-radius:12px;padding:10px 14px;
+  font-size:13px;font-weight:740;border:1px solid var(--line-2);background:#fff;color:var(--ink);
+  box-shadow:var(--shadow-s);transition:.14s;white-space:nowrap;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-m)}
+.btn.primary{background:linear-gradient(140deg,#FF7A6B,#FF5E50);color:#fff;border-color:transparent;box-shadow:0 10px 22px rgba(255,94,80,.28)}
+.btn.mint{background:linear-gradient(140deg,#12B892,#0F9C8C);color:#fff;border-color:transparent;box-shadow:0 10px 22px rgba(15,169,127,.26)}
+.btn.sm{padding:8px 11px;font-size:12.5px;border-radius:10px}
+.btn.ghost{background:var(--bg-2);border-color:transparent;box-shadow:none;color:var(--ink-2)}
+.btn.danger{background:#fff;border-color:#F3C9C3;color:#C43A2C;box-shadow:none}
+.btn.danger:hover{background:#FFF5F3;border-color:#EFB3AA}
+.btn.danger.solid{background:linear-gradient(140deg,#F0655A,#D9432F);color:#fff;border-color:transparent;box-shadow:0 10px 20px rgba(217,67,47,.24)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+
+.chips{display:flex;gap:7px;overflow-x:auto;padding:2px 1px 4px;margin-bottom:11px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:9px 13px;border-radius:99px;
+  background:#fff;border:1px solid var(--line);font-size:12.5px;font-weight:700;color:var(--ink-2);
+  box-shadow:var(--shadow-s);transition:.15s;
+}
+.chip:hover{border-color:var(--line-2);transform:translateY(-1px)}
+.chip b{font-size:12px;font-weight:820;color:var(--ink);background:var(--bg-2);padding:1px 7px;border-radius:99px}
+.chip.on{background:#2A2521;border-color:#2A2521;color:#fff}
+.chip.on b{background:rgba(255,255,255,.2);color:#fff}
+.chip.c-avail.on{background:linear-gradient(140deg,#12B892,#0F9C8C);border-color:transparent}
+.chip.c-prog.on{background:linear-gradient(140deg,#F5B444,#EBA02A);border-color:transparent}
+.chip.c-match.on{background:linear-gradient(140deg,#FF7A6B,#FF5E50);border-color:transparent}
+.chip.c-hold.on{background:linear-gradient(140deg,#9A9188,#7E766D);border-color:transparent}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.search{position:relative;flex:1 1 100%;min-width:0}
+.search input{
+  width:100%;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:12px 40px 12px 38px;
+  font-size:13.5px;outline:none;transition:.16s;box-shadow:var(--shadow-s);
+}
+.search input::placeholder{color:#ADA398}
+.search input:focus{border-color:var(--mint);box-shadow:0 0 0 4px rgba(15,169,127,.1)}
+.search .ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.5}
+.search .clr{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:var(--muted);background:var(--bg-2)}
+.filters select{
+  flex:1 1 0;min-width:0;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:11px 30px 11px 12px;
+  font-size:13px;font-weight:650;outline:none;appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23948A80' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center;box-shadow:var(--shadow-s);
+}
+.filters select:focus{border-color:var(--mint)}
+.toggle{
+  flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);
+  border-radius:13px;padding:11px 13px;font-size:12.5px;font-weight:700;color:var(--ink-2);box-shadow:var(--shadow-s);transition:.15s;
+}
+.toggle .knob{width:14px;height:14px;border-radius:50%;border:1.5px solid #CFC3B6;background:#fff;transition:.15s}
+.toggle.on{border-color:var(--mint);background:var(--mint-soft);color:var(--mint-ink)}
+.toggle.on .knob{background:var(--mint);border-color:var(--mint)}
+.age-range{display:flex;flex:1 1 100%;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:8px 12px;box-shadow:var(--shadow-s)}
+.age-range span{font-size:12px;font-weight:700;color:var(--muted)}
+.age-range input{width:58px;border:0;background:var(--bg-2);border-radius:8px;padding:7px 8px;font-size:13px;font-weight:700;text-align:center;outline:none}
+.age-range input:focus{box-shadow:0 0 0 2px rgba(15,169,127,.28)}
+.age-range .unit{font-size:12px;font-weight:700;color:var(--ink-2)}
+.result-line{font-size:12px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.result-line b{color:var(--ink);font-weight:750}
+.result-line .clear{font-size:11.5px;font-weight:700;color:var(--mint-ink);text-decoration:underline;text-underline-offset:2px}
+
+.cards{display:grid;grid-template-columns:1fr;gap:10px}
+.card{
+  display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:var(--r-md);padding:11px;
+  box-shadow:var(--shadow-s);cursor:pointer;transition:transform .18s, box-shadow .18s, border-color .18s;
+  text-align:left;width:100%;animation:rise .32s both;position:relative;
+}
+@keyframes rise{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-m);border-color:var(--line-2)}
+.card:focus-visible{outline:2.5px solid var(--mint);outline-offset:2px}
+.thumb{position:relative;width:88px;height:auto;align-self:stretch;min-height:104px;flex:0 0 auto;border-radius:12px;overflow:hidden;background:var(--bg-2)}
+.thumb svg{display:block;width:100%;height:100%}
+.card .body{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
+.card .l1{display:flex;align-items:center;gap:6px;min-width:0}
+.card .nm{font-size:15.5px;font-weight:800;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag-pseudo{font-size:9.5px;font-weight:750;color:var(--muted);background:var(--bg-2);padding:2px 5px;border-radius:5px;flex:0 0 auto}
+.badge{
+  margin-left:auto;flex:0 0 auto;font-size:10.5px;font-weight:780;padding:3.5px 8px;border-radius:99px;
+  display:inline-flex;align-items:center;gap:3px;white-space:nowrap;
+}
+.st-available{background:var(--mint-soft);color:#0A7C5D}
+.st-progress{background:var(--amber-soft);color:#A06913}
+.st-matched{background:var(--coral-soft);color:#C43A2C}
+.st-hold{background:#EFEBE5;color:#7D746B}
+.card .ln{font-size:12px;color:var(--ink-2);font-weight:620;display:flex;align-items:center;gap:5px;flex-wrap:wrap;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .ln .sep{color:#D8CDBF}
+.card .ln b{font-weight:750;color:var(--ink)}
+.card .ln .lab{font-size:10px;font-weight:750;color:var(--muted);background:var(--bg-2);border-radius:4px;padding:1px 4px}
+.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
+.tag{font-size:10.5px;font-weight:680;padding:2.5px 7px;border-radius:6px;background:var(--bg-2);color:var(--ink-2);white-space:nowrap}
+.tag.hl{background:var(--mint-soft);color:var(--mint-ink)}
+.ox{font-size:10.5px;font-weight:700;padding:2.5px 7px;border-radius:6px;background:#F3F1EE;color:var(--ink-2);white-space:nowrap}
+.ox b{font-weight:850;margin-left:2px}
+.ox b.o{color:#C43A2C}
+.ox b.x{color:var(--mint-ink)}
+.card .l4{margin-top:2px;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted);font-weight:650}
+.card .l4 .agent-pill{margin-left:auto}
+.agent-pill{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--ink-2);background:var(--bg-2);padding:2px 7px;border-radius:99px}
+
+.empty{
+  text-align:center;padding:52px 18px;background:#fff;border:1px dashed var(--line-2);border-radius:var(--r-md);color:var(--muted);
+}
+.empty .big{font-size:34px;margin-bottom:10px}
+.empty p{font-size:13.5px;font-weight:650;color:var(--ink-2)}
+.empty small{font-size:12px}
+
+/* matches board */
+.match-list{display:flex;flex-direction:column;gap:11px}
+.match{background:#fff;border:1px solid var(--line);border-radius:var(--r-md);padding:14px;box-shadow:var(--shadow-s);animation:rise .3s both}
+.match.past{opacity:.82}
+.mhead{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.mhead .no{font-size:11px;font-weight:800;color:var(--ink-2);background:var(--bg-2);padding:3px 8px;border-radius:6px}
+.mhead .when{font-size:11.5px;color:var(--muted);font-weight:600}
+.mhead .stage-tag{margin-left:auto;font-size:11px;font-weight:780;padding:4px 9px;border-radius:99px;background:var(--mint-soft);color:var(--mint-ink)}
+.mhead .stage-tag.pass{background:#EFEBE5;color:#7D746B}
+.mhead .stage-tag.done{background:var(--coral-soft);color:#C43A2C}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) 30px minmax(0,1fr);align-items:center;gap:6px}
+.person{display:flex;align-items:center;gap:9px;min-width:0;cursor:pointer;border-radius:12px;padding:4px;transition:.14s}
+.person:hover{background:var(--bg-2)}
+.person .ava{width:50px;height:50px;border-radius:50%;overflow:hidden;flex:0 0 auto;border:2px solid #fff;box-shadow:0 3px 9px rgba(70,45,20,.14)}
+.person .ava svg{display:block;width:100%;height:100%}
+.person .pi{min-width:0}
+.person .pn{font-size:13.5px;font-weight:800;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.person .pm{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.person .pa{font-size:10px;color:var(--ink-2);font-weight:700;margin-top:2px}
+.pair .link{display:grid;place-items:center;font-size:17px;color:var(--coral)}
+.steps{display:flex;align-items:flex-start;margin:14px 0 12px;position:relative;list-style:none;padding:0}
+.steps .step{flex:1;text-align:center;position:relative;font-size:10.5px;font-weight:700;color:var(--muted)}
+.steps .step .d{width:9px;height:9px;border-radius:50%;background:#E6DCD0;margin:0 auto 6px;position:relative;z-index:1;transition:.2s}
+.steps .step::after{content:'';position:absolute;left:50%;right:-50%;top:4px;height:2px;background:#EFE7DD}
+.steps .step:last-child::after{display:none}
+.steps .step.done .d{background:#B6E7D8}
+.steps .step.done::after{background:#B6E7D8}
+.steps .step.on .d{background:var(--coral);box-shadow:0 0 0 4px rgba(255,107,94,.16)}
+.steps .step.on{color:var(--ink)}
+.mstage{display:flex;gap:5px;flex-wrap:wrap;padding-top:10px;border-top:1px dashed var(--line)}
+.sbtn{
+  font-size:11.5px;font-weight:720;padding:7px 11px;border-radius:9px;background:var(--bg-2);color:var(--ink-2);
+  border:1px solid transparent;transition:.14s;
+}
+.sbtn:hover{background:#EDE4D8;color:var(--ink)}
+.sbtn.on{background:var(--ink);color:#fff}
+.sbtn.pass-on{background:#7D746B;color:#fff}
+.sbtn.done-on{background:linear-gradient(140deg,#FF7A6B,#FF5E50);color:#fff}
+
+/* leaderboard */
+.lb{display:flex;flex-direction:column;gap:8px}
+.lb-row{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 13px;box-shadow:var(--shadow-s);animation:rise .3s both}
+.lb-row.me{border-color:#B6E7D8;background:linear-gradient(120deg,#F2FCF8,#fff 60%)}
+.lb-row .rk{width:26px;flex:0 0 auto;text-align:center;font-size:13px;font-weight:850;color:var(--muted)}
+.lb-row .rk.top{color:var(--coral)}
+.lb-row .av{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:17px;flex:0 0 auto;background:var(--bg-2)}
+.lb-row .info{flex:1;min-width:0}
+.lb-row .nm{font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:6px;letter-spacing:-.03em}
+.lb-row .nm .metag{font-size:9.5px;font-weight:750;color:var(--coral);background:var(--coral-soft);padding:2px 6px;border-radius:5px}
+.lb-row .nm .metag.mine{color:var(--mint-ink);background:var(--mint-soft)}
+.lb-row .st{font-size:11px;color:var(--muted);font-weight:620;margin-top:3px}
+.lb-row .st b{color:var(--ink-2);font-weight:750}
+.bar{height:5px;border-radius:99px;background:#EFE7DD;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#12B892,#0FA97F);transition:width .5s}
+.lb-row .rate{flex:0 0 auto;text-align:right;min-width:56px}
+.lb-row .rate b{font-size:16px;font-weight:850;letter-spacing:-.04em}
+.lb-row .rate b small{font-size:10px;font-weight:700;color:var(--muted);margin-left:1px}
+.lb-row .rate span{display:block;font-size:10px;color:var(--muted);font-weight:650}
+.lb-note{margin-top:12px;font-size:11.5px;color:var(--muted);line-height:1.7;background:#fff;border:1px dashed var(--line-2);border-radius:12px;padding:11px 13px}
+.section-t{display:flex;align-items:center;gap:8px;margin:20px 0 10px;font-size:13px;font-weight:800;color:var(--ink-2);letter-spacing:-.02em}
+.section-t::after{content:'';flex:1;height:1px;background:var(--line)}
+.section-t .n{font-size:11px;font-weight:800;color:var(--muted)}
+
+/* modal */
+.overlay{
+  position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(40,30,20,.42);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+  padding:0;animation:fade .2s both;
+}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{
+  background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;
+  box-shadow:0 -20px 60px rgba(40,30,20,.28);animation:sheet .28s cubic-bezier(.2,.9,.25,1) both;position:relative;
+}
+@keyframes sheet{from{transform:translateY(26px);opacity:.6}to{transform:none;opacity:1}}
+.modal-x{position:absolute;right:12px;top:12px;z-index:3;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.9);color:var(--ink);font-size:15px;box-shadow:0 4px 12px rgba(0,0,0,.14)}
+.modal-x:hover{background:#fff}
+
+.gallery{position:relative;aspect-ratio:5/4;background:var(--bg-2);overflow:hidden}
+.slide{position:absolute;inset:0;opacity:0;transition:opacity .28s}
+.slide.on{opacity:1}
+.slide svg{display:block;width:100%;height:100%}
+.g-arrow{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.82);color:var(--ink);font-size:15px;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.g-arrow.l{left:10px}.g-arrow.r{right:10px}
+.g-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:5px}
+.g-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:.2s}
+.g-dots i.on{background:#fff;width:16px;border-radius:99px}
+.detail-body{padding:16px 16px 22px}
+.dhead{display:flex;align-items:flex-start;gap:9px;margin-bottom:4px}
+.dhead h2{font-size:22px;font-weight:850;letter-spacing:-.045em;line-height:1.2}
+.dsub{margin-top:6px;font-size:13px;color:var(--ink-2);font-weight:640;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.dsub .sep{color:#D2C7BA}
+.spec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border-radius:14px;overflow:hidden;margin-top:15px;border:1px solid var(--line)}
+.spec{background:#fff;padding:9px 11px}
+.spec dt{font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.02em;display:flex;align-items:center;gap:3px}
+.spec dd{margin:2px 0 0;font-size:13px;font-weight:700;color:var(--ink);letter-spacing:-.02em}
+.spec.wide{grid-column:1 / -1}
+.block{margin-top:17px}
+.block h4{font-size:11.5px;font-weight:800;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:6px}
+.block h4 .req{font-size:9.5px;letter-spacing:0;color:var(--mint-ink);background:var(--mint-soft);padding:2px 6px;border-radius:5px;text-transform:none;font-weight:750}
+.block p{font-size:13.5px;color:var(--ink-2);line-height:1.62}
+.opt-list{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.opt-row{display:flex;gap:10px;background:#fff;padding:9px 11px}
+.opt-row .k{flex:0 0 76px;font-size:11.5px;font-weight:750;color:var(--muted)}
+.opt-row .v{flex:1;font-size:12.5px;font-weight:650;color:var(--ink-2);line-height:1.5}
+.ox-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.ox-big{font-size:12.5px;font-weight:750;padding:7px 12px;border-radius:9px;background:#fff;border:1px solid var(--line);color:var(--ink-2)}
+.ox-big b{font-weight:850}
+.ox-big b.o{color:#C43A2C}
+.ox-big b.x{color:var(--mint-ink)}
+.ox-big.none{color:var(--muted);border-style:dashed}
+.quote{
+  background:linear-gradient(135deg,#F2FCF8,#fff);border:1px solid #D8F1E7;border-radius:14px;padding:12px 13px;
+  font-size:13px;color:var(--ink-2);line-height:1.6;position:relative;
+}
+.quote .by{display:flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;font-weight:750;color:var(--mint-ink)}
+.quote .by .av{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;background:#fff;border:1px solid #D8F1E7}
+.memo-box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:12.5px;color:var(--ink-2);line-height:1.6;white-space:pre-wrap}
+.tl{margin-top:4px;position:relative;padding-left:16px}
+.tl::before{content:'';position:absolute;left:4px;top:6px;bottom:6px;width:2px;background:var(--line)}
+.tl-item{position:relative;padding:0 0 12px 0}
+.tl-item::before{content:'';position:absolute;left:-15px;top:5px;width:8px;height:8px;border-radius:50%;background:#D9CEC1;border:2px solid #fff}
+.tl-item:first-child::before{background:var(--coral);box-shadow:0 0 0 3px rgba(255,107,94,.14)}
+.tl-item .dt{font-size:10.5px;color:var(--muted);font-weight:700}
+.tl-item .tx{font-size:12.5px;color:var(--ink-2);line-height:1.55;margin-top:2px}
+.memo{display:flex;gap:6px;margin-top:9px}
+.memo textarea{
+  flex:1;min-height:42px;max-height:110px;resize:vertical;background:#fff;border:1.5px solid var(--line);border-radius:11px;
+  padding:10px 11px;font-size:12.5px;outline:none;line-height:1.5;
+}
+.memo textarea:focus{border-color:var(--mint)}
+.memo button{align-self:stretch;background:var(--ink);color:#fff;border-radius:11px;padding:0 14px;font-size:12.5px;font-weight:750}
+.status-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.status-row .sbtn{font-size:11.5px;padding:8px 11px}
+
+.proposal{margin-top:16px;border:1.5px solid #FFD9D2;background:#FFF9F7;border-radius:16px;padding:13px;animation:rise .25s both}
+.proposal h4{font-size:13px;font-weight:800;color:#C43A2C;margin-bottom:3px}
+.proposal .hint{font-size:11.5px;color:var(--ink-2);margin-bottom:10px;line-height:1.5}
+.cand{display:flex;align-items:center;gap:9px;padding:8px;border-radius:11px;background:#fff;border:1.5px solid transparent;margin-bottom:6px;transition:.14s;width:100%;text-align:left}
+.cand:hover{border-color:#FFC9C0}
+.cand.on{border-color:var(--coral);background:#FFF5F3;box-shadow:0 6px 16px rgba(255,94,80,.12)}
+.cand.off{opacity:.44;cursor:not-allowed}
+.cand .ca{width:38px;height:38px;border-radius:50%;overflow:hidden;flex:0 0 auto;background:var(--bg-2)}
+.cand .ca svg{display:block;width:100%;height:100%}
+.cand .ci{flex:1;min-width:0}
+.cand .cn{font-size:12.5px;font-weight:780;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cand .cm{font-size:10.5px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cand .cc{flex:0 0 auto;font-size:10px;font-weight:750;color:var(--ink-2);background:var(--bg-2);padding:2px 6px;border-radius:5px}
+.cand .pick{width:18px;height:18px;border-radius:50%;border:1.6px solid #D9CEC1;flex:0 0 auto}
+.cand.on .pick{border-color:var(--coral);background:radial-gradient(circle,#FF6B5E 42%,#fff 46%)}
+.dfooter{display:flex;gap:7px;margin-top:18px;position:sticky;bottom:0;background:var(--bg);box-shadow:0 -10px 18px rgba(251,247,242,.9);border-top:1px solid var(--line);padding:11px 0 4px;align-items:stretch}
+.dfooter .btn{justify-content:center;padding:13px}
+.dfooter .btn.grow{flex:1.6}
+.dfooter .btn.mid{flex:1}
+.dfooter .btn.icon{padding:13px 14px;flex:0 0 auto}
+
+.danger-bar{
+  margin-top:16px;border:1.5px solid #F3C9C3;background:#FFF5F3;border-radius:16px;padding:13px;animation:rise .2s both;
+}
+.danger-bar .dt{font-size:13px;font-weight:800;color:#C43A2C;display:flex;align-items:center;gap:6px}
+.danger-bar p{font-size:11.5px;color:#8A5A52;line-height:1.55;margin-top:5px}
+.danger-bar .row{display:flex;gap:7px;margin-top:11px}
+.danger-bar .row .btn{flex:1;justify-content:center;padding:11px}
+
+/* share / kakao */
+.share-box{margin-top:16px;border:1.5px solid #D9E6FF;background:linear-gradient(140deg,#F4F8FF,#fff 70%);border-radius:16px;padding:13px}
+.share-box h4{font-size:13px;font-weight:800;color:#2C5FA8;margin-bottom:4px}
+.share-box .hint{font-size:11.5px;color:var(--ink-2);line-height:1.5}
+.share-pick{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.spick{display:inline-flex;align-items:center;gap:5px;padding:7px 10px;border-radius:9px;background:#fff;border:1.5px solid #DCE6F7;font-size:11.5px;font-weight:700;color:var(--ink-2)}
+.spick b{font-weight:800;color:var(--ink)}
+.spick:hover{border-color:#B9CFF3}
+.spick.on{border-color:#3E7BD6;background:#EAF2FF;color:#1F4E8C;box-shadow:0 4px 12px rgba(62,123,214,.16)}
+.share-pick .none{font-size:11.5px;color:var(--muted)}
+.share-preview{margin-top:10px;background:#fff;border:1px dashed #CFDDF3;border-radius:11px;padding:10px 11px;font-size:12px;line-height:1.6;color:var(--ink-2);white-space:pre-wrap;word-break:break-all}
+.share-preview .tagline{font-weight:800;color:#2C5FA8}
+.share-btns{display:flex;gap:6px;margin-top:9px}
+.share-btns .btn{flex:1;justify-content:center;padding:11px;font-size:12.5px}
+.btn.kakao{background:#FEE500;color:#3C1E1E;border-color:#F3DA00;box-shadow:0 8px 18px rgba(254,229,0,.35);font-weight:800}
+.btn.kakao:hover{background:#FFEB33}
+
+/* form modal */
+.form-head{padding:18px 18px 0;display:flex;align-items:center;gap:8px}
+.form-head h2{font-size:19px;font-weight:840;letter-spacing:-.04em}
+.form-head .req-note{font-size:10.5px;font-weight:700;color:var(--coral);background:var(--coral-soft);padding:3px 7px;border-radius:6px}
+.form-body{padding:14px 18px 8px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-sec{grid-column:1 / -1;display:flex;align-items:center;gap:7px;margin-top:6px}
+.form-sec span{font-size:11.5px;font-weight:800;color:var(--ink-2);letter-spacing:.02em}
+.form-sec small{font-size:10.5px;color:var(--muted);font-weight:650}
+.form-sec::after{content:'';flex:1;height:1px;background:var(--line)}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field.wide{grid-column:1 / -1}
+.field label{font-size:11.5px;font-weight:750;color:var(--ink-2);display:flex;align-items:center;gap:4px}
+.field label em{font-style:normal;color:var(--coral);font-weight:800}
+.field input,.field select,.field textarea{
+  background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:10px 11px;font-size:13px;outline:none;width:100%;transition:.14s;
+}
+.field textarea{resize:vertical;min-height:62px;line-height:1.5}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(15,169,127,.1)}
+.field input.bad,.field select.bad{border-color:#E76A5B;background:#FFF7F5}
+.field .hint{font-size:10.5px;color:var(--muted);font-weight:650}
+.field .hint b{color:var(--mint-ink);font-weight:800}
+.seg{display:flex;gap:4px;background:var(--bg-2);border-radius:11px;padding:3px}
+.seg button{
+  flex:1;padding:9px 6px;border-radius:9px;font-size:12.5px;font-weight:750;color:var(--ink-2);transition:.14s;white-space:nowrap;
+}
+.seg button:hover{color:var(--ink)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 2px 6px rgba(70,45,20,.1)}
+.seg button.on.seg-m{background:#EAF4FF;color:#2563A8}
+.seg button.on.seg-f{background:#FFEFF3;color:#C2447A}
+.seg.sm button{padding:8px 4px;font-size:12px}
+.seg button.on.seg-o{background:#FFEDEA;color:#C43A2C}
+.seg button.on.seg-x{background:var(--mint-soft);color:var(--mint-ink)}
+.form-err{grid-column:1 / -1;font-size:12px;font-weight:700;color:#D9432F;min-height:0}
+.extras{grid-column:1 / -1;display:flex;flex-direction:column;gap:6px}
+.extra-row{display:flex;gap:6px}
+.extra-row input.lab{flex:0 0 34%;background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:10px 11px;font-size:12.5px;outline:none}
+.extra-row input.val{flex:1;min-width:0;background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:10px 11px;font-size:12.5px;outline:none}
+.extra-row input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(15,169,127,.1)}
+.extra-row .del{flex:0 0 auto;width:38px;border-radius:11px;background:var(--bg-2);color:var(--muted);font-size:13px}
+.extra-row .del:hover{background:#FBE7E3;color:#C43A2C}
+.add-extra{
+  display:flex;align-items:center;justify-content:center;gap:5px;padding:10px;border-radius:11px;
+  border:1.5px dashed var(--line-2);background:#fff;font-size:12.5px;font-weight:750;color:var(--ink-2);
+}
+.add-extra:hover{border-color:var(--mint);color:var(--mint-ink);background:var(--mint-soft)}
+.form-foot{display:flex;gap:8px;padding:6px 18px 18px;position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 72%,rgba(251,247,242,.2))}
+.form-foot .btn{flex:1;justify-content:center;padding:13px}
+
+/* toast + footer */
+.toast-wrap{position:fixed;left:0;right:0;bottom:18px;z-index:90;display:flex;justify-content:center;pointer-events:none;padding:0 16px}
+.toast{
+  background:#2A2521;color:#fff;font-size:13px;font-weight:700;padding:12px 18px;border-radius:99px;
+  box-shadow:0 16px 34px rgba(40,30,20,.3);animation:toastIn .3s cubic-bezier(.2,.9,.25,1) both;max-width:100%;
+}
+@keyframes toastIn{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.appfoot{max-width:1080px;margin:0 auto;padding:0 16px 46px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
+.appfoot .lnk{font-weight:700;color:var(--ink-2);text-decoration:underline;text-underline-offset:2px;background:none;padding:0;font-size:11.5px;color:inherit}
+
+/* PC */
+@media (min-width:760px){
+  .wrap{padding:22px 24px 80px}
+  .dash{padding:26px}
+  .dash h1{font-size:26px}
+  .stat-grid{grid-template-columns:repeat(4,1fr);gap:12px}
+  .stat strong{font-size:26px}
+  .cards{grid-template-columns:repeat(auto-fill,minmax(352px,1fr));gap:12px}
+  .overlay{align-items:center;padding:24px}
+  .modal{max-width:660px;border-radius:26px;max-height:88vh}
+  .modal.detail{max-width:720px}
+  .gallery{aspect-ratio:16/8}
+  .modal.form{max-width:640px}
+  .spec-grid{grid-template-columns:repeat(3,1fr)}
+  .spec.wide{grid-column:span 3}
+  .tabs{max-width:520px}
+  .match-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+  .gate-inner{max-width:420px}
+  .form-body{grid-template-columns:1fr 1fr 1fr}
+  .field.wide{grid-column:1 / -1}
+}
+@media (max-width:520px){
+  .stat-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  .stat{min-height:64px}
+  .btn-dash{display:none}
+}
+@media (max-width:430px){
+  .tab{font-size:12px;padding:10px 5px;gap:4px}
+  .tab .cnt{display:none}
+}
+@media (max-width:380px){
+  .thumb{width:80px;min-height:100px}
+  .dash h1{font-size:20px}
+  .stat strong{font-size:19px}
+  .opt-row .k{flex-basis:62px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= GATE ================= -->
+<section class="gate" id="gate">
+  <div class="gate-inner">
+    <div class="gate-badge">🏠</div>
+    <h1>&lt;<em>만나방</em>&gt;</h1>
+    <p class="lead">
+      지인이 소개해 주는 만남, 이제 <b>부동산 매물처럼</b> 한눈에.<br>
+      주선자 <b>9명</b>이 각자 아는 사람을 매물로 올리고, 조건을 비교해 서로에게 소개합니다.
+    </p>
+    <div class="pill-row">
+      <span>🟢 매칭가능</span><span>🟡 진행중</span><span>💘 성사</span><span>⏸️ 보류</span>
+    </div>
+
+    <form class="gate-card" id="gateForm" autocomplete="off">
+      <div class="code-label">
+        <span>중개사 입장 코드</span>
+        <button type="button" class="code-hint" id="hintBtn">힌트 · 체험용 0824</button>
+      </div>
+      <div class="code-row">
+        <input id="codeInput" inputmode="numeric" maxlength="4" placeholder="4자리 코드" aria-label="입장 코드">
+        <button type="submit" class="btn-enter">입장</button>
+      </div>
+      <div class="gate-err" id="gateErr" role="status"></div>
+      <div class="gate-foot">
+        <b>프로토타입</b> · 실제 중개 서비스가 아니며, 입력한 정보는 이 브라우저에만 저장됩니다.
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<div id="app" hidden>
+  <header class="topbar">
+    <div class="topbar-in">
+      <div class="brand">
+        <span class="brand-mark">🏠</span>
+        <span><span class="brk">&lt;</span>만나방<span class="brk">&gt;</span></span>
+      </div>
+      <div class="who">
+        <span class="who-lab">접속 중</span>
+        <select id="agentSelect" aria-label="접속 중인 주선자 선택"></select>
+        <span class="ava-dot" id="whoAva">🌿</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="dash">
+      <div class="dash-top">
+        <div>
+          <p class="eyebrow">중개소 현황 · 2026</p>
+          <h1>매물 <b id="dTotal">30</b>건 · 지금 <b id="dPairs">4</b>쌍이 만나는 중</h1>
+          <p class="dash-sub" id="dSub">오늘도 좋은 소개는 조건보다 사람에서 나옵니다.</p>
+        </div>
+        <button class="btn-dash" id="dashNew">＋ 매물 등록</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><span>🟢 매칭 가능</span><strong id="sAvail">18<small>명</small></strong></div>
+        <div class="stat"><span>🟡 진행 중 매칭</span><strong id="sProg">8<small>건</small></strong></div>
+        <div class="stat"><span>💘 성사</span><strong id="sDone">2<small>쌍</small></strong></div>
+        <div class="stat"><span>📈 전체 성사율</span><strong id="sRate">7<small>%</small></strong></div>
+      </div>
+    </section>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab on" data-tab="list" role="tab" aria-selected="true">🏠 매물 리스트 <span class="cnt" id="tabCntList">30</span></button>
+      <button class="tab" data-tab="board" role="tab" aria-selected="false">💌 매칭 현황판 <span class="cnt" id="tabCntBoard">4</span></button>
+      <button class="tab" data-tab="agents" role="tab" aria-selected="false">🏆 중개사 9명</button>
+    </nav>
+
+    <!-- TAB 1 -->
+    <section class="panel" id="panel-list">
+      <div class="panel-head">
+        <h2>🏠 매물 리스트 <small id="headCount">30건</small></h2>
+        <span class="spacer"></span>
+        <button class="btn primary sm" id="btnNew">＋ 매물 등록</button>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="filters">
+        <div class="search">
+          <span class="ico">🔍</span>
+          <input id="q" type="search" placeholder="이름 · 직업 · 거주지 · 근무지 · 키워드 검색" aria-label="매물 검색">
+          <button class="clr" id="qClear" hidden aria-label="검색어 지우기">✕</button>
+        </div>
+        <select id="fGender" aria-label="성별 필터">
+          <option value="all">성별 전체</option>
+          <option value="M">남성</option>
+          <option value="F">여성</option>
+        </select>
+        <select id="fAge" aria-label="나이대 필터">
+          <option value="all">나이 전체</option>
+          <option value="27-29">20대 후반 (27~29)</option>
+          <option value="30-32">30대 초반 (30~32)</option>
+          <option value="33-40">30대 중반+ (33~)</option>
+          <option value="custom">직접 입력 (나이 범위)</option>
+        </select>
+        <select id="fAgent" aria-label="담당 주선자 필터"></select>
+        <button class="toggle" id="fMine" aria-pressed="false"><span class="knob"></span>내 매물만</button>
+        <div class="age-range" id="ageRange" hidden>
+          <span>만 나이</span>
+          <input id="ageMin" type="number" min="19" max="70" value="27" aria-label="최소 나이">
+          <span class="unit">세 ~</span>
+          <input id="ageMax" type="number" min="19" max="70" value="36" aria-label="최대 나이">
+          <span class="unit">세</span>
+        </div>
+      </div>
+      <p class="result-line" id="resultLine"></p>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <!-- TAB 2 -->
+    <section class="panel" id="panel-board" hidden>
+      <div class="panel-head">
+        <h2>💌 매칭 현황판 <small id="boardCount">진행 4쌍</small></h2>
+      </div>
+      <div class="section-t">진행 중인 매칭 <span class="n" id="boardLiveN">4</span></div>
+      <div class="match-list" id="boardLive"></div>
+      <div class="section-t">지난 매칭 <span class="n" id="boardPastN">1</span></div>
+      <div class="match-list" id="boardPast"></div>
+    </section>
+
+    <!-- TAB 3 -->
+    <section class="panel" id="panel-agents" hidden>
+      <div class="panel-head">
+        <h2>🏆 중개사 9명 <small>성사율 랭킹</small></h2>
+      </div>
+      <div class="lb" id="lb"></div>
+      <div class="lb-note">성사율 = 성사된 매물 수 ÷ 보유 매물 수. 두 사람이 한 쌍이 되면 양쪽 주선자 모두 성사 1건으로 계산됩니다.</div>
+    </section>
+
+    <div class="appfoot">
+      <span>&lt;만나방&gt; 프로토타입 · 데이터는 이 브라우저(localStorage)에만 저장됩니다.</span>
+      <span style="margin-left:auto"></span>
+      <button class="lnk" id="btnReset">데모 데이터 초기화</button>
+    </div>
+  </main>
+</div>
+
+<!-- ================= DETAIL MODAL ================= -->
+<div class="overlay" id="detailOverlay" hidden>
+  <div class="modal detail" role="dialog" aria-modal="true" aria-labelledby="dName">
+    <button class="modal-x" data-close aria-label="닫기">✕</button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- ================= FORM MODAL ================= -->
+<div class="overlay" id="formOverlay" hidden>
+  <div class="modal form" role="dialog" aria-modal="true" aria-labelledby="formTitle">
+    <button class="modal-x" data-close aria-label="닫기">✕</button>
+    <div class="form-head"><h2 id="formTitle">새 매물 등록</h2><span class="req-note">필수 6개</span></div>
+    <form id="assetForm" autocomplete="off">
+      <div class="form-body">
+        <div class="form-err" id="formErr" role="status"></div>
+
+        <div class="form-sec"><span>필수 스펙</span><small>매물 카드에 그대로 보여요</small></div>
+
+        <div class="field wide">
+          <label>성별 <em>*</em></label>
+          <div class="seg" id="segGender">
+            <button type="button" data-g="M">남성</button>
+            <button type="button" data-g="F">여성</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="f-name">이름(가명) <em>*</em></label>
+          <input id="f-name" maxlength="12" placeholder="예: 김서준">
+        </div>
+
+        <div class="field">
+          <label for="f-birth">출생연도 <em>*</em></label>
+          <input id="f-birth" type="number" min="1980" max="2004" placeholder="1994">
+          <span class="hint" id="birthHint">예: 1994 → <b>94년생 / 32세</b></span>
+        </div>
+
+        <div class="field">
+          <label for="f-height">키(cm) <em>*</em></label>
+          <input id="f-height" type="number" min="140" max="210" placeholder="178">
+        </div>
+
+        <div class="field">
+          <label for="f-region">거주지 <em>*</em></label>
+          <input id="f-region" placeholder="서울 강남구">
+        </div>
+
+        <div class="field">
+          <label for="f-work">근무지 <em>*</em></label>
+          <input id="f-work" placeholder="서울 강남구 테헤란로">
+        </div>
+
+        <div class="field">
+          <label for="f-job">직업 <em>*</em></label>
+          <input id="f-job" placeholder="IT 개발자">
+        </div>
+
+        <div class="field">
+          <label for="f-company">직장</label>
+          <input id="f-company" placeholder="토스">
+        </div>
+
+        <div class="field">
+          <label for="f-mbti">MBTI <span style="color:var(--muted);font-weight:650">(선택)</span></label>
+          <input id="f-mbti" maxlength="4" placeholder="ENTJ" style="text-transform:uppercase">
+        </div>
+
+        <div class="form-sec"><span>선택 항목</span><small>비워 두면 카드에 표시되지 않아요</small></div>
+
+        <div class="field">
+          <label>흡연 여부</label>
+          <div class="seg sm" id="segSmoke">
+            <button type="button" data-v="">미입력</button>
+            <button type="button" data-v="O">O</button>
+            <button type="button" data-v="X">X</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>음주 여부</label>
+          <div class="seg sm" id="segDrink">
+            <button type="button" data-v="">미입력</button>
+            <button type="button" data-v="O">O</button>
+            <button type="button" data-v="X">X</button>
+          </div>
+        </div>
+
+        <div class="field wide">
+          <label for="f-tags">매력 태그 (쉼표 구분)</label>
+          <input id="f-tags" placeholder="러닝, 연봉상위">
+        </div>
+
+        <div class="field wide">
+          <label for="f-ideal">비고 (자유 메모)</label>
+          <textarea id="f-ideal" placeholder="학력, 종교, 이상형 등 정해진 항목이 아닌 내용은 여기에 자유롭게 적어 주세요."></textarea>
+        </div>
+
+        <div class="field wide">
+          <label>추가 항목 <span style="color:var(--muted);font-weight:650">(라벨 + 값)</span></label>
+          <div class="extras" id="extras"></div>
+          <button type="button" class="add-extra" id="addExtra">＋ 항목 추가</button>
+        </div>
+
+        <div class="field wide">
+          <label for="f-comment">주선자 코멘트</label>
+          <textarea id="f-comment" placeholder="어떤 사람인지, 왜 소개하고 싶은지"></textarea>
+        </div>
+
+        <div class="form-sec"><span>관리</span><small>담당 주선자 · 상태</small></div>
+
+        <div class="field">
+          <label for="f-agent">담당 주선자</label>
+          <select id="f-agent"></select>
+        </div>
+
+        <div class="field">
+          <label for="f-status">상태</label>
+          <select id="f-status">
+            <option value="available">🟢 매칭가능</option>
+            <option value="progress">🟡 진행중</option>
+            <option value="matched">💘 성사</option>
+            <option value="hold">⏸️ 보류</option>
+          </select>
+        </div>
+      </div>
+      <div id="formDanger"></div>
+      <div class="form-foot">
+        <button type="button" class="btn ghost" data-close>취소</button>
+        <button type="submit" class="btn mint">저장하기</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* ---------------- constants ---------------- */
+var ENTRY_CODE = '0824';
+var STORAGE_KEY = 'mannabang.prototype.v2';
+
+var AGENTS = [
+  {id:'ag1', name:'종윤', emoji:'🌿', role:'중개소 대표'},
+  {id:'ag2', name:'영석', emoji:'🧭', role:'주선자'},
+  {id:'ag3', name:'예은', emoji:'🌸', role:'주선자'},
+  {id:'ag4', name:'송비', emoji:'🎬', role:'주선자'},
+  {id:'ag5', name:'미영', emoji:'🍋', role:'주선자'},
+  {id:'ag6', name:'지은', emoji:'🕊️', role:'주선자'},
+  {id:'ag7', name:'현아', emoji:'🎧', role:'주선자'},
+  {id:'ag8', name:'혜윤', emoji:'🍷', role:'주선자'},
+  {id:'ag9', name:'겨레', emoji:'📚', role:'주선자'}
+];
+
+var STATUS = {
+  available:{label:'매칭가능', emoji:'🟢', cls:'st-available', order:1},
+  progress: {label:'진행중',   emoji:'🟡', cls:'st-progress',  order:2},
+  matched:  {label:'성사',     emoji:'💘', cls:'st-matched',   order:3},
+  hold:     {label:'보류',     emoji:'⏸️', cls:'st-hold',      order:4}
+};
+var STAGES = ['제안중','일정 조율','만남 완료','애프터','성사','패스'];
+var LIVE_STAGES = ['제안중','일정 조율','만남 완료','애프터'];
+
+/* ---------------- sample data ----------------
+   필수: gender, birth, height, region(거주지), workArea(근무지), job(+company)
+   선택: smoke/drink (O · X · 미입력), tags, extras[], memo(비고), comment
+------------------------------------------------ */
+var RAW = [
+  {id:'p1', name:'김서준', gender:'M', birth:1994, height:178, region:'서울 강남구', workArea:'서울 강남구 테헤란로', job:'IT 개발자', company:'토스', mbti:'ENTJ', smoke:'X', drink:'X', tags:['#러닝','#연봉상위'], extras:[{label:'학력',value:'연세대 컴퓨터공학'},{label:'종교',value:'무교'},{label:'취미',value:'러닝 · 위스키 · 전시회'},{label:'이상형',value:'대화가 잘 통하고 자기 생활이 뚜렷한 분'}], memo:'', comment:'3년 지기 직장 동료예요. 말수는 적지만 약속은 꼭 지키는 타입이고, 주말엔 한강 러닝을 합니다.', agent:'ag2', status:'available'},
+  {id:'p2', name:'이도현', gender:'M', birth:1992, height:175, region:'서울 마포구', workArea:'서울 영등포구 여의도동', job:'회계사', company:'삼정KPMG', mbti:'ISTJ', smoke:'X', drink:'O', tags:['#성실함','#주말골퍼'], extras:[{label:'학력',value:'고려대 경영학'},{label:'종교',value:'기독교'},{label:'취미',value:'골프 · 맛집탐방'},{label:'이상형',value:'계획적이고 안정적인 분'}], memo:'결혼까지 진지하게 생각 중이에요. 맞벌이 가능.', comment:'대학 동기 남동생. 성실함 하나는 제가 보증합니다.', agent:'ag7', status:'available'},
+  {id:'p3', name:'박지훈', gender:'M', birth:1995, height:182, region:'서울 송파구', workArea:'서울 송파구 잠실동', job:'초등교사', company:'잠실초등학교', mbti:'ENFJ', smoke:'X', drink:'X', tags:['#키큰','#다정함'], extras:[{label:'학력',value:'서울교육대학교'},{label:'종교',value:'무교'},{label:'취미',value:'등산 · 베이킹'},{label:'이상형',value:'아이 같은 미소를 가진 분'}], memo:'', comment:'제 소개로 세 커플이 결혼했어요. 이 친구도 그 기운을 받을 차례입니다.', agent:'ag3', status:'progress'},
+  {id:'p4', name:'최원빈', gender:'M', birth:1993, height:176, region:'성남 분당구', workArea:'경기 성남시 분당구', job:'반도체 엔지니어', company:'SK하이닉스', mbti:'INTP', smoke:'X', drink:'O', tags:['#이과감성','#자전거'], extras:[{label:'학력',value:'KAIST 전자공학'},{label:'종교',value:'무교'},{label:'취미',value:'자전거 · 독서'},{label:'이상형',value:'조용히 오래 이야기할 수 있는 분'}], memo:'', comment:'말은 느린데 한번 빠지면 끝까지 가는 사람. 사회성은 생각보다 좋아요.', agent:'ag4', status:'available'},
+  {id:'p5', name:'정도윤', gender:'M', birth:1996, height:180, region:'서울 성동구', workArea:'서울 성동구 성수동', job:'스타트업 PM', company:'시리즈A 스타트업', mbti:'ENTP', smoke:'X', drink:'O', tags:['#와인','#여행러'], extras:[{label:'학력',value:'한양대 산업공학'},{label:'종교',value:'무교'},{label:'취미',value:'와인 · 여행 · 사진'},{label:'이상형',value:'밝고 리액션 좋은 분'}], memo:'', comment:'성수에서 와인바 다니는 걸 좋아해요. 대화의 텐션이 좋아서 어디든 분위기를 살립니다.', agent:'ag5', status:'available'},
+  {id:'p6', name:'강민재', gender:'M', birth:1991, height:183, region:'서울 용산구', workArea:'서울 용산구 한남동', job:'건축사', company:'개인 건축사무소', mbti:'ISFP', smoke:'', drink:'O', tags:['#캠핑','#금손'], extras:[{label:'학력',value:'홍익대 건축학'},{label:'종교',value:'천주교'},{label:'취미',value:'캠핑 · 드로잉'},{label:'이상형',value:'자기 세계가 있는 분'}], memo:'본인 요청으로 잠시 보류 중. 12월 이후 재개 예정.', comment:'집을 직접 고쳐 쓰는 분.', agent:'ag6', status:'hold'},
+  {id:'p7', name:'윤하준', gender:'M', birth:1994, height:177, region:'서울 서초구', workArea:'서울 서초구 서초동', job:'변호사', company:'법무법인 대륜', mbti:'INTJ', smoke:'X', drink:'X', tags:['#테니스','#지적'], extras:[{label:'학력',value:'서울대 법학'},{label:'종교',value:'무교'},{label:'취미',value:'테니스 · 클래식'},{label:'이상형',value:'지적이고 독립적인 분'}], memo:'', comment:'반포에서 일해요. 말투는 차분한데 유머 코드가 있어서 두 번째 만남부터 편해진대요.', agent:'ag8', status:'available'},
+  {id:'p8', name:'임태양', gender:'M', birth:1990, height:172, region:'서울 영등포구', workArea:'서울 중구 세종대로', job:'공무원', company:'서울시청', mbti:'ISFJ', smoke:'X', drink:'O', tags:['#요리','#안정적'], extras:[{label:'학력',value:'성균관대 행정학'},{label:'종교',value:'무교'},{label:'취미',value:'축구 · 요리'},{label:'이상형',value:'편안하고 따뜻한 분'}], memo:'', comment:'같은 동네(영등포)에 사는 직장 후배예요. 요리를 진짜 잘합니다.', agent:'ag1', status:'available'},
+  {id:'p9', name:'한지완', gender:'M', birth:1997, height:179, region:'서울 관악구', workArea:'서울 관악구 봉천동', job:'약사', company:'한빛약국', mbti:'ENFP', smoke:'X', drink:'X', tags:['#클라이밍','#밝음'], extras:[{label:'학력',value:'서울대 약학'},{label:'종교',value:'기독교'},{label:'취미',value:'클라이밍 · 커피'},{label:'이상형',value:'웃음이 많은 분'}], memo:'', comment:'동네 약국 사장님. 텐션이 높고 리액션이 좋아서 처음 만난 사람도 금방 편해져요.', agent:'ag9', status:'progress'},
+  {id:'p10', name:'오세민', gender:'M', birth:1993, height:174, region:'서울 광진구', workArea:'경기 성남시 판교', job:'프론트엔드 개발자', company:'카카오', mbti:'INFP', smoke:'X', drink:'O', tags:['#LP','#영화광'], extras:[{label:'학력',value:'숭실대 소프트웨어학'},{label:'종교',value:'무교'},{label:'취미',value:'LP · 영화'},{label:'이상형',value:'조용한 데이트를 좋아하는 분'}], memo:'', comment:'제 대학 후배. 감성적인 사람이라 LP 들으면서 이야기하는 걸 좋아해요.', agent:'ag2', status:'available'},
+  {id:'p11', name:'배준영', gender:'M', birth:1995, height:181, region:'고양 일산', workArea:'경기 고양시 일산동구', job:'물리치료사', company:'일산재활의학과', mbti:'ESFJ', smoke:'X', drink:'X', tags:['#운동러','#부지런'], extras:[{label:'학력',value:'연세대 물리치료학'},{label:'종교',value:'천주교'},{label:'취미',value:'수영 · 러닝'},{label:'이상형',value:'건강한 습관을 가진 분'}], memo:'일산-서울 왕복이 힘들어서 서울 사는 분을 원해요.', comment:'운동을 정말 꾸준히 하는 사람.', agent:'ag7', status:'progress'},
+  {id:'p12', name:'신우진', gender:'M', birth:1992, height:176, region:'수원 영통구', workArea:'경기 화성시 팔탄면', job:'제약 연구원', company:'한미약품', mbti:'ISTJ', smoke:'X', drink:'O', tags:['#등산','#한결같음'], extras:[{label:'학력',value:'성균관대 약학'},{label:'종교',value:'무교'},{label:'취미',value:'등산 · 정원가꾸기'},{label:'이상형',value:'차분하고 정돈된 분'}], memo:'', comment:'연구소에서 8년째. 말수 적지만 한 번 마음을 주면 오래가는 스타일이에요.', agent:'ag3', status:'available'},
+  {id:'p13', name:'조민규', gender:'M', birth:1998, height:178, region:'서울 중랑구', workArea:'서울 중랑구 상봉동', job:'은행원', company:'KB국민은행', mbti:'ESTJ', smoke:'X', drink:'O', tags:['#야구','#애교'], extras:[{label:'학력',value:'건국대 경제학'},{label:'종교',value:'무교'},{label:'취미',value:'골프 · 야구직관'},{label:'이상형',value:'활발하고 계획적인 분'}], memo:'', comment:'저희 사촌 동생. 애교가 있고 사람 좋아하는 게 티가 나요.', agent:'ag4', status:'available'},
+  {id:'p14', name:'노승우', gender:'M', birth:1991, height:180, region:'서울 동작구', workArea:'서울 강서구 마곡동', job:'대기업 영업', company:'LG전자', mbti:'ESFP', smoke:'X', drink:'O', tags:['#헬스','#인싸'], extras:[{label:'학력',value:'중앙대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'헬스 · 페스티벌'},{label:'이상형',value:'같이 신나게 놀 수 있는 분'}], memo:'', comment:'흑석동 자취 5년차. 사람 만나는 걸 좋아해서 소개팅 자리도 즐깁니다.', agent:'ag5', status:'progress'},
+  {id:'p15', name:'서지호', gender:'M', birth:1996, height:177, region:'서울 서대문구', workArea:'서울 서대문구 연희동', job:'치과의사', company:'연희치과의원', mbti:'INTJ', smoke:'X', drink:'X', tags:['#스키','#성사'], extras:[{label:'학력',value:'연세대 치의학'},{label:'종교',value:'기독교'},{label:'취미',value:'스키 · 와인'},{label:'이상형',value:'신앙심 있고 차분한 분'}], memo:'', comment:'작년에 매칭돼서 지금 잘 만나고 있어요. 제 중개 인생 최고의 성과입니다.', agent:'ag6', status:'matched'},
+
+  {id:'p16', name:'이하윤', gender:'F', birth:1995, height:165, region:'서울 강남구', workArea:'서울 용산구 한강대로', job:'마케팅 매니저', company:'아모레퍼시픽', mbti:'ENFP', smoke:'X', drink:'O', tags:['#필라테스','#센스'], extras:[{label:'학력',value:'이화여대 광고홍보학'},{label:'종교',value:'무교'},{label:'취미',value:'필라테스 · 전시회'},{label:'이상형',value:'유머 코드가 맞는 분'}], memo:'', comment:'제 9년 지기. 밝고 센스 있는 친구라 처음 만나는 자리도 어색할 틈이 없어요.', agent:'ag1', status:'available'},
+  {id:'p17', name:'김나연', gender:'F', birth:1993, height:162, region:'서울 마포구', workArea:'서울 서대문구 신촌동', job:'간호사', company:'세브란스병원', mbti:'ISFJ', smoke:'X', drink:'X', tags:['#요가','#다정함'], extras:[{label:'학력',value:'가톨릭대 간호학'},{label:'종교',value:'천주교'},{label:'취미',value:'요가 · 베이킹'},{label:'이상형',value:'배려심 깊고 안정적인 분'}], memo:'교대 근무라 시간대가 조금 특이해요.', comment:'만나면 정말 잘 챙겨주는 사람이에요.', agent:'ag2', status:'progress'},
+  {id:'p18', name:'박서연', gender:'F', birth:1996, height:168, region:'서울 송파구', workArea:'경기 성남시 분당구 정자동', job:'UX 디자이너', company:'네이버', mbti:'INFP', smoke:'X', drink:'O', tags:['#그림','#브런치'], extras:[{label:'학력',value:'국민대 시각디자인'},{label:'종교',value:'무교'},{label:'취미',value:'드로잉 · 브런치'},{label:'이상형',value:'자기 일에 진심인 분'}], memo:'', comment:'잠실에서 혼자 살아요. 조용한 편이지만 취향 이야기가 시작되면 눈이 반짝입니다.', agent:'ag3', status:'available'},
+  {id:'p19', name:'최유진', gender:'F', birth:1994, height:160, region:'서울 성동구', workArea:'서울 영등포구 여의도동', job:'공인회계사', company:'딜로이트안진', mbti:'ESTJ', smoke:'X', drink:'X', tags:['#테니스','#일잘러'], extras:[{label:'학력',value:'서강대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'테니스 · 독서'},{label:'이상형',value:'자기 관리가 확실한 분'}], memo:'', comment:'일 잘하는 친구. 대화가 명확해서 만나면 시간이 금방 갑니다.', agent:'ag4', status:'progress'},
+  {id:'p20', name:'정다은', gender:'F', birth:1992, height:163, region:'서울 용산구', workArea:'서울 용산구 한남동', job:'초등교사', company:'한남초등학교', mbti:'ISFP', smoke:'X', drink:'O', tags:['#꽃','#산책'], extras:[{label:'학력',value:'서울교육대학교'},{label:'종교',value:'기독교'},{label:'취미',value:'플라워클래스 · 산책'},{label:'이상형',value:'말보다 행동으로 보여주는 분'}], memo:'', comment:'한남동에서 7년째. 꽃을 좋아하고 주말엔 남산을 걸어요. 정말 순한 사람입니다.', agent:'ag5', status:'available'},
+  {id:'p21', name:'강하늘', gender:'F', birth:1997, height:166, region:'서울 서초구', workArea:'서울 강남구 삼성동', job:'스타트업 마케터', company:'푸드테크 스타트업', mbti:'ENTP', smoke:'X', drink:'O', tags:['#클라이밍','#액티브'], extras:[{label:'학력',value:'한양대 미디어커뮤니케이션'},{label:'종교',value:'무교'},{label:'취미',value:'클라이밍 · 캠핑'},{label:'이상형',value:'새로운 걸 같이 시도하는 분'}], memo:'', comment:'에너지가 좋은 후배. 주말마다 뭔가 새로운 걸 하고 있어요.', agent:'ag6', status:'available'},
+  {id:'p22', name:'윤소희', gender:'F', birth:1991, height:164, region:'서울 영등포구', workArea:'서울 중구 을지로', job:'대기업 인사', company:'롯데지주', mbti:'ESFJ', smoke:'X', drink:'O', tags:['#골프','#리더십'], extras:[{label:'학력',value:'중앙대 심리학'},{label:'종교',value:'불교'},{label:'취미',value:'골프 · 여행'},{label:'이상형',value:'가족과 가까운 분'}], memo:'', comment:'직장에서 10년째 인사 업무. 사람 보는 눈이 좋고 챙기는 걸 좋아합니다.', agent:'ag7', status:'available'},
+  {id:'p23', name:'임지원', gender:'F', birth:1995, height:161, region:'성남 분당구', workArea:'경기 성남시 분당구 서현동', job:'약사', company:'분당온누리약국', mbti:'ISTJ', smoke:'X', drink:'X', tags:['#필라테스','#자립적'], extras:[{label:'학력',value:'이화여대 약학'},{label:'종교',value:'무교'},{label:'취미',value:'필라테스 · 독서'},{label:'이상형',value:'생활 습관이 건강한 분'}], memo:'', comment:'약국을 직접 운영해요. 성실하고 계획적인 성격이라 만나는 사람도 편안해집니다.', agent:'ag8', status:'progress'},
+  {id:'p24', name:'한채린', gender:'F', birth:1993, height:167, region:'서울 광진구', workArea:'서울 마포구 상암동', job:'콘텐츠 PD', company:'CJ ENM', mbti:'ENFJ', smoke:'X', drink:'O', tags:['#요리','#이야기꾼'], extras:[{label:'학력',value:'한양대 미디어커뮤니케이션'},{label:'종교',value:'무교'},{label:'취미',value:'요리 · 음악'},{label:'이상형',value:'표현을 아끼지 않는 분'}], memo:'', comment:'예능 PD 7년차. 이야기꾼이라 자리가 지루할 일이 없어요.', agent:'ag9', status:'progress'},
+  {id:'p25', name:'오지민', gender:'F', birth:1996, height:163, region:'서울 관악구', workArea:'서울 중구 소공동', job:'재무 분석가', company:'신세계', mbti:'INTJ', smoke:'X', drink:'X', tags:['#러닝','#똑부러짐'], extras:[{label:'학력',value:'서울시립대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'러닝 · 영화'},{label:'이상형',value:'생각이 깊은 분'}], memo:'', comment:'똑부러지는 후배. 말은 직설적이지만 속은 정 많고, 러닝 크루에서 만났어요.', agent:'ag1', status:'available'},
+  {id:'p26', name:'배수아', gender:'F', birth:1994, height:159, region:'고양 일산', workArea:'경기 고양시 일산동구', job:'물리치료사', company:'일산재활의학과', mbti:'ESFP', smoke:'', drink:'O', tags:['#댄스','#분위기메이커'], extras:[{label:'학력',value:'을지대 물리치료학'},{label:'종교',value:'천주교'},{label:'취미',value:'댄스 · 브런치'},{label:'이상형',value:'같이 춤출 수 있는 분'}], memo:'', comment:'분위기 메이커. 노래방 가면 마이크를 놓지 않아요.', agent:'ag2', status:'available'},
+  {id:'p27', name:'신예린', gender:'F', birth:1992, height:162, region:'수원 영통구', workArea:'경기 수원시 영통구', job:'중등 영어교사', company:'영통중학교', mbti:'INFJ', smoke:'X', drink:'X', tags:['#독서','#성사'], extras:[{label:'학력',value:'이화여대 영어교육'},{label:'종교',value:'기독교'},{label:'취미',value:'독서 · 플루트'},{label:'이상형',value:'신앙이 있고 따뜻한 분'}], memo:'', comment:'작년에 매칭돼서 지금 결혼을 준비하고 있어요.', agent:'ag3', status:'matched'},
+  {id:'p28', name:'조아라', gender:'F', birth:1998, height:165, region:'서울 중랑구', workArea:'서울 중랑구 면목동', job:'은행원', company:'우리은행', mbti:'ESTJ', smoke:'X', drink:'O', tags:['#배드민턴','#추진력'], extras:[{label:'학력',value:'경희대 경제학'},{label:'종교',value:'무교'},{label:'취미',value:'배드민턴 · 여행'},{label:'이상형',value:'계획 세우는 걸 좋아하는 분'}], memo:'', comment:'막내. 밝고 추진력 있어요. 여행 계획은 늘 본인이 짭니다.', agent:'ag4', status:'available'},
+  {id:'p29', name:'노유나', gender:'F', birth:1991, height:166, region:'서울 동작구', workArea:'서울 동작구 흑석동', job:'변호사', company:'법무법인 한결', mbti:'INTJ', smoke:'X', drink:'O', tags:['#골프','#독립적'], extras:[{label:'학력',value:'이화여대 법학'},{label:'종교',value:'무교'},{label:'취미',value:'골프 · 전시회'},{label:'이상형',value:'자기 세계가 확실한 분'}], memo:'', comment:'흑석동에서 사무실을 열었어요. 서로의 시간을 존중하는 관계를 원합니다.', agent:'ag5', status:'available'},
+  {id:'p30', name:'서지안', gender:'F', birth:1995, height:164, region:'서울 서대문구', workArea:'서울 서대문구 신촌동', job:'피부과 의사', company:'신촌 피부과', mbti:'ISFJ', smoke:'X', drink:'X', tags:['#요가','#차분함'], extras:[{label:'학력',value:'연세대 의학'},{label:'종교',value:'천주교'},{label:'취미',value:'요가 · 클래식'},{label:'이상형',value:'차분하게 오래 곁에 있을 분'}], memo:'전공의 마치고 개원 준비 중이라 지금은 잠시 보류 상태입니다.', comment:'', agent:'ag6', status:'hold'}
+];
+
+var SEED_MATCHES = [
+  {id:'mt1', aId:'p3',  bId:'p17', stage:'제안중',    at:'2026-11-10'},
+  {id:'mt2', aId:'p9',  bId:'p19', stage:'일정 조율', at:'2026-11-05'},
+  {id:'mt3', aId:'p11', bId:'p23', stage:'만남 완료', at:'2026-10-28'},
+  {id:'mt4', aId:'p14', bId:'p24', stage:'애프터',    at:'2026-10-18'},
+  {id:'mt5', aId:'p15', bId:'p27', stage:'성사',      at:'2026-09-30'}
+];
+
+/* ---------------- utils ---------------- */
+function agentById(id){
+  for(var i=0;i<AGENTS.length;i++){ if(AGENTS[i].id===id) return AGENTS[i]; }
+  return AGENTS[0];
+}
+function agentName(id){ return agentById(id).name; }
+function ageOf(p){ return new Date().getFullYear() - p.birth; }
+function birthLabel(p){ return String(p.birth).slice(2) + '년생'; }
+function ageLabel(p){ return birthLabel(p) + ' / ' + ageOf(p) + '세'; }
+function today(){
+  var d = new Date();
+  var m = String(d.getMonth()+1); if(m.length<2) m='0'+m;
+  var dd = String(d.getDate()); if(dd.length<2) dd='0'+dd;
+  return d.getFullYear()+'-'+m+'-'+dd;
+}
+function fmtDate(s){ return String(s||'').replace(/-/g,'.'); }
+function esc(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function hash(s){
+  var h = 7;
+  for(var i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) % 99991; }
+  return h;
+}
+
+/* ---------------- illustrations ---------------- */
+var PALETTES = [
+  ['#FFE7DA','#FFC3AC'], ['#DEF6EC','#A6E6CD'], ['#E5EEFF','#BFD2FB'],
+  ['#F5E8FF','#DBBEF7'], ['#FFF3D4','#FFDFA0'], ['#E1F6F6','#B2E8E8'],
+  ['#FDE7EF','#F8C3D7'], ['#ECEFE0','#CCD5B0']
+];
+var SKINS = ['#F7D6BC','#F0C4A4','#E1AF8D'];
+var HAIRS = ['#3A2C25','#4C392F','#2A2320','#5B4534'];
+var CLOTHES = ['#2F6C5E','#3E5D8C','#8C4B4B','#4A4A55','#7A6A4F','#8A6BA8'];
+
+function avatarSVG(p, v){
+  v = v || 0;
+  var base = hash(p.id);
+  var pal = PALETTES[(base + v) % PALETTES.length];
+  var skin = SKINS[base % SKINS.length];
+  var hair = HAIRS[(base + v) % HAIRS.length];
+  var cloth = CLOTHES[(base + v*2) % CLOTHES.length];
+  var long = p.gender === 'F';
+  var uid = 'g' + p.id + v;
+  var bg = '';
+  if(v === 0){
+    bg = '<circle cx="164" cy="34" r="26" fill="#FFFFFF" opacity=".38"/>' +
+         '<circle cx="30" cy="176" r="34" fill="#FFFFFF" opacity=".26"/>';
+  } else if(v === 1){
+    bg = '<path d="M0 152 C46 120 74 176 120 148 C164 122 182 168 200 150 L200 200 L0 200 Z" fill="#FFFFFF" opacity=".28"/>' +
+         '<circle cx="42" cy="40" r="14" fill="#FFFFFF" opacity=".34"/>';
+  } else {
+    bg = '<g opacity=".3" fill="#FFFFFF">' +
+         '<circle cx="30" cy="26" r="4"/><circle cx="58" cy="44" r="3"/><circle cx="26" cy="62" r="3.4"/>' +
+         '<circle cx="172" cy="30" r="4"/><circle cx="150" cy="52" r="2.6"/><circle cx="176" cy="70" r="3"/>' +
+         '</g>';
+  }
+  var hairBack = long ? '<ellipse cx="100" cy="104" rx="46" ry="56" fill="' + hair + '"/>' : '';
+  var fringe = long
+    ? '<path d="M62 96 C60 56 78 40 100 40 C122 40 140 56 138 96 C134 76 128 66 118 62 C112 72 100 78 84 78 C72 78 64 86 62 96 Z" fill="' + hair + '"/>'
+    : '<path d="M66 90 C66 52 82 38 100 38 C118 38 134 52 134 90 C132 72 122 62 100 62 C78 62 68 72 66 90 Z" fill="' + hair + '"/>';
+  var sideHair = long
+    ? '<path d="M62 92 C56 100 56 120 60 132 C64 128 66 112 66 100 Z" fill="' + hair + '"/>' +
+      '<path d="M138 92 C144 100 144 120 140 132 C136 128 134 112 134 100 Z" fill="' + hair + '"/>'
+    : '';
+  var glasses = (base % 5 === 0)
+    ? '<g stroke="#4A4038" stroke-width="1.6" fill="rgba(255,255,255,.55)">' +
+      '<rect x="76" y="88" width="19" height="16" rx="7"/><rect x="105" y="88" width="19" height="16" rx="7"/>' +
+      '<path d="M95 95 h10" stroke-width="1.6"/></g>'
+    : '';
+
+  return '<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + esc(p.name) + ' 프로필 일러스트">' +
+    '<defs><linearGradient id="' + uid + '" x1="0" y1="0" x2="1" y2="1">' +
+    '<stop offset="0" stop-color="' + pal[0] + '"/><stop offset="1" stop-color="' + pal[1] + '"/>' +
+    '</linearGradient></defs>' +
+    '<rect width="200" height="200" fill="url(#' + uid + ')"/>' + bg +
+    hairBack +
+    '<path d="M34 200 C34 166 60 150 100 150 C140 150 166 166 166 200 Z" fill="' + cloth + '"/>' +
+    '<path d="M100 150 C108 156 112 168 112 200 L88 200 C88 168 92 156 100 150 Z" fill="#FFFFFF" opacity=".9"/>' +
+    '<rect x="90" y="118" width="20" height="30" rx="9" fill="' + skin + '"/>' +
+    '<ellipse cx="100" cy="100" rx="35" ry="39" fill="' + skin + '"/>' +
+    '<ellipse cx="65" cy="102" rx="5" ry="7" fill="' + skin + '"/>' +
+    '<ellipse cx="135" cy="102" rx="5" ry="7" fill="' + skin + '"/>' +
+    fringe + sideHair + glasses +
+    '<path d="M84 104 q5 5 10 0" stroke="#3B302A" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+    '<path d="M106 104 q5 5 10 0" stroke="#3B302A" stroke-width="2.4" fill="none" stroke-linecap="round"/>' +
+    '<ellipse cx="78" cy="116" rx="6" ry="3.4" fill="#FF8E80" opacity=".38"/>' +
+    '<ellipse cx="122" cy="116" rx="6" ry="3.4" fill="#FF8E80" opacity=".38"/>' +
+    '<path d="M94 118 q6 6 12 0" stroke="#C05B4E" stroke-width="2.2" fill="none" stroke-linecap="round"/>' +
+    '</svg>';
+}
+
+/* ---------------- state ---------------- */
+var store = {
+  get: function(){ try { return window.localStorage.getItem(STORAGE_KEY); } catch(e){ return null; } },
+  set: function(v){ try { window.localStorage.setItem(STORAGE_KEY, v); return true; } catch(e){ return false; } },
+  clear: function(){ try { window.localStorage.removeItem(STORAGE_KEY); } catch(e){} }
+};
+
+function seed(){
+  var assets = RAW.map(function(r){
+    var o = {};
+    for(var k in r){ if(Object.prototype.hasOwnProperty.call(r,k)) o[k] = r[k]; }
+    o.tags = (r.tags || []).slice();
+    o.extras = (r.extras || []).map(function(e){ return {label:e.label, value:e.value}; });
+    o.history = [];
+    return o;
+  });
+  var byId = {};
+  assets.forEach(function(a){ byId[a.id] = a; });
+
+  SEED_MATCHES.forEach(function(m){
+    var a = byId[m.aId], b = byId[m.bId];
+    if(!a || !b) return;
+    if(m.stage === '성사'){ a.status = 'matched'; b.status = 'matched'; }
+    else { a.status = 'progress'; b.status = 'progress'; }
+  });
+
+  assets.forEach(function(a){
+    var day = 10 + (hash(a.id) % 18);
+    a.history.push({
+      at: '2026-10-' + (day < 10 ? '0'+day : day),
+      by: agentName(a.agent),
+      text: '지인 소개로 매물 등록. 신분·직장 확인 완료.'
+    });
+    if(hash(a.id) % 2 === 0){
+      a.history.push({at:'2026-10-21', by:agentName(a.agent), text:'전화 상담 30분. 이상형 조건 조정(지역 → 서울 전역 가능).'});
+    }
+    if(a.status === 'hold'){
+      a.history.push({at:'2026-11-02', by:agentName(a.agent), text:'본인 요청으로 잠시 보류. 재개하면 먼저 연락 주기로 함.'});
+    }
+  });
+
+  SEED_MATCHES.forEach(function(m){
+    var a = byId[m.aId], b = byId[m.bId];
+    if(!a || !b) return;
+    if(m.stage === '성사'){
+      a.history.push({at:m.at, by:agentName(a.agent), text:b.name + ' 님과 최종 성사 🎉 두 분 모두 진지하게 만남 중.'});
+      b.history.push({at:m.at, by:agentName(b.agent), text:a.name + ' 님과 최종 성사 🎉 결혼 준비 중.'});
+      a.history.push({at:'2026-10-02', by:agentName(a.agent), text:'3회 만남 후 교제 확정. 서로 호감 표시 확인.'});
+      b.history.push({at:'2026-10-02', by:agentName(b.agent), text:'3회 만남 후 교제 확정. 서로 호감 표시 확인.'});
+    } else {
+      a.history.push({at:m.at, by:agentName(a.agent), text:b.name + ' 님과 매칭 제안 → 현재 "' + m.stage + '" 단계.'});
+      b.history.push({at:m.at, by:agentName(b.agent), text:a.name + ' 님과 매칭 제안 도착 → 현재 "' + m.stage + '" 단계.'});
+      if(m.stage !== '제안중'){
+        a.history.push({at:'2026-11-12', by:agentName(a.agent), text:'상대 주선자와 통화. 다음 단계 일정 확인함.'});
+      }
+    }
+  });
+
+  assets.forEach(function(a){ a.history.sort(function(x,y){ return x.at < y.at ? 1 : -1; }); });
+
+  return {
+    session: 'ag1',
+    assets: assets,
+    matches: SEED_MATCHES.map(function(m){
+      var o = {}; for(var k in m){ if(Object.prototype.hasOwnProperty.call(m,k)) o[k]=m[k]; } return o;
+    }),
+    seq: {asset: 31, match: 6}
+  };
+}
+
+function load(){
+  var raw = store.get();
+  if(raw){
+    try {
+      var s = JSON.parse(raw);
+      if(s && s.assets && s.assets.length && s.matches && s.seq){ return s; }
+    } catch(e){ /* fall back to seed */ }
+  }
+  return seed();
+}
+
+var state = load();
+
+function save(){ store.set(JSON.stringify(state)); }
+function getAsset(id){
+  for(var i=0;i<state.assets.length;i++){ if(state.assets[i].id===id) return state.assets[i]; }
+  return null;
+}
+function getMatch(id){
+  for(var i=0;i<state.matches.length;i++){ if(state.matches[i].id===id) return state.matches[i]; }
+  return null;
+}
+
+/* ---------------- filters ---------------- */
+var F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, agent:'all', mine:false};
+
+function ageRangeOf(){
+  if(F.age === 'all') return null;
+  if(F.age === 'custom') return [F.ageMin, F.ageMax];
+  var parts = F.age.split('-');
+  return [Number(parts[0]), Number(parts[1])];
+}
+
+function filteredAssets(){
+  var q = F.q.trim().toLowerCase();
+  var range = ageRangeOf();
+  return state.assets.filter(function(a){
+    if(F.status !== 'all' && a.status !== F.status) return false;
+    if(F.gender !== 'all' && a.gender !== F.gender) return false;
+    if(F.agent !== 'all' && a.agent !== F.agent) return false;
+    if(F.mine && a.agent !== state.session) return false;
+    if(range){
+      var age = ageOf(a);
+      if(age < range[0] || age > range[1]) return false;
+    }
+    if(q){
+      var extras = (a.extras || []).map(function(e){ return e.label + ' ' + e.value; }).join(' ');
+      var hay = [a.name, a.job, a.company, a.region, a.workArea, a.mbti, a.memo, extras,
+                 (a.tags||[]).join(' '), agentName(a.agent), a.smoke, a.drink,
+                 (a.gender === 'M' ? '남성 남' : '여성 여')].join(' ').toLowerCase();
+      if(hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  }).sort(function(x,y){
+    var d = STATUS[x.status].order - STATUS[y.status].order;
+    if(d !== 0) return d;
+    return ageOf(x) - ageOf(y);
+  });
+}
+
+/* ---------------- toast ---------------- */
+var toastTimer = null;
+function toast(msg){
+  var wrap = document.getElementById('toastWrap');
+  wrap.innerHTML = '<div class="toast">' + esc(msg) + '</div>';
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ wrap.innerHTML = ''; }, 2400);
+}
+
+/* ---------------- render: header + dashboard ---------------- */
+function counts(){
+  var c = {all:state.assets.length, available:0, progress:0, matched:0, hold:0};
+  state.assets.forEach(function(a){ if(c[a.status] !== undefined) c[a.status]++; });
+  return c;
+}
+
+function renderHeader(){
+  var sel = document.getElementById('agentSelect');
+  sel.innerHTML = AGENTS.map(function(ag){
+    return '<option value="' + ag.id + '"' + (ag.id===state.session?' selected':'') + '>' + esc(ag.name) + '</option>';
+  }).join('');
+  document.getElementById('whoAva').textContent = agentById(state.session).emoji;
+}
+
+function renderDash(){
+  var c = counts();
+  var live = state.matches.filter(function(m){ return LIVE_STAGES.indexOf(m.stage) !== -1; });
+  var done = state.assets.filter(function(a){ return a.status === 'matched'; }).length;
+  var rate = state.assets.length ? Math.round(done / state.assets.length * 100) : 0;
+  document.getElementById('dTotal').textContent = c.all;
+  document.getElementById('dPairs').textContent = live.length;
+  document.getElementById('sAvail').innerHTML = c.available + '<small>명</small>';
+  document.getElementById('sProg').innerHTML = live.length + '<small>쌍</small>';
+  document.getElementById('sDone').innerHTML = Math.round(done/2) + '<small>쌍</small>';
+  document.getElementById('sRate').innerHTML = rate + '<small>%</small>';
+  document.getElementById('tabCntList').textContent = c.all;
+  document.getElementById('tabCntBoard').textContent = live.length;
+  document.getElementById('headCount').textContent = c.all + '건';
+  document.getElementById('boardCount').textContent = '진행 ' + live.length + '쌍';
+  var myCount = state.assets.filter(function(a){ return a.agent === state.session; }).length;
+  document.getElementById('dSub').textContent = agentName(state.session) + ' 님 담당 매물 ' + myCount + '건 · 오늘도 좋은 소개는 조건보다 사람에서 나옵니다.';
+}
+
+/* ---------------- render: list ---------------- */
+function renderChips(){
+  var c = counts();
+  var items = [
+    {k:'all', label:'전체', n:c.all, cls:''},
+    {k:'available', label:'🟢 매칭가능', n:c.available, cls:'c-avail'},
+    {k:'progress', label:'🟡 진행중', n:c.progress, cls:'c-prog'},
+    {k:'matched', label:'💘 성사', n:c.matched, cls:'c-match'},
+    {k:'hold', label:'⏸️ 보류', n:c.hold, cls:'c-hold'}
+  ];
+  document.getElementById('chips').innerHTML = items.map(function(it){
+    return '<button class="chip ' + it.cls + (F.status===it.k?' on':'') + '" data-status="' + it.k + '">' +
+      it.label + ' <b>' + it.n + '</b></button>';
+  }).join('');
+}
+
+function oxChip(kind, v){
+  if(!v) return '';
+  return '<span class="ox">' + kind + ' <b class="' + (v === 'O' ? 'o' : 'x') + '">' + v + '</b></span>';
+}
+
+function cardHTML(a){
+  var st = STATUS[a.status];
+  var tags = (a.tags || []).slice(0,1).map(function(t){
+    return '<span class="tag hl">' + esc(t) + '</span>';
+  }).join('');
+  return '<button class="card" data-id="' + a.id + '" aria-label="' + esc(a.name) + ' 매물 상세 보기">' +
+    '<div class="thumb">' + avatarSVG(a,0) + '</div>' +
+    '<div class="body">' +
+      '<div class="l1"><span class="nm">' + esc(a.name) + '</span><span class="tag-pseudo">가명</span>' +
+        '<span class="badge ' + st.cls + '">' + st.emoji + ' ' + st.label + '</span></div>' +
+      '<div class="ln">' + (a.gender === 'M' ? '남' : '여') + ' <span class="sep">·</span> ' + birthLabel(a) + '/' + ageOf(a) + '세 <span class="sep">·</span> <b>' + a.height + 'cm</b></div>' +
+      '<div class="ln"><span class="lab">거주</span>' + esc(a.region) + ' <span class="sep">·</span> <span class="lab">근무</span>' + esc(a.workArea) + '</div>' +
+      '<div class="ln"><b>' + esc(a.job) + '</b>' + (a.company ? ' <span class="sep">·</span> ' + esc(a.company) : '') + '</div>' +
+      '<div class="tags">' + oxChip('흡연', a.smoke) + oxChip('음주', a.drink) + tags +
+        '<span class="agent-pill">' + agentById(a.agent).emoji + ' ' + esc(agentName(a.agent)) + '</span></div>' +
+    '</div>' +
+  '</button>';
+}
+
+function renderList(){
+  var list = filteredAssets();
+  var cardsEl = document.getElementById('cards');
+  document.getElementById('qClear').hidden = !F.q;
+  document.getElementById('fMine').classList.toggle('on', F.mine);
+  document.getElementById('fMine').setAttribute('aria-pressed', F.mine ? 'true' : 'false');
+  document.getElementById('ageRange').hidden = F.age !== 'custom';
+
+  var parts = ['<b>' + list.length + '</b>명의 매물'];
+  if(F.status !== 'all') parts.push(STATUS[F.status].emoji + ' ' + STATUS[F.status].label);
+  if(F.gender !== 'all') parts.push(F.gender === 'M' ? '남성' : '여성');
+  if(F.age !== 'all'){
+    var r = ageRangeOf();
+    parts.push(r ? '만 ' + r[0] + '~' + r[1] + '세' : '');
+  }
+  if(F.agent !== 'all') parts.push('담당 ' + agentName(F.agent));
+  if(F.mine) parts.push('내 매물만 (' + agentName(state.session) + ')');
+  if(F.q.trim()) parts.push('“' + esc(F.q.trim()) + '” 검색');
+  var filtered = (F.status!=='all' || F.gender!=='all' || F.age!=='all' || F.agent!=='all' || F.mine || F.q.trim());
+  document.getElementById('resultLine').innerHTML = parts.filter(Boolean).join(' · ') +
+    (filtered ? ' <button class="clear" id="resetFilter">필터 초기화</button>' : '');
+
+  if(!list.length){
+    cardsEl.innerHTML = '<div class="empty"><div class="big">🔍</div><p>조건에 맞는 매물이 없어요.</p>' +
+      '<small>필터를 풀거나 새 매물을 등록해 보세요.</small></div>';
+  } else {
+    cardsEl.innerHTML = list.map(function(a, i){
+      return cardHTML(a).replace('class="card"', 'class="card" style="animation-delay:' + Math.min(i*20,200) + 'ms"');
+    }).join('');
+  }
+}
+
+/* ---------------- render: board ---------------- */
+function stepsHTML(stage){
+  var idx = STAGES.indexOf(stage);
+  return '<ol class="steps">' + STAGES.slice(0,5).map(function(s, i){
+    var cls = i === idx ? 'on' : (idx > i ? 'done' : '');
+    return '<li class="step ' + cls + '"><span class="d"></span>' + s + '</li>';
+  }).join('') + '</ol>';
+}
+
+function personHTML(a){
+  return '<div class="person" data-open="' + a.id + '" role="button" tabindex="0">' +
+    '<span class="ava">' + avatarSVG(a,0) + '</span>' +
+    '<span class="pi"><span class="pn">' + esc(a.name) + ' · ' + ageOf(a) + '</span>' +
+    '<span class="pm">' + esc(a.region) + ' · ' + esc(a.job) + '</span>' +
+    '<span class="pa">' + agentById(a.agent).emoji + ' ' + esc(agentName(a.agent)) + ' 주선</span></span>' +
+  '</div>';
+}
+
+function matchHTML(m){
+  var a = getAsset(m.aId), b = getAsset(m.bId);
+  if(!a || !b) return '';
+  var isPast = (m.stage === '성사' || m.stage === '패스');
+  var tagCls = m.stage === '패스' ? 'pass' : (m.stage === '성사' ? 'done' : '');
+  var btns = STAGES.map(function(s){
+    var cls = 'sbtn';
+    if(m.stage === s){ cls += s === '패스' ? ' pass-on' : (s === '성사' ? ' done-on' : ' on'); }
+    return '<button class="' + cls + '" data-mid="' + m.id + '" data-stage="' + s + '">' + s + '</button>';
+  }).join('');
+  return '<article class="match' + (isPast?' past':'') + '">' +
+    '<div class="mhead"><span class="no">매칭 #' + m.id.replace('mt','') + '</span>' +
+      '<span class="when">' + fmtDate(m.at) + ' 제안</span>' +
+      '<span class="stage-tag ' + tagCls + '">' + m.stage + '</span></div>' +
+    '<div class="pair">' + personHTML(a) + '<div class="link">💌</div>' + personHTML(b) + '</div>' +
+    stepsHTML(m.stage) +
+    '<div class="mstage">' + btns + '</div>' +
+  '</article>';
+}
+
+function renderBoard(){
+  var live = state.matches.filter(function(m){ return LIVE_STAGES.indexOf(m.stage) !== -1; });
+  var past = state.matches.filter(function(m){ return LIVE_STAGES.indexOf(m.stage) === -1; });
+  document.getElementById('boardLiveN').textContent = live.length;
+  document.getElementById('boardPastN').textContent = past.length;
+  document.getElementById('boardLive').innerHTML = live.length
+    ? live.map(matchHTML).join('')
+    : '<div class="empty"><div class="big">💌</div><p>진행 중인 매칭이 없어요.</p><small>매물 상세에서 “매칭 제안하기”를 눌러 시작해 보세요.</small></div>';
+  document.getElementById('boardPast').innerHTML = past.length
+    ? past.map(matchHTML).join('')
+    : '<div class="empty"><div class="big">🏁</div><p>아직 지난 매칭이 없어요.</p><small>성사되거나 패스된 매칭이 여기에 쌓입니다.</small></div>';
+}
+
+/* ---------------- render: leaderboard ---------------- */
+function renderLeaderboard(){
+  var rows = AGENTS.map(function(ag){
+    var own = state.assets.filter(function(a){ return a.agent === ag.id; });
+    var avail = own.filter(function(a){ return a.status === 'available'; }).length;
+    var done = own.filter(function(a){ return a.status === 'matched'; }).length;
+    var live = own.filter(function(a){ return a.status === 'progress'; }).length;
+    return {ag:ag, total:own.length, avail:avail, done:done, live:live,
+            rate: own.length ? Math.round(done / own.length * 100) : 0};
+  });
+  rows.sort(function(x, y){
+    if(y.done !== x.done) return y.done - x.done;
+    if(y.rate !== x.rate) return y.rate - x.rate;
+    return y.total - x.total;
+  });
+  document.getElementById('lb').innerHTML = rows.map(function(r, i){
+    var mine = r.ag.id === state.session;
+    return '<div class="lb-row' + (mine?' me':'') + '" style="animation-delay:' + (i*30) + 'ms">' +
+      '<span class="rk' + (i<3?' top':'') + '">' + (i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)) + '</span>' +
+      '<span class="av">' + r.ag.emoji + '</span>' +
+      '<span class="info"><span class="nm">' + esc(r.ag.name) +
+        (mine ? '<span class="metag mine">나</span>' : '') +
+        (r.done > 0 && !mine ? '<span class="metag">성사 ' + r.done + '</span>' : '') + '</span>' +
+        '<span class="st">보유 <b>' + r.total + '</b>명 · 가능 <b>' + r.avail + '</b> · 진행 <b>' + r.live + '</b> · 성사 <b>' + r.done + '</b></span>' +
+        '<span class="bar"><i style="width:' + Math.max(r.rate, r.total?4:0) + '%"></i></span>' +
+      '</span>' +
+      '<span class="rate"><b>' + r.rate + '<small>%</small></b><span>성사율</span></span>' +
+    '</div>';
+  }).join('');
+}
+
+/* ---------------- detail modal ---------------- */
+var detailId = null;
+var slideIdx = 0;
+var proposalOpen = false;
+var proposalPick = null;
+var deleteArmed = false;
+var shareMine = null;
+var returnFocus = null;
+
+function candidatesFor(a){
+  return state.assets.filter(function(x){
+    return x.id !== a.id && x.gender !== a.gender;
+  }).sort(function(x, y){
+    var ax = (x.status === 'available' ? 0 : 1) - (y.status === 'available' ? 0 : 1);
+    if(ax !== 0) return ax;
+    return ageOf(x) - ageOf(y);
+  });
+}
+
+function relatedMatches(id){
+  return state.matches.filter(function(m){ return m.aId === id || m.bId === id; });
+}
+
+/* ---------------- kakao share ---------------- */
+function shareLink(id){
+  var base = window.location.href.split('#')[0].split('?')[0];
+  return base + '?item=' + encodeURIComponent(id);
+}
+function shareMessage(target, mine){
+  var who = agentName(target.agent);
+  var head = '[만나방 매칭 제안 💘] ' + who + ' 중개사님! ';
+  var spec = target.name + '(' + birthLabel(target) + '/' + ageOf(target) + '세·' + target.region + '·' + target.job + ')';
+  var tail;
+  if(mine){
+    tail = '에게 우리 ' + mine.name + '(' + birthLabel(mine) + '/' + ageOf(mine) + '세·' + mine.region + '·' + mine.job + ') 소개팅 한번 물어봐 주세요!';
+  } else {
+    tail = '에게 우리 쪽 매물 소개팅 한번 물어봐 주세요!';
+  }
+  return head + spec + tail + '\n' + shareLink(target.id);
+}
+function myAssetsFor(a){
+  var mine = state.assets.filter(function(x){ return x.agent === state.session && x.gender !== a.gender; });
+  if(shareMine){
+    var sel = getAsset(shareMine);
+    if(sel && sel.gender !== a.gender && !mine.some(function(m){ return m.id === sel.id; })) mine.push(sel);
+  }
+  return mine;
+}
+function shareBlockHTML(a){
+  var mine = myAssetsFor(a);
+  var picked = null;
+  if(shareMine){
+    picked = getAsset(shareMine);
+    if(picked && picked.gender === a.gender) picked = null;
+  }
+  var chips = mine.length
+    ? mine.map(function(x){
+        var other = x.agent !== state.session;
+        return '<button class="spick' + (picked && picked.id === x.id ? ' on' : '') + '" data-action="share-pick" data-id="' + x.id + '">' +
+          '<b>' + esc(x.name) + '</b> ' + ageOf(x) + '세 · ' + esc(x.region) +
+          (other ? ' <span style="font-size:10px;font-weight:700;color:#2C5FA8">' + esc(agentName(x.agent)) + ' 담당</span>' : '') +
+          '</button>';
+      }).join('')
+    : '<span class="none">내 담당 매물이 없어요. 매물을 등록하면 상대 스펙과 함께 문구를 만들 수 있어요.</span>';
+  var text = shareMessage(a, picked);
+  return '<div class="share-box">' +
+    '<h4>💬 카톡으로 물어보기</h4>' +
+    '<p class="hint">내 매물을 고르면 아래 문구가 완성됩니다. 그대로 복사하거나 카톡으로 바로 보내 보세요.</p>' +
+    '<div class="share-pick">' + chips + '</div>' +
+    '<div class="share-preview" id="sharePreview">' + esc(text) + '</div>' +
+    '<div class="share-btns">' +
+      '<button class="btn kakao" data-action="share">💬 카톡으로 물어보기</button>' +
+      '<button class="btn ghost" data-action="copy">📋 제안 문구 복사</button>' +
+    '</div>' +
+  '</div>';
+}
+function currentShareText(){
+  var a = getAsset(detailId);
+  if(!a) return '';
+  var picked = shareMine ? getAsset(shareMine) : null;
+  if(picked && picked.gender === a.gender) picked = null;
+  return shareMessage(a, picked);
+}
+function copyText(text){
+  function legacy(){
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly','');
+      ta.style.position = 'fixed'; ta.style.top = '-1000px'; ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      var ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return !!ok;
+    } catch(e){ return false; }
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    return navigator.clipboard.writeText(text).then(function(){ return true; }).catch(function(){ return legacy(); });
+  }
+  return Promise.resolve(legacy());
+}
+function doCopy(){
+  var text = currentShareText();
+  if(!text) return;
+  copyText(text).then(function(ok){
+    toast(ok ? '제안 문구를 복사했어요 📋 카톡에 붙여넣기 하세요' : '복사에 실패했어요. 문구를 길게 눌러 직접 복사해 주세요');
+  });
+}
+function doShare(){
+  var text = currentShareText();
+  if(!text) return;
+  if(navigator.share){
+    navigator.share({ title:'만나방 매칭 제안 💘', text: text }).then(function(){
+      toast('공유 창을 열었어요. 카톡을 골라 보내 주세요 💬');
+    }).catch(function(err){
+      if(err && (err.name === 'AbortError' || err.name === 'NotAllowedError')){
+        if(err.name === 'AbortError') return;
+      }
+      copyText(text).then(function(ok){
+        toast(ok ? '이 브라우저는 공유를 지원하지 않아 문구를 복사했어요 📋' : '공유도 복사도 안 돼요. 문구를 직접 선택해 주세요');
+      });
+    });
+  } else {
+    copyText(text).then(function(ok){
+      toast(ok ? '이 브라우저는 공유를 지원하지 않아 문구를 복사했어요 📋' : '공유도 복사도 안 돼요. 문구를 직접 선택해 주세요');
+    });
+  }
+}
+
+function renderDetail(){
+  var a = getAsset(detailId);
+  if(!a){ closeDetail(); return; }
+  var st = STATUS[a.status];
+  var by = agentById(a.agent);
+
+  var slides = [0,1,2].map(function(v){
+    return '<div class="slide' + (v === slideIdx ? ' on' : '') + '">' + avatarSVG(a, v) + '</div>';
+  }).join('');
+  var dots = [0,1,2].map(function(v){ return '<i class="' + (v === slideIdx ? 'on' : '') + '"></i>'; }).join('');
+
+  var tags = (a.tags || []).map(function(t){ return '<span class="tag hl">' + esc(t) + '</span>'; }).join('');
+  var extras = (a.extras || []).map(function(e){
+    return '<div class="opt-row"><span class="k">' + esc(e.label) + '</span><span class="v">' + esc(e.value) + '</span></div>';
+  }).join('');
+
+  var oxRow = '';
+  oxRow += a.smoke
+    ? '<span class="ox-big">흡연 <b class="' + (a.smoke==='O'?'o':'x') + '">' + a.smoke + '</b></span>'
+    : '<span class="ox-big none">흡연 미입력</span>';
+  oxRow += a.drink
+    ? '<span class="ox-big">음주 <b class="' + (a.drink==='O'?'o':'x') + '">' + a.drink + '</b></span>'
+    : '<span class="ox-big none">음주 미입력</span>';
+
+  var tl = a.history.map(function(h){
+    return '<div class="tl-item"><div class="dt">' + fmtDate(h.at) + ' · ' + esc(h.by) + '</div>' +
+      '<div class="tx">' + esc(h.text) + '</div></div>';
+  }).join('');
+
+  var statusBtns = Object.keys(STATUS).map(function(k){
+    return '<button class="sbtn ' + (a.status === k ? 'on' : '') + '" data-action="status" data-status="' + k + '">' +
+      STATUS[k].emoji + ' ' + STATUS[k].label + '</button>';
+  }).join('');
+
+  var related = relatedMatches(a.id);
+  var danger = '';
+  if(deleteArmed){
+    danger = '<div class="danger-bar"><div class="dt">🗑 이 매물을 삭제할까요?</div>' +
+      '<p>' + esc(a.name) + ' 님이 목록에서 사라지고, 연결된 매칭 ' + related.length + '건도 함께 정리됩니다. 되돌릴 수 없어요.</p>' +
+      '<div class="row"><button class="btn ghost" data-action="delete-cancel">취소</button>' +
+      '<button class="btn danger solid" data-action="delete-confirm">삭제하기</button></div></div>';
+  }
+
+  var proposal = '';
+  if(proposalOpen){
+    var cands = candidatesFor(a);
+    if(!cands.length){
+      proposal = '<div class="proposal"><h4>💌 매칭 제안하기</h4><p class="hint">제안할 수 있는 이성 매물이 없어요. 먼저 매물을 등록해 주세요.</p></div>';
+    } else {
+      proposal = '<div class="proposal"><h4>💌 매칭 제안하기</h4>' +
+        '<p class="hint">' + esc(a.name) + ' 님에게 소개할 이성 매물을 골라 주세요. 제안하면 두 매물이 <b>🟡 진행중</b>으로 바뀌고 매칭 현황판에 바로 올라갑니다.</p>' +
+        cands.map(function(c){
+          var s = STATUS[c.status];
+          var disabled = c.status === 'matched';
+          return '<button class="cand' + (proposalPick === c.id ? ' on' : '') + (disabled ? ' off' : '') + '" data-action="pick" data-id="' + c.id + '"' + (disabled?' disabled':'') + '>' +
+            '<span class="ca">' + avatarSVG(c,0) + '</span>' +
+            '<span class="ci"><span class="cn">' + esc(c.name) + ' · ' + ageOf(c) + '세 · ' + c.height + 'cm</span>' +
+            '<span class="cm">' + esc(c.region) + ' · ' + esc(c.workArea) + ' · ' + esc(c.job) + '</span></span>' +
+            '<span class="cc">' + s.emoji + ' ' + s.label + '</span>' +
+            '<span class="pick"></span>' +
+          '</button>';
+        }).join('') +
+        '<div style="display:flex;gap:6px;margin-top:9px">' +
+          '<button class="btn ghost sm" data-action="proposal-close" style="flex:1;justify-content:center">닫기</button>' +
+          '<button class="btn ghost sm" data-action="proposal-share" style="flex:1.2;justify-content:center"' + (proposalPick?'':' disabled') + '>💬 카톡 문구</button>' +
+          '<button class="btn primary sm" data-action="propose" style="flex:1.4;justify-content:center"' + (proposalPick?'':' disabled') + '>제안 보내기 💌</button>' +
+        '</div></div>';
+    }
+  }
+
+  document.getElementById('detailContent').innerHTML =
+    '<div class="gallery">' + slides +
+      '<button class="g-arrow l" data-action="slide" data-dir="-1" aria-label="이전 사진">‹</button>' +
+      '<button class="g-arrow r" data-action="slide" data-dir="1" aria-label="다음 사진">›</button>' +
+      '<div class="g-dots">' + dots + '</div>' +
+    '</div>' +
+    '<div class="detail-body">' +
+      '<div class="dhead"><h2 id="dName">' + esc(a.name) + '</h2>' +
+        '<span class="badge ' + st.cls + '" style="margin-left:auto;margin-top:6px">' + st.emoji + ' ' + st.label + '</span></div>' +
+      '<div class="dsub">' + (a.gender === 'M' ? '남성' : '여성') + ' <span class="sep">|</span> ' + ageLabel(a) + ' <span class="sep">|</span> ' + a.height + 'cm <span class="sep">|</span> ' + esc(a.region) + '</div>' +
+
+      '<div class="spec-grid">' +
+        '<div class="spec"><dt>나이</dt><dd>' + birthLabel(a) + ' / ' + ageOf(a) + '세</dd></div>' +
+        '<div class="spec"><dt>키</dt><dd>' + a.height + 'cm</dd></div>' +
+        '<div class="spec"><dt>성별</dt><dd>' + (a.gender === 'M' ? '남성' : '여성') + '</dd></div>' +
+        '<div class="spec"><dt>거주지</dt><dd>' + esc(a.region) + '</dd></div>' +
+        '<div class="spec"><dt>근무지</dt><dd>' + esc(a.workArea) + '</dd></div>' +
+        '<div class="spec"><dt>직업 · 직장</dt><dd>' + esc(a.job) + (a.company ? ' · ' + esc(a.company) : '') + '</dd></div>' +
+      '</div>' +
+
+      '<div class="block"><h4>흡연 · 음주</h4><div class="ox-row">' + oxRow + '</div></div>' +
+
+      ((a.extras && a.extras.length) ? '<div class="block"><h4>추가 정보</h4><div class="opt-list">' + extras + '</div></div>' : '') +
+
+      (a.memo ? '<div class="block"><h4>비고</h4><div class="memo-box">' + esc(a.memo) + '</div></div>' : '') +
+
+      (tags ? '<div class="block"><h4>매력 태그</h4><div class="tags">' + tags + '</div></div>' : '') +
+
+      (a.comment ? '<div class="block"><h4>주선자 코멘트</h4><div class="quote">' + esc(a.comment) +
+        '<div class="by"><span class="av">' + by.emoji + '</span>' + esc(by.name) + ' 주선자</div></div></div>' : '') +
+
+      '<div class="block"><h4>상태 변경</h4><div class="status-row">' + statusBtns + '</div></div>' +
+
+      '<div class="block"><h4>진행 히스토리 <span style="font-weight:700;color:#948A80">' + a.history.length + '건</span></h4>' +
+        '<div class="tl">' + (tl || '<div class="tl-item"><div class="tx">아직 기록이 없어요.</div></div>') + '</div>' +
+        '<div class="memo"><textarea id="memoInput" placeholder="상담·소개 내용을 메모로 남겨 주세요"></textarea>' +
+        '<button data-action="memo">추가</button></div>' +
+      '</div>' +
+
+      '<div class="block"><h4>담당 <span style="font-weight:700;color:#948A80">' + esc(by.name) + ' · ' + esc(by.role) + '</span></h4></div>' +
+
+      proposal + shareBlockHTML(a) + danger +
+
+      '<div class="dfooter">' +
+        '<button class="btn primary grow" data-action="proposal-open">💌 매칭 제안</button>' +
+        '<button class="btn mid" data-action="edit">✏️ 수정</button>' +
+        '<button class="btn danger icon" data-action="delete" aria-label="매물 삭제" title="매물 삭제">🗑</button>' +
+      '</div>' +
+    '</div>';
+}
+
+function openDetail(id){
+  detailId = id; slideIdx = 0; proposalOpen = false; proposalPick = null; deleteArmed = false; shareMine = null;
+  renderDetail();
+  returnFocus = document.activeElement;
+  document.getElementById('detailOverlay').hidden = false;
+  document.body.style.overflow = 'hidden';
+  var m = document.querySelector('#detailOverlay .modal');
+  if(m) m.scrollTop = 0;
+}
+function closeDetail(){
+  document.getElementById('detailOverlay').hidden = true;
+  detailId = null;
+  document.body.style.overflow = '';
+  if(returnFocus && returnFocus.focus){ try { returnFocus.focus(); } catch(e){} }
+}
+
+/* ---------------- actions ---------------- */
+function setAssetStatus(id, status, silent){
+  var a = getAsset(id);
+  if(!a || a.status === status) return;
+  var prev = a.status;
+  a.status = status;
+  a.history.unshift({
+    at: today(), by: agentName(state.session),
+    text: '상태 변경: ' + STATUS[prev].emoji + ' ' + STATUS[prev].label + ' → ' + STATUS[status].emoji + ' ' + STATUS[status].label
+  });
+  save(); renderAll();
+  if(!silent) toast(a.name + ' 님 상태를 ' + STATUS[status].label + '로 바꿨어요.');
+}
+
+function setMatchStage(mid, stage){
+  var m = getMatch(mid);
+  if(!m || m.stage === stage) return;
+  var a = getAsset(m.aId), b = getAsset(m.bId);
+  if(!a || !b) return;
+  var prev = m.stage;
+  m.stage = stage;
+  if(stage === '성사'){ a.status = 'matched'; b.status = 'matched'; }
+  else if(stage === '패스'){ a.status = 'available'; b.status = 'available'; }
+  else { a.status = 'progress'; b.status = 'progress'; }
+  a.history.unshift({at: today(), by: agentName(state.session), text: '매칭 #' + mid.replace('mt','') + ' 단계 변경: ' + prev + ' → ' + stage + ' (' + b.name + ' 님)'});
+  b.history.unshift({at: today(), by: agentName(state.session), text: '매칭 #' + mid.replace('mt','') + ' 단계 변경: ' + prev + ' → ' + stage + ' (' + a.name + ' 님)'});
+  save(); renderAll();
+  if(detailId === a.id || detailId === b.id) renderDetail();
+  toast('매칭 #' + mid.replace('mt','') + ' → ' + stage);
+}
+
+function propose(aId, bId){
+  var a = getAsset(aId), b = getAsset(bId);
+  if(!a || !b) return;
+  var mid = 'mt' + (state.seq.match++);
+  state.matches.push({id:mid, aId:aId, bId:bId, stage:'제안중', at:today()});
+  a.status = 'progress'; b.status = 'progress';
+  a.history.unshift({at: today(), by: agentName(state.session), text: b.name + ' 님(' + agentName(b.agent) + ' 담당)에게 매칭 제안. 매칭 #' + mid.replace('mt','') + ' 생성.'});
+  b.history.unshift({at: today(), by: agentName(state.session), text: a.name + ' 님(' + agentName(a.agent) + ' 담당)의 매칭 제안 도착. 매칭 #' + mid.replace('mt','') + '.'});
+  save();
+  proposalOpen = false; proposalPick = null;
+  renderAll(); renderDetail();
+  toast('매칭 현황판에 추가했어요 💌');
+}
+
+function addMemo(id, text){
+  var a = getAsset(id);
+  if(!a) return false;
+  text = (text || '').trim();
+  if(!text) return false;
+  a.history.unshift({at: today(), by: agentName(state.session), text: text});
+  save(); renderAll(); renderDetail();
+  toast('히스토리에 메모를 추가했어요.');
+  return true;
+}
+
+function deleteAsset(id){
+  var a = getAsset(id);
+  if(!a) return;
+  var related = relatedMatches(id);
+  related.forEach(function(m){
+    var otherId = m.aId === id ? m.bId : m.aId;
+    var other = getAsset(otherId);
+    if(other){
+      if(other.status === 'progress' || other.status === 'matched') other.status = 'available';
+      other.history.unshift({at: today(), by: agentName(state.session), text: a.name + ' 님 매물이 삭제되어 매칭 #' + m.id.replace('mt','') + '이(가) 정리되었습니다.'});
+    }
+  });
+  state.matches = state.matches.filter(function(m){ return m.aId !== id && m.bId !== id; });
+  state.assets = state.assets.filter(function(x){ return x.id !== id; });
+  save();
+  if(detailId === id) closeDetail();
+  if(editingId === id) closeForm();
+  renderAll();
+  toast(a.name + ' 매물을 삭제했어요' + (related.length ? ' (매칭 ' + related.length + '건 정리)' : ''));
+}
+
+/* ---------------- form modal ---------------- */
+var editingId = null;
+var formGender = 'M';
+var formSmoke = '';
+var formDrink = '';
+var formExtras = [];
+var formDeleteArmed = false;
+
+function fillAgentSelects(){
+  var opts = AGENTS.map(function(ag){
+    return '<option value="' + ag.id + '">' + ag.emoji + ' ' + ag.name + '</option>';
+  }).join('');
+  document.getElementById('f-agent').innerHTML = opts;
+  document.getElementById('fAgent').innerHTML = '<option value="all">담당 주선자 전체</option>' + opts;
+}
+
+function setSeg(containerId, value){
+  var box = document.getElementById(containerId);
+  Array.prototype.forEach.call(box.querySelectorAll('button'), function(b){
+    b.classList.toggle('on', b.getAttribute('data-v') === value || b.getAttribute('data-g') === value);
+  });
+}
+
+function renderExtras(){
+  var box = document.getElementById('extras');
+  if(!formExtras.length){
+    box.innerHTML = '<div style="font-size:11.5px;color:#948A80;padding:2px 2px 4px">아직 추가 항목이 없어요. 학력·종교·이상형처럼 필요한 항목만 골라 추가해 보세요.</div>';
+    return;
+  }
+  box.innerHTML = formExtras.map(function(e, i){
+    return '<div class="extra-row">' +
+      '<input class="lab" data-i="' + i + '" data-k="label" placeholder="항목 (예: 학력)" value="' + esc(e.label) + '">' +
+      '<input class="val" data-i="' + i + '" data-k="value" placeholder="내용 (예: 연세대 컴퓨터공학)" value="' + esc(e.value) + '">' +
+      '<button type="button" class="del" data-i="' + i + '" aria-label="항목 삭제">✕</button>' +
+    '</div>';
+  }).join('');
+}
+
+function updateBirthHint(){
+  var v = Number(document.getElementById('f-birth').value);
+  var hint = document.getElementById('birthHint');
+  if(v >= 1980 && v <= 2004){
+    hint.innerHTML = '예: ' + v + ' → <b>' + String(v).slice(2) + '년생 / ' + (new Date().getFullYear() - v) + '세</b>';
+  } else {
+    hint.innerHTML = '예: 1994 → <b>94년생 / 32세</b>';
+  }
+}
+
+function openForm(id){
+  editingId = id || null;
+  var a = id ? getAsset(id) : null;
+  document.getElementById('formErr').textContent = '';
+  document.getElementById('formTitle').textContent = a ? '매물 정보 수정' : '새 매물 등록';
+  formDeleteArmed = false;
+  document.getElementById('formDanger').innerHTML = '';
+
+  function set(elId, v){ document.getElementById(elId).value = v == null ? '' : v; }
+  set('f-name', a ? a.name : '');
+  set('f-birth', a ? a.birth : '');
+  set('f-height', a ? a.height : '');
+  set('f-region', a ? a.region : '');
+  set('f-work', a ? a.workArea : '');
+  set('f-job', a ? a.job : '');
+  set('f-company', a ? a.company : '');
+  set('f-mbti', a ? a.mbti : '');
+  set('f-tags', a ? (a.tags || []).join(', ') : '');
+  set('f-ideal', a ? a.memo : '');
+  set('f-comment', a ? a.comment : '');
+  document.getElementById('f-status').value = a ? a.status : 'available';
+  document.getElementById('f-agent').value = a ? a.agent : state.session;
+
+  formGender = a ? a.gender : 'M';
+  formSmoke = a ? (a.smoke || '') : '';
+  formDrink = a ? (a.drink || '') : '';
+  formExtras = a ? (a.extras || []).map(function(e){ return {label:e.label, value:e.value}; }) : [];
+
+  setSeg('segGender', formGender);
+  setSeg('segSmoke', formSmoke);
+  setSeg('segDrink', formDrink);
+  renderExtras();
+  updateBirthHint();
+
+  var del = document.getElementById('formDanger');
+  del.innerHTML = '';
+  document.querySelector('#formOverlay .form-foot').innerHTML =
+    (a ? '<button type="button" class="btn danger" id="formDeleteBtn">🗑 삭제</button>' : '') +
+    '<button type="button" class="btn ghost" data-close>취소</button>' +
+    '<button type="submit" class="btn mint">저장하기</button>';
+  wireFormFoot();
+
+  document.getElementById('formOverlay').hidden = false;
+  document.body.style.overflow = 'hidden';
+  var nameEl = document.getElementById('f-name');
+  setTimeout(function(){ try { nameEl.focus(); } catch(e){} }, 60);
+}
+
+function wireFormFoot(){
+  var delBtn = document.getElementById('formDeleteBtn');
+  if(!delBtn) return;
+  delBtn.addEventListener('click', function(){
+    if(formDeleteArmed) return;
+    formDeleteArmed = true;
+    var a = getAsset(editingId);
+    var n = relatedMatches(editingId).length;
+    document.getElementById('formDanger').innerHTML =
+      '<div class="danger-bar" style="margin:0 18px 8px"><div class="dt">🗑 정말 삭제할까요?</div>' +
+      '<p>' + esc(a ? a.name : '') + ' 님이 목록에서 사라지고, 연결된 매칭 ' + n + '건도 함께 정리됩니다. 되돌릴 수 없어요.</p>' +
+      '<div class="row"><button type="button" class="btn ghost" id="formDeleteCancel">취소</button>' +
+      '<button type="button" class="btn danger solid" id="formDeleteOk">삭제하기</button></div></div>';
+    document.getElementById('formDeleteCancel').addEventListener('click', function(){
+      formDeleteArmed = false;
+      document.getElementById('formDanger').innerHTML = '';
+    });
+    document.getElementById('formDeleteOk').addEventListener('click', function(){
+      var id = editingId;
+      formDeleteArmed = false;
+      deleteAsset(id);
+    });
+  });
+}
+
+function closeForm(){
+  document.getElementById('formOverlay').hidden = true;
+  document.body.style.overflow = '';
+}
+
+function splitList(str){
+  return String(str||'').split(',').map(function(s){ return s.trim(); }).filter(Boolean);
+}
+
+/* ---------------- wiring ---------------- */
+function renderAll(){
+  renderHeader();
+  renderDash();
+  renderChips();
+  renderList();
+  renderBoard();
+  renderLeaderboard();
+}
+
+fillAgentSelects();
+
+/* gate */
+var gateForm = document.getElementById('gateForm');
+var codeInput = document.getElementById('codeInput');
+var gateErr = document.getElementById('gateErr');
+
+document.getElementById('hintBtn').addEventListener('click', function(){
+  codeInput.value = ENTRY_CODE;
+  gateErr.textContent = '';
+  codeInput.focus();
+});
+
+var DEEP_ITEM = null;
+try {
+  var qp = new URLSearchParams(window.location.search);
+  DEEP_ITEM = qp.get('item');
+} catch(e){ DEEP_ITEM = null; }
+
+function enterApp(deepId){
+  document.getElementById('gate').hidden = true;
+  document.getElementById('app').hidden = false;
+  renderAll();
+  if(deepId && getAsset(deepId)){
+    openDetail(deepId);
+    toast('공유 링크로 매물을 열었어요 📩');
+  } else {
+    toast('만나방에 입장했어요. 오늘도 좋은 소개 부탁해요 🌿');
+  }
+}
+
+gateForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  var v = codeInput.value.replace(/\s/g,'');
+  if(v === ENTRY_CODE){
+    gateErr.textContent = '';
+    enterApp(DEEP_ITEM);
+  } else {
+    gateErr.textContent = v ? '입장 코드가 맞지 않아요. 힌트를 확인해 주세요.' : '입장 코드를 입력해 주세요.';
+    codeInput.classList.remove('shake');
+    void codeInput.offsetWidth;
+    codeInput.classList.add('shake');
+    codeInput.select();
+  }
+});
+
+/* tabs */
+var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+tabButtons.forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var t = btn.getAttribute('data-tab');
+    tabButtons.forEach(function(b){
+      var on = b === btn;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    document.getElementById('panel-list').hidden = t !== 'list';
+    document.getElementById('panel-board').hidden = t !== 'board';
+    document.getElementById('panel-agents').hidden = t !== 'agents';
+  });
+});
+
+/* agent switch */
+document.getElementById('agentSelect').addEventListener('change', function(e){
+  state.session = e.target.value;
+  save(); renderAll();
+  toast(agentName(state.session) + ' 님으로 접속을 전환했어요.');
+});
+
+/* chips */
+document.getElementById('chips').addEventListener('click', function(e){
+  var btn = e.target.closest('.chip');
+  if(!btn) return;
+  F.status = btn.getAttribute('data-status');
+  renderChips(); renderList();
+});
+
+/* search + filters */
+var qEl = document.getElementById('q');
+qEl.addEventListener('input', function(){ F.q = qEl.value; renderList(); });
+document.getElementById('qClear').addEventListener('click', function(){
+  qEl.value = ''; F.q = ''; renderList(); qEl.focus();
+});
+document.getElementById('fGender').addEventListener('change', function(e){ F.gender = e.target.value; renderList(); });
+document.getElementById('fAge').addEventListener('change', function(e){
+  F.age = e.target.value;
+  renderList();
+});
+document.getElementById('ageMin').addEventListener('input', function(e){
+  F.ageMin = Number(e.target.value) || 0; renderList();
+});
+document.getElementById('ageMax').addEventListener('input', function(e){
+  F.ageMax = Number(e.target.value) || 99; renderList();
+});
+document.getElementById('fAgent').addEventListener('change', function(e){ F.agent = e.target.value; renderList(); });
+document.getElementById('fMine').addEventListener('click', function(){ F.mine = !F.mine; renderList(); });
+document.getElementById('resultLine').addEventListener('click', function(e){
+  if(e.target && e.target.id === 'resetFilter'){
+    F.status = 'all'; F.q = ''; F.gender = 'all'; F.age = 'all'; F.agent = 'all'; F.mine = false;
+    qEl.value = '';
+    document.getElementById('fGender').value = 'all';
+    document.getElementById('fAge').value = 'all';
+    document.getElementById('fAgent').value = 'all';
+    renderChips(); renderList();
+  }
+});
+
+/* list open */
+document.getElementById('cards').addEventListener('click', function(e){
+  var card = e.target.closest('.card');
+  if(card) openDetail(card.getAttribute('data-id'));
+});
+
+/* board */
+document.getElementById('panel-board').addEventListener('click', function(e){
+  var sbtn = e.target.closest('.sbtn');
+  if(sbtn){ setMatchStage(sbtn.getAttribute('data-mid'), sbtn.getAttribute('data-stage')); return; }
+  var person = e.target.closest('.person');
+  if(person) openDetail(person.getAttribute('data-open'));
+});
+
+/* detail modal */
+var detailOverlay = document.getElementById('detailOverlay');
+detailOverlay.addEventListener('click', function(e){
+  if(e.target === detailOverlay){ closeDetail(); return; }
+  if(e.target.closest('[data-close]')){ closeDetail(); return; }
+  var btn = e.target.closest('[data-action]');
+  if(!btn) return;
+  var act = btn.getAttribute('data-action');
+  var a = getAsset(detailId);
+  if(!a) return;
+
+  if(act === 'slide'){
+    slideIdx = (slideIdx + Number(btn.getAttribute('data-dir')) + 3) % 3;
+    renderDetail();
+  } else if(act === 'status'){
+    deleteArmed = false;
+    setAssetStatus(detailId, btn.getAttribute('data-status'));
+    renderDetail();
+  } else if(act === 'memo'){
+    var ta = document.getElementById('memoInput');
+    if(!ta) return;
+    if(!addMemo(detailId, ta.value)){ ta.focus(); toast('메모 내용을 먼저 입력해 주세요.'); }
+  } else if(act === 'proposal-open'){
+    proposalOpen = true; proposalPick = null; deleteArmed = false;
+    renderDetail();
+    var pr = detailOverlay.querySelector('.proposal');
+    if(pr) setTimeout(function(){ try { pr.scrollIntoView({behavior:'smooth', block:'center'}); } catch(err){} }, 60);
+  } else if(act === 'proposal-close'){
+    proposalOpen = false; proposalPick = null; renderDetail();
+  } else if(act === 'pick'){
+    if(btn.disabled) return;
+    proposalPick = btn.getAttribute('data-id');
+    renderDetail();
+  } else if(act === 'propose'){
+    if(proposalPick) propose(detailId, proposalPick);
+  } else if(act === 'share-pick'){
+    var sid = btn.getAttribute('data-id');
+    shareMine = (shareMine === sid) ? null : sid;
+    renderDetail();
+  } else if(act === 'share'){
+    doShare();
+  } else if(act === 'copy'){
+    doCopy();
+  } else if(act === 'proposal-share'){
+    if(!proposalPick) return;
+    shareMine = proposalPick;
+    proposalOpen = false; proposalPick = null;
+    renderDetail();
+    var sb = detailOverlay.querySelector('.share-box');
+    if(sb) setTimeout(function(){ try { sb.scrollIntoView({behavior:'smooth', block:'center'}); } catch(err){} }, 60);
+    toast('카톡 문구를 준비했어요. 아래 버튼으로 보내 보세요 💬');
+  } else if(act === 'edit'){
+    var id = detailId;
+    closeDetail();
+    openForm(id);
+  } else if(act === 'delete'){
+    deleteArmed = !deleteArmed; proposalOpen = false;
+    renderDetail();
+    var bar = detailOverlay.querySelector('.danger-bar');
+    if(bar) setTimeout(function(){ try { bar.scrollIntoView({behavior:'smooth', block:'center'}); } catch(err){} }, 40);
+  } else if(act === 'delete-cancel'){
+    deleteArmed = false; renderDetail();
+  } else if(act === 'delete-confirm'){
+    deleteAsset(detailId);
+  }
+});
+
+/* form modal */
+var formOverlay = document.getElementById('formOverlay');
+formOverlay.addEventListener('click', function(e){
+  if(e.target === formOverlay || e.target.closest('[data-close]')) closeForm();
+});
+
+document.getElementById('segGender').addEventListener('click', function(e){
+  var b = e.target.closest('button');
+  if(!b) return;
+  formGender = b.getAttribute('data-g');
+  setSeg('segGender', formGender);
+});
+document.getElementById('segSmoke').addEventListener('click', function(e){
+  var b = e.target.closest('button');
+  if(!b) return;
+  formSmoke = b.getAttribute('data-v');
+  setSeg('segSmoke', formSmoke);
+});
+document.getElementById('segDrink').addEventListener('click', function(e){
+  var b = e.target.closest('button');
+  if(!b) return;
+  formDrink = b.getAttribute('data-v');
+  setSeg('segDrink', formDrink);
+});
+document.getElementById('f-birth').addEventListener('input', updateBirthHint);
+
+document.getElementById('addExtra').addEventListener('click', function(){
+  formExtras.push({label:'', value:''});
+  renderExtras();
+  var rows = document.querySelectorAll('#extras .extra-row .lab');
+  if(rows.length) rows[rows.length-1].focus();
+});
+document.getElementById('extras').addEventListener('input', function(e){
+  var el = e.target;
+  if(!el.dataset || el.dataset.i === undefined) return;
+  var i = Number(el.dataset.i);
+  if(!formExtras[i]) return;
+  formExtras[i][el.dataset.k] = el.value;
+});
+document.getElementById('extras').addEventListener('click', function(e){
+  var b = e.target.closest('.del');
+  if(!b) return;
+  formExtras.splice(Number(b.dataset.i), 1);
+  renderExtras();
+});
+
+document.getElementById('assetForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var errEl = document.getElementById('formErr');
+  var val = function(id){ return document.getElementById(id).value.trim(); };
+  var name = val('f-name'), region = val('f-region'), work = val('f-work'), job = val('f-job');
+  var birth = Number(val('f-birth')), height = Number(val('f-height'));
+  var bad = [];
+  ['f-name','f-region','f-work','f-job','f-birth','f-height'].forEach(function(id){
+    document.getElementById(id).classList.remove('bad');
+  });
+  if(!name){ bad.push(['f-name','이름(가명)']); }
+  if(!birth || birth < 1980 || birth > 2004){ bad.push(['f-birth','출생연도']); }
+  if(!height || height < 140 || height > 210){ bad.push(['f-height','키']); }
+  if(!region){ bad.push(['f-region','거주지']); }
+  if(!work){ bad.push(['f-work','근무지']); }
+  if(!job){ bad.push(['f-job','직업']); }
+  if(bad.length){
+    bad.forEach(function(b){ document.getElementById(b[0]).classList.add('bad'); });
+    errEl.textContent = '필수 항목을 확인해 주세요: ' + bad.map(function(b){ return b[1]; }).join(', ');
+    var first = document.getElementById(bad[0][0]);
+    if(first && first.focus) first.focus();
+    return;
+  }
+  errEl.textContent = '';
+
+  var tags = splitList(val('f-tags')).map(function(t){ return t.charAt(0) === '#' ? t : '#' + t; });
+  var extras = formExtras
+    .map(function(x){ return {label:(x.label||'').trim(), value:(x.value||'').trim()}; })
+    .filter(function(x){ return x.label || x.value; });
+
+  var data = {
+    name: name,
+    gender: formGender,
+    birth: birth,
+    height: height,
+    region: region,
+    workArea: work,
+    job: job,
+    company: val('f-company'),
+    mbti: val('f-mbti').toUpperCase(),
+    smoke: formSmoke,
+    drink: formDrink,
+    tags: tags,
+    extras: extras,
+    memo: val('f-ideal'),
+    comment: val('f-comment'),
+    agent: val('f-agent'),
+    status: val('f-status')
+  };
+
+  if(editingId){
+    var a = getAsset(editingId);
+    if(!a) return;
+    for(var k in data){ if(Object.prototype.hasOwnProperty.call(data,k)) a[k] = data[k]; }
+    a.history.unshift({at: today(), by: agentName(state.session), text: '매물 정보 수정 (' + agentName(state.session) + ')'});
+    save(); renderAll(); closeForm();
+    toast('매물 정보를 수정했어요.');
+    openDetail(editingId);
+  } else {
+    var id = 'p' + (state.seq.asset++);
+    state.assets.push({
+      id: id, name: data.name, gender: data.gender, birth: data.birth, height: data.height,
+      region: data.region, workArea: data.workArea, job: data.job, company: data.company,
+      mbti: data.mbti, smoke: data.smoke, drink: data.drink, tags: data.tags.length ? data.tags : [],
+      extras: data.extras, memo: data.memo, comment: data.comment, agent: data.agent, status: data.status,
+      history: [{at: today(), by: agentName(state.session), text: '새 매물로 등록했습니다.'}]
+    });
+    save(); renderAll(); closeForm();
+    toast(name + ' 님을 매물로 등록했어요 🏠');
+  }
+});
+
+/* new buttons */
+document.getElementById('btnNew').addEventListener('click', function(){ openForm(null); });
+document.getElementById('dashNew').addEventListener('click', function(){ openForm(null); });
+
+/* reset */
+document.getElementById('btnReset').addEventListener('click', function(){
+  if(!window.confirm('데모 데이터를 처음 상태로 되돌릴까요? 등록·수정한 내용은 사라집니다.')) return;
+  store.clear();
+  state = seed();
+  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, agent:'all', mine:false};
+  qEl.value = '';
+  document.getElementById('fGender').value = 'all';
+  document.getElementById('fAge').value = 'all';
+  document.getElementById('fAgent').value = 'all';
+  save(); renderAll();
+  toast('데모 데이터를 초기화했어요.');
+});
+
+/* keyboard */
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape'){
+    if(!document.getElementById('formOverlay').hidden){ closeForm(); return; }
+    if(!detailOverlay.hidden){ closeDetail(); return; }
+  }
+  if((e.key === 'Enter' || e.key === ' ') && document.activeElement && document.activeElement.classList.contains('person')){
+    e.preventDefault();
+    openDetail(document.activeElement.getAttribute('data-open'));
+  }
+});
+
+/* boot */
+renderAll();
+window.__mannabang = {get state(){ return state; }, render:renderAll, filtered:filteredAssets, shareMessage:shareMessage, shareLink:shareLink};
+if(DEEP_ITEM && getAsset(DEEP_ITEM)) enterApp(DEEP_ITEM);
+})();
+</script>
+</body>
+</html>
