@@ -406,10 +406,10 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .bchips{display:flex;gap:7px;overflow-x:auto;padding:2px 1px 6px;margin:2px 0 8px;scrollbar-width:none}
 .bchips::-webkit-scrollbar{display:none}
 .bchips .chip{padding:8px 12px;font-size:12px}
-.pdir{font-size:9.5px;font-weight:820;padding:2px 5px;border-radius:5px;margin-right:3px;white-space:nowrap;vertical-align:1px}
+.pdir{display:inline-block;font-size:9.5px;font-weight:820;line-height:1.35;padding:2px 6px;border-radius:6px;white-space:nowrap}
 .pdir.from{background:#FCEFE9;color:#B26B58}
 .pdir.to{background:var(--mint-soft);color:var(--mint-ink)}
-.mytag{font-size:9.5px;font-weight:820;color:#A95344;background:#FCEFE9;border-radius:5px;padding:2px 5px;margin-left:3px;white-space:nowrap}
+.mytag{flex:0 0 auto;font-size:9.5px;line-height:1.35;font-weight:820;color:#A95344;background:#FCEFE9;border-radius:6px;padding:1.5px 5px;white-space:nowrap}
 .inctag{font-size:10.5px;font-weight:820;color:#9C3B31;background:#FBE3DE;border-radius:99px;padding:3px 8px;white-space:nowrap}
 .mquick{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:12px;padding:9px 10px;border:1.5px solid #EFD9CE;background:#FDF4EE;border-radius:12px}
 .mquick .mq-lab{flex:1 0 100%;font-size:11px;font-weight:750;color:var(--ink-2);margin-bottom:2px}
@@ -423,15 +423,17 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .mhead .stage-tag.pass{background:#F1E9E3;color:#6E6058}
 .mhead .stage-tag.done{background:var(--coral-soft);color:#A95344}
 .pair{display:grid;grid-template-columns:minmax(0,1.15fr) 24px minmax(0,1.15fr);align-items:center;gap:4px}
-.person{display:flex;align-items:center;gap:9px;min-width:0;cursor:pointer;border-radius:12px;padding:4px;transition:.14s}
+.person{display:flex;align-items:flex-start;gap:9px;min-width:0;cursor:pointer;border-radius:12px;padding:4px;transition:.14s}
 .person:hover{background:var(--bg-2)}
 .person .ava{width:46px;height:46px;border-radius:50%;overflow:hidden;flex:0 0 auto;border:2px solid #fff;box-shadow:0 3px 9px rgba(120,86,70,.14)}
 .person .ava svg{display:block;width:100%;height:100%}
 .person .ava img{display:block;width:100%;height:100%;object-fit:cover}
-.person .pi{min-width:0;display:block;overflow:hidden}
-.person .pn{display:block;font-size:13px;font-weight:800;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.person .pi{min-width:0;display:block;overflow:hidden;margin-top:2px}
+.person .pnrow{display:flex;align-items:center;gap:4px;min-width:0;white-space:nowrap}
+.person .pn{display:block;flex:0 1 auto;min-width:0;font-size:13px;font-weight:800;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .person .pm{display:block;font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.person .pa{display:block;font-size:10px;color:var(--ink-2);font-weight:700;margin-top:2px}
+.person .pdirrow{display:block;margin-top:4px;line-height:1}
+.person .pagent{display:block;margin-top:3px;font-size:10px;line-height:1.35;color:var(--ink-2);font-weight:750;white-space:nowrap}
 .pair .link{display:grid;place-items:center;font-size:17px;color:var(--coral)}
 .steps{display:flex;align-items:flex-start;margin:14px 0 12px;position:relative;list-style:none;padding:0}
 .steps .step{flex:1;text-align:center;position:relative;font-size:10.5px;font-weight:700;color:var(--muted)}
@@ -801,8 +803,9 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
   .person .ava{width:38px;height:38px}
   .person .pn{font-size:12px}
   .person .pm{font-size:10px}
-  .person .pa{font-size:9.5px;line-height:1.5}
-  .pdir{font-size:9px;padding:1px 4px}
+  .person .pagent{font-size:9.5px}
+  .pdir{font-size:9px;padding:1px 5px}
+  .mytag{font-size:9px;padding:1px 4px}
   .mhead{flex-wrap:wrap;gap:6px}
   .steps .step{font-size:9.5px}
   .bchips{display:grid;grid-template-columns:1fr 1fr;gap:6px;overflow:visible}
@@ -1997,16 +2000,20 @@ function personHTML(a, role, mine){
   var ph = photosOf(a);
   var roleTag = role === 'from' ? '<span class="pdir from">📤 보낸 쪽</span>'
               : role === 'to'   ? '<span class="pdir to">📩 받은 쪽</span>' : '';
+  var agent = agentById(a.agent);
   return '<div class="person" data-open="' + a.id + '" role="button" tabindex="0">' +
     '<span class="ava">' + (ph.length
       ? '<img src="' + esc(ph[0]) + '" alt="' + esc(assetTitle(a)) + ' 대표 사진">'
       : avatarSVG(a,0)) + '</span>' +
-    '<span class="pi"><span class="pn">' + esc(assetTitle(a)) + '</span>' +
-    '<span class="pm">' + ageOf(a) + '세 · ' + esc(a.region) + '</span>' +
-    '<span class="pa">' + (roleTag ? roleTag + ' ' : '') +
-      agentById(a.agent).emoji + ' ' + esc(agentName(a.agent)) + (roleTag ? '' : ' 주선') +
-      (mine ? '<b class="mytag">내 매물</b>' : '') + '</span></span>' +
-  '</div>';
+    '<span class="pi">' +
+      /* 1줄: 매물 번호 + (내 매물) 뱃지 — 번호와 뱃지가 붙어 한 줄에 유지된다 */
+      '<span class="pnrow"><span class="pn">' + esc(assetTitle(a)) + '</span>' +
+        (mine ? '<b class="mytag">내 매물</b>' : '') + '</span>' +
+      '<span class="pm">' + ageOf(a) + '세 · ' + esc(a.region) + '</span>' +
+      /* 아래는 의도한 2줄: ①보낸/받은 쪽 뱃지 ②담당 주선자 이모지+이름 */
+      (roleTag ? '<span class="pdirrow">' + roleTag + '</span>' : '') +
+      '<span class="pagent">' + agent.emoji + ' ' + esc(agentName(a.agent)) + (roleTag ? '' : ' 주선') + '</span>' +
+    '</span></div>';
 }
 
 /* ---------------- 매칭의 보낸 쪽 · 받은 쪽 -------------
