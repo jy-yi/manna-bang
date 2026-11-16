@@ -179,8 +179,9 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .chip.c-match.on{background:linear-gradient(140deg,#FF7A6B,#FF5E50);border-color:transparent}
 .chip.c-hold.on{background:linear-gradient(140deg,#9A9188,#7E766D);border-color:transparent}
 
-.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.search{position:relative;flex:1 1 100%;min-width:0}
+.filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.filters .toggle{width:100%;justify-content:center}
+.search{position:relative;grid-column:1 / -1;min-width:0}
 .search input{
   width:100%;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:12px 40px 12px 38px;
   font-size:13.5px;outline:none;transition:.16s;box-shadow:var(--shadow-s);
@@ -190,20 +191,20 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .search .ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:13px;opacity:.5}
 .search .clr{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:var(--muted);background:var(--bg-2)}
 .filters select{
-  flex:1 1 0;min-width:0;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:11px 30px 11px 12px;
+  width:100%;min-width:0;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:11px 30px 11px 12px;
   font-size:13px;font-weight:650;outline:none;appearance:none;cursor:pointer;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23948A80' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 11px center;box-shadow:var(--shadow-s);
 }
 .filters select:focus{border-color:var(--mint)}
 .toggle{
-  flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);
+  display:inline-flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);
   border-radius:13px;padding:11px 13px;font-size:12.5px;font-weight:700;color:var(--ink-2);box-shadow:var(--shadow-s);transition:.15s;
 }
 .toggle .knob{width:14px;height:14px;border-radius:50%;border:1.5px solid #CFC3B6;background:#fff;transition:.15s}
 .toggle.on{border-color:var(--mint);background:var(--mint-soft);color:var(--mint-ink)}
 .toggle.on .knob{background:var(--mint);border-color:var(--mint)}
-.age-range{display:flex;flex:1 1 100%;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:8px 12px;box-shadow:var(--shadow-s)}
+.age-range{display:flex;grid-column:1 / -1;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:8px 12px;box-shadow:var(--shadow-s)}
 .age-range span{font-size:12px;font-weight:700;color:var(--muted)}
 .age-range input{width:58px;border:0;background:var(--bg-2);border-radius:8px;padding:7px 8px;font-size:13px;font-weight:700;text-align:center;outline:none}
 .age-range input:focus{box-shadow:0 0 0 2px rgba(15,169,127,.28)}
@@ -225,8 +226,8 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .thumb svg{display:block;width:100%;height:100%}
 .card .body{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
 .card .l1{display:flex;align-items:center;gap:6px;min-width:0}
-.card .nm{font-size:15.5px;font-weight:800;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tag-pseudo{font-size:9.5px;font-weight:750;color:var(--muted);background:var(--bg-2);padding:2px 5px;border-radius:5px;flex:0 0 auto}
+.card .nm{font-size:15px;font-weight:820;letter-spacing:-.03em;white-space:nowrap;flex:0 0 auto}
+.card .nmsum{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:-.01em;white-space:nowrap;flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .badge{
   margin-left:auto;flex:0 0 auto;font-size:10.5px;font-weight:780;padding:3.5px 8px;border-radius:99px;
   display:inline-flex;align-items:center;gap:3px;white-space:nowrap;
@@ -242,6 +243,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:2px}
 .tag{font-size:10.5px;font-weight:680;padding:2.5px 7px;border-radius:6px;background:var(--bg-2);color:var(--ink-2);white-space:nowrap}
 .tag.hl{background:var(--mint-soft);color:var(--mint-ink)}
+.tag.mb{background:var(--violet-soft);color:#5A49C0;font-weight:750;letter-spacing:.02em}
 .ox{font-size:10.5px;font-weight:700;padding:2.5px 7px;border-radius:6px;background:#F3F1EE;color:var(--ink-2);white-space:nowrap}
 .ox b{font-weight:850;margin-left:2px}
 .ox b.o{color:#C43A2C}
@@ -273,7 +275,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .person .ava{width:46px;height:46px;border-radius:50%;overflow:hidden;flex:0 0 auto;border:2px solid #fff;box-shadow:0 3px 9px rgba(70,45,20,.14)}
 .person .ava svg{display:block;width:100%;height:100%}
 .person .pi{min-width:0;display:block;overflow:hidden}
-.person .pn{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.person .pn{display:block;font-size:13px;font-weight:800;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .person .pm{display:block;font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .person .pa{display:block;font-size:10px;color:var(--ink-2);font-weight:700;margin-top:2px}
 .pair .link{display:grid;place-items:center;font-size:17px;color:var(--coral)}
@@ -346,7 +348,8 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .g-dots i.on{background:#fff;width:16px;border-radius:99px}
 .detail-body{padding:16px 16px 22px}
 .dhead{display:flex;align-items:flex-start;gap:9px;margin-bottom:4px}
-.dhead h2{font-size:22px;font-weight:850;letter-spacing:-.045em;line-height:1.2}
+.dhead h2{font-size:22px;font-weight:850;letter-spacing:-.045em;line-height:1.2;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 7px}
+.dhead h2 .h2sum{font-size:12.5px;font-weight:720;color:var(--muted);letter-spacing:-.02em}
 .dsub{margin-top:6px;font-size:13px;color:var(--ink-2);font-weight:640;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .dsub .sep{color:#D2C7BA}
 .spec-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border-radius:14px;overflow:hidden;margin-top:15px;border:1px solid var(--line)}
@@ -368,6 +371,8 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .ox-big b.o{color:#C43A2C}
 .ox-big b.x{color:var(--mint-ink)}
 .ox-big.none{color:var(--muted);border-style:dashed}
+.ox-big.mb{background:var(--violet-soft);border-color:#DED7F8}
+.ox-big.mb b{color:#5A49C0}
 .quote{
   background:linear-gradient(135deg,#F2FCF8,#fff);border:1px solid #D8F1E7;border-radius:14px;padding:12px 13px;
   font-size:13px;color:var(--ink-2);line-height:1.6;position:relative;
@@ -499,6 +504,11 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 /* PC */
 @media (min-width:760px){
   .wrap{padding:22px 24px 80px}
+  .filters{display:flex;flex-wrap:wrap;gap:8px}
+  .filters .search{flex:1 1 100%}
+  .filters select{flex:0 0 auto;width:auto;min-width:170px}
+  .filters .toggle{width:auto}
+  .filters .age-range{flex:1 1 100%}
   .dash{padding:26px}
   .dash h1{font-size:26px}
   .stat-grid{grid-template-columns:repeat(4,1fr);gap:12px}
@@ -525,6 +535,9 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 @media (max-width:430px){
   .tab{font-size:12px;padding:10px 5px;gap:4px}
   .tab .cnt{display:none}
+}
+@media (max-width:340px){
+  .filters{grid-template-columns:1fr}
 }
 @media (max-width:380px){
   .thumb{width:80px;min-height:100px}
@@ -620,7 +633,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
       <div class="filters">
         <div class="search">
           <span class="ico">🔍</span>
-          <input id="q" type="search" placeholder="이름 · 직업 · 거주지 · 근무지 · 키워드 검색" aria-label="매물 검색">
+          <input id="q" type="search" placeholder="번호 · 직업 · 거주지 · 근무지 검색" aria-label="매물 검색">
           <button class="clr" id="qClear" hidden aria-label="검색어 지우기">✕</button>
         </div>
         <select id="fGender" aria-label="성별 필터">
@@ -630,10 +643,10 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
         </select>
         <select id="fAge" aria-label="나이대 필터">
           <option value="all">나이 전체</option>
-          <option value="27-29">20대 후반 (27~29)</option>
-          <option value="30-32">30대 초반 (30~32)</option>
-          <option value="33-40">30대 중반+ (33~)</option>
-          <option value="custom">직접 입력 (나이 범위)</option>
+          <option value="27-29">20대 후반 27~29</option>
+          <option value="30-32">30대 초반 30~32</option>
+          <option value="33-40">30대 중반+ 33~</option>
+          <option value="custom">직접 입력 (범위)</option>
         </select>
         <select id="fAgent" aria-label="담당 주선자 필터"></select>
         <button class="toggle" id="fMine" aria-pressed="false"><span class="knob"></span>내 매물만</button>
@@ -694,7 +707,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
       <div class="form-body">
         <div class="form-err" id="formErr" role="status"></div>
 
-        <div class="form-sec"><span>필수 스펙</span><small>매물 카드에 그대로 보여요</small></div>
+        <div class="form-sec"><span>필수 스펙</span><small>이름 없이 번호로 관리돼요</small></div>
 
         <div class="field wide">
           <label>성별 <em>*</em></label>
@@ -702,11 +715,6 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
             <button type="button" data-g="M">남성</button>
             <button type="button" data-g="F">여성</button>
           </div>
-        </div>
-
-        <div class="field">
-          <label for="f-name">이름(가명) <em>*</em></label>
-          <input id="f-name" maxlength="12" placeholder="예: 김서준">
         </div>
 
         <div class="field">
@@ -740,12 +748,30 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
           <input id="f-company" placeholder="토스">
         </div>
 
-        <div class="field">
-          <label for="f-mbti">MBTI <span style="color:var(--muted);font-weight:650">(선택)</span></label>
-          <input id="f-mbti" maxlength="4" placeholder="ENTJ" style="text-transform:uppercase">
-        </div>
-
         <div class="form-sec"><span>선택 항목</span><small>비워 두면 카드에 표시되지 않아요</small></div>
+
+        <div class="field">
+          <label for="f-mbti">MBTI</label>
+          <select id="f-mbti">
+            <option value="">미입력</option>
+            <option>ISTJ</option>
+            <option>ISFJ</option>
+            <option>INFJ</option>
+            <option>INTJ</option>
+            <option>ISTP</option>
+            <option>ISFP</option>
+            <option>INFP</option>
+            <option>INTP</option>
+            <option>ESTP</option>
+            <option>ESFP</option>
+            <option>ENFP</option>
+            <option>ENTP</option>
+            <option>ESTJ</option>
+            <option>ESFJ</option>
+            <option>ENFJ</option>
+            <option>ENTJ</option>
+          </select>
+        </div>
 
         <div class="field">
           <label>흡연 여부</label>
@@ -820,7 +846,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 
 /* ---------------- constants ---------------- */
 var ENTRY_CODE = '0824';
-var STORAGE_KEY = 'mannabang.prototype.v2';
+var STORAGE_KEY = 'mannabang.prototype.v3';
 
 var AGENTS = [
   {id:'ag1', name:'종윤', emoji:'🌿', role:'중개소 대표'},
@@ -848,37 +874,37 @@ var LIVE_STAGES = ['제안중','일정 조율','만남 완료','애프터'];
    선택: smoke/drink (O · X · 미입력), tags, extras[], memo(비고), comment
 ------------------------------------------------ */
 var RAW = [
-  {id:'p1', name:'김서준', gender:'M', birth:1994, height:178, region:'서울 강남구', workArea:'서울 강남구 테헤란로', job:'IT 개발자', company:'토스', mbti:'ENTJ', smoke:'X', drink:'X', tags:['#러닝','#연봉상위'], extras:[{label:'학력',value:'연세대 컴퓨터공학'},{label:'종교',value:'무교'},{label:'취미',value:'러닝 · 위스키 · 전시회'},{label:'이상형',value:'대화가 잘 통하고 자기 생활이 뚜렷한 분'}], memo:'', comment:'3년 지기 직장 동료예요. 말수는 적지만 약속은 꼭 지키는 타입이고, 주말엔 한강 러닝을 합니다.', agent:'ag2', status:'available'},
-  {id:'p2', name:'이도현', gender:'M', birth:1992, height:175, region:'서울 마포구', workArea:'서울 영등포구 여의도동', job:'회계사', company:'삼정KPMG', mbti:'ISTJ', smoke:'X', drink:'O', tags:['#성실함','#주말골퍼'], extras:[{label:'학력',value:'고려대 경영학'},{label:'종교',value:'기독교'},{label:'취미',value:'골프 · 맛집탐방'},{label:'이상형',value:'계획적이고 안정적인 분'}], memo:'결혼까지 진지하게 생각 중이에요. 맞벌이 가능.', comment:'대학 동기 남동생. 성실함 하나는 제가 보증합니다.', agent:'ag7', status:'available'},
-  {id:'p3', name:'박지훈', gender:'M', birth:1995, height:182, region:'서울 송파구', workArea:'서울 송파구 잠실동', job:'초등교사', company:'잠실초등학교', mbti:'ENFJ', smoke:'X', drink:'X', tags:['#키큰','#다정함'], extras:[{label:'학력',value:'서울교육대학교'},{label:'종교',value:'무교'},{label:'취미',value:'등산 · 베이킹'},{label:'이상형',value:'아이 같은 미소를 가진 분'}], memo:'', comment:'제 소개로 세 커플이 결혼했어요. 이 친구도 그 기운을 받을 차례입니다.', agent:'ag3', status:'progress'},
-  {id:'p4', name:'최원빈', gender:'M', birth:1993, height:176, region:'성남 분당구', workArea:'경기 성남시 분당구', job:'반도체 엔지니어', company:'SK하이닉스', mbti:'INTP', smoke:'X', drink:'O', tags:['#이과감성','#자전거'], extras:[{label:'학력',value:'KAIST 전자공학'},{label:'종교',value:'무교'},{label:'취미',value:'자전거 · 독서'},{label:'이상형',value:'조용히 오래 이야기할 수 있는 분'}], memo:'', comment:'말은 느린데 한번 빠지면 끝까지 가는 사람. 사회성은 생각보다 좋아요.', agent:'ag4', status:'available'},
-  {id:'p5', name:'정도윤', gender:'M', birth:1996, height:180, region:'서울 성동구', workArea:'서울 성동구 성수동', job:'스타트업 PM', company:'시리즈A 스타트업', mbti:'ENTP', smoke:'X', drink:'O', tags:['#와인','#여행러'], extras:[{label:'학력',value:'한양대 산업공학'},{label:'종교',value:'무교'},{label:'취미',value:'와인 · 여행 · 사진'},{label:'이상형',value:'밝고 리액션 좋은 분'}], memo:'', comment:'성수에서 와인바 다니는 걸 좋아해요. 대화의 텐션이 좋아서 어디든 분위기를 살립니다.', agent:'ag5', status:'available'},
-  {id:'p6', name:'강민재', gender:'M', birth:1991, height:183, region:'서울 용산구', workArea:'서울 용산구 한남동', job:'건축사', company:'개인 건축사무소', mbti:'ISFP', smoke:'', drink:'O', tags:['#캠핑','#금손'], extras:[{label:'학력',value:'홍익대 건축학'},{label:'종교',value:'천주교'},{label:'취미',value:'캠핑 · 드로잉'},{label:'이상형',value:'자기 세계가 있는 분'}], memo:'본인 요청으로 잠시 보류 중. 12월 이후 재개 예정.', comment:'집을 직접 고쳐 쓰는 분.', agent:'ag6', status:'hold'},
-  {id:'p7', name:'윤하준', gender:'M', birth:1994, height:177, region:'서울 서초구', workArea:'서울 서초구 서초동', job:'변호사', company:'법무법인 대륜', mbti:'INTJ', smoke:'X', drink:'X', tags:['#테니스','#지적'], extras:[{label:'학력',value:'서울대 법학'},{label:'종교',value:'무교'},{label:'취미',value:'테니스 · 클래식'},{label:'이상형',value:'지적이고 독립적인 분'}], memo:'', comment:'반포에서 일해요. 말투는 차분한데 유머 코드가 있어서 두 번째 만남부터 편해진대요.', agent:'ag8', status:'available'},
-  {id:'p8', name:'임태양', gender:'M', birth:1990, height:172, region:'서울 영등포구', workArea:'서울 중구 세종대로', job:'공무원', company:'서울시청', mbti:'ISFJ', smoke:'X', drink:'O', tags:['#요리','#안정적'], extras:[{label:'학력',value:'성균관대 행정학'},{label:'종교',value:'무교'},{label:'취미',value:'축구 · 요리'},{label:'이상형',value:'편안하고 따뜻한 분'}], memo:'', comment:'같은 동네(영등포)에 사는 직장 후배예요. 요리를 진짜 잘합니다.', agent:'ag1', status:'available'},
-  {id:'p9', name:'한지완', gender:'M', birth:1997, height:179, region:'서울 관악구', workArea:'서울 관악구 봉천동', job:'약사', company:'한빛약국', mbti:'ENFP', smoke:'X', drink:'X', tags:['#클라이밍','#밝음'], extras:[{label:'학력',value:'서울대 약학'},{label:'종교',value:'기독교'},{label:'취미',value:'클라이밍 · 커피'},{label:'이상형',value:'웃음이 많은 분'}], memo:'', comment:'동네 약국 사장님. 텐션이 높고 리액션이 좋아서 처음 만난 사람도 금방 편해져요.', agent:'ag9', status:'progress'},
-  {id:'p10', name:'오세민', gender:'M', birth:1993, height:174, region:'서울 광진구', workArea:'경기 성남시 판교', job:'프론트엔드 개발자', company:'카카오', mbti:'INFP', smoke:'X', drink:'O', tags:['#LP','#영화광'], extras:[{label:'학력',value:'숭실대 소프트웨어학'},{label:'종교',value:'무교'},{label:'취미',value:'LP · 영화'},{label:'이상형',value:'조용한 데이트를 좋아하는 분'}], memo:'', comment:'제 대학 후배. 감성적인 사람이라 LP 들으면서 이야기하는 걸 좋아해요.', agent:'ag2', status:'available'},
-  {id:'p11', name:'배준영', gender:'M', birth:1995, height:181, region:'고양 일산', workArea:'경기 고양시 일산동구', job:'물리치료사', company:'일산재활의학과', mbti:'ESFJ', smoke:'X', drink:'X', tags:['#운동러','#부지런'], extras:[{label:'학력',value:'연세대 물리치료학'},{label:'종교',value:'천주교'},{label:'취미',value:'수영 · 러닝'},{label:'이상형',value:'건강한 습관을 가진 분'}], memo:'일산-서울 왕복이 힘들어서 서울 사는 분을 원해요.', comment:'운동을 정말 꾸준히 하는 사람.', agent:'ag7', status:'progress'},
-  {id:'p12', name:'신우진', gender:'M', birth:1992, height:176, region:'수원 영통구', workArea:'경기 화성시 팔탄면', job:'제약 연구원', company:'한미약품', mbti:'ISTJ', smoke:'X', drink:'O', tags:['#등산','#한결같음'], extras:[{label:'학력',value:'성균관대 약학'},{label:'종교',value:'무교'},{label:'취미',value:'등산 · 정원가꾸기'},{label:'이상형',value:'차분하고 정돈된 분'}], memo:'', comment:'연구소에서 8년째. 말수 적지만 한 번 마음을 주면 오래가는 스타일이에요.', agent:'ag3', status:'available'},
-  {id:'p13', name:'조민규', gender:'M', birth:1998, height:178, region:'서울 중랑구', workArea:'서울 중랑구 상봉동', job:'은행원', company:'KB국민은행', mbti:'ESTJ', smoke:'X', drink:'O', tags:['#야구','#애교'], extras:[{label:'학력',value:'건국대 경제학'},{label:'종교',value:'무교'},{label:'취미',value:'골프 · 야구직관'},{label:'이상형',value:'활발하고 계획적인 분'}], memo:'', comment:'저희 사촌 동생. 애교가 있고 사람 좋아하는 게 티가 나요.', agent:'ag4', status:'available'},
-  {id:'p14', name:'노승우', gender:'M', birth:1991, height:180, region:'서울 동작구', workArea:'서울 강서구 마곡동', job:'대기업 영업', company:'LG전자', mbti:'ESFP', smoke:'X', drink:'O', tags:['#헬스','#인싸'], extras:[{label:'학력',value:'중앙대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'헬스 · 페스티벌'},{label:'이상형',value:'같이 신나게 놀 수 있는 분'}], memo:'', comment:'흑석동 자취 5년차. 사람 만나는 걸 좋아해서 소개팅 자리도 즐깁니다.', agent:'ag5', status:'progress'},
-  {id:'p15', name:'서지호', gender:'M', birth:1996, height:177, region:'서울 서대문구', workArea:'서울 서대문구 연희동', job:'치과의사', company:'연희치과의원', mbti:'INTJ', smoke:'X', drink:'X', tags:['#스키','#성사'], extras:[{label:'학력',value:'연세대 치의학'},{label:'종교',value:'기독교'},{label:'취미',value:'스키 · 와인'},{label:'이상형',value:'신앙심 있고 차분한 분'}], memo:'', comment:'작년에 매칭돼서 지금 잘 만나고 있어요. 제 중개 인생 최고의 성과입니다.', agent:'ag6', status:'matched'},
+  {id:'p1', gender:'M', birth:1994, height:178, region:'서울 강남구', workArea:'서울 강남구 테헤란로', job:'IT 개발자', company:'토스', mbti:'ENTJ', smoke:'X', drink:'X', tags:['#러닝','#연봉상위'], extras:[{label:'학력',value:'연세대 컴퓨터공학'},{label:'종교',value:'무교'},{label:'취미',value:'러닝 · 위스키 · 전시회'},{label:'이상형',value:'대화가 잘 통하고 자기 생활이 뚜렷한 분'}], memo:'', comment:'3년 지기 직장 동료예요. 말수는 적지만 약속은 꼭 지키는 타입이고, 주말엔 한강 러닝을 합니다.', agent:'ag2', status:'available'},
+  {id:'p2', gender:'M', birth:1992, height:175, region:'서울 마포구', workArea:'서울 영등포구 여의도동', job:'회계사', company:'삼정KPMG', mbti:'ISTJ', smoke:'X', drink:'O', tags:['#성실함','#주말골퍼'], extras:[{label:'학력',value:'고려대 경영학'},{label:'종교',value:'기독교'},{label:'취미',value:'골프 · 맛집탐방'},{label:'이상형',value:'계획적이고 안정적인 분'}], memo:'결혼까지 진지하게 생각 중이에요. 맞벌이 가능.', comment:'대학 동기 남동생. 성실함 하나는 제가 보증합니다.', agent:'ag7', status:'available'},
+  {id:'p3', gender:'M', birth:1995, height:182, region:'서울 송파구', workArea:'서울 송파구 잠실동', job:'초등교사', company:'잠실초등학교', mbti:'ENFJ', smoke:'X', drink:'X', tags:['#키큰','#다정함'], extras:[{label:'학력',value:'서울교육대학교'},{label:'종교',value:'무교'},{label:'취미',value:'등산 · 베이킹'},{label:'이상형',value:'아이 같은 미소를 가진 분'}], memo:'', comment:'제 소개로 세 커플이 결혼했어요. 이 친구도 그 기운을 받을 차례입니다.', agent:'ag3', status:'progress'},
+  {id:'p4', gender:'M', birth:1993, height:176, region:'성남 분당구', workArea:'경기 성남시 분당구', job:'반도체 엔지니어', company:'SK하이닉스', mbti:'INTP', smoke:'X', drink:'O', tags:['#이과감성','#자전거'], extras:[{label:'학력',value:'KAIST 전자공학'},{label:'종교',value:'무교'},{label:'취미',value:'자전거 · 독서'},{label:'이상형',value:'조용히 오래 이야기할 수 있는 분'}], memo:'', comment:'말은 느린데 한번 빠지면 끝까지 가는 사람. 사회성은 생각보다 좋아요.', agent:'ag4', status:'available'},
+  {id:'p5', gender:'M', birth:1996, height:180, region:'서울 성동구', workArea:'서울 성동구 성수동', job:'스타트업 PM', company:'시리즈A 스타트업', mbti:'ENTP', smoke:'X', drink:'O', tags:['#와인','#여행러'], extras:[{label:'학력',value:'한양대 산업공학'},{label:'종교',value:'무교'},{label:'취미',value:'와인 · 여행 · 사진'},{label:'이상형',value:'밝고 리액션 좋은 분'}], memo:'', comment:'성수에서 와인바 다니는 걸 좋아해요. 대화의 텐션이 좋아서 어디든 분위기를 살립니다.', agent:'ag5', status:'available'},
+  {id:'p6', gender:'M', birth:1991, height:183, region:'서울 용산구', workArea:'서울 용산구 한남동', job:'건축사', company:'개인 건축사무소', mbti:'ISFP', smoke:'', drink:'O', tags:['#캠핑','#금손'], extras:[{label:'학력',value:'홍익대 건축학'},{label:'종교',value:'천주교'},{label:'취미',value:'캠핑 · 드로잉'},{label:'이상형',value:'자기 세계가 있는 분'}], memo:'본인 요청으로 잠시 보류 중. 12월 이후 재개 예정.', comment:'집을 직접 고쳐 쓰는 분.', agent:'ag6', status:'hold'},
+  {id:'p7', gender:'M', birth:1994, height:177, region:'서울 서초구', workArea:'서울 서초구 서초동', job:'변호사', company:'법무법인 대륜', mbti:'INTJ', smoke:'X', drink:'X', tags:['#테니스','#지적'], extras:[{label:'학력',value:'서울대 법학'},{label:'종교',value:'무교'},{label:'취미',value:'테니스 · 클래식'},{label:'이상형',value:'지적이고 독립적인 분'}], memo:'', comment:'반포에서 일해요. 말투는 차분한데 유머 코드가 있어서 두 번째 만남부터 편해진대요.', agent:'ag8', status:'available'},
+  {id:'p8', gender:'M', birth:1990, height:172, region:'서울 영등포구', workArea:'서울 중구 세종대로', job:'공무원', company:'서울시청', mbti:'ISFJ', smoke:'X', drink:'O', tags:['#요리','#안정적'], extras:[{label:'학력',value:'성균관대 행정학'},{label:'종교',value:'무교'},{label:'취미',value:'축구 · 요리'},{label:'이상형',value:'편안하고 따뜻한 분'}], memo:'', comment:'같은 동네(영등포)에 사는 직장 후배예요. 요리를 진짜 잘합니다.', agent:'ag1', status:'available'},
+  {id:'p9', gender:'M', birth:1997, height:179, region:'서울 관악구', workArea:'서울 관악구 봉천동', job:'약사', company:'한빛약국', mbti:'ENFP', smoke:'X', drink:'X', tags:['#클라이밍','#밝음'], extras:[{label:'학력',value:'서울대 약학'},{label:'종교',value:'기독교'},{label:'취미',value:'클라이밍 · 커피'},{label:'이상형',value:'웃음이 많은 분'}], memo:'', comment:'동네 약국 사장님. 텐션이 높고 리액션이 좋아서 처음 만난 사람도 금방 편해져요.', agent:'ag9', status:'progress'},
+  {id:'p10', gender:'M', birth:1993, height:174, region:'서울 광진구', workArea:'경기 성남시 판교', job:'프론트엔드 개발자', company:'카카오', mbti:'INFP', smoke:'X', drink:'O', tags:['#LP','#영화광'], extras:[{label:'학력',value:'숭실대 소프트웨어학'},{label:'종교',value:'무교'},{label:'취미',value:'LP · 영화'},{label:'이상형',value:'조용한 데이트를 좋아하는 분'}], memo:'', comment:'제 대학 후배. 감성적인 사람이라 LP 들으면서 이야기하는 걸 좋아해요.', agent:'ag2', status:'available'},
+  {id:'p11', gender:'M', birth:1995, height:181, region:'고양 일산', workArea:'경기 고양시 일산동구', job:'물리치료사', company:'일산재활의학과', mbti:'ESFJ', smoke:'X', drink:'X', tags:['#운동러','#부지런'], extras:[{label:'학력',value:'연세대 물리치료학'},{label:'종교',value:'천주교'},{label:'취미',value:'수영 · 러닝'},{label:'이상형',value:'건강한 습관을 가진 분'}], memo:'일산-서울 왕복이 힘들어서 서울 사는 분을 원해요.', comment:'운동을 정말 꾸준히 하는 사람.', agent:'ag7', status:'progress'},
+  {id:'p12', gender:'M', birth:1992, height:176, region:'수원 영통구', workArea:'경기 화성시 팔탄면', job:'제약 연구원', company:'한미약품', mbti:'ISTJ', smoke:'X', drink:'O', tags:['#등산','#한결같음'], extras:[{label:'학력',value:'성균관대 약학'},{label:'종교',value:'무교'},{label:'취미',value:'등산 · 정원가꾸기'},{label:'이상형',value:'차분하고 정돈된 분'}], memo:'', comment:'연구소에서 8년째. 말수 적지만 한 번 마음을 주면 오래가는 스타일이에요.', agent:'ag3', status:'available'},
+  {id:'p13', gender:'M', birth:1998, height:178, region:'서울 중랑구', workArea:'서울 중랑구 상봉동', job:'은행원', company:'KB국민은행', mbti:'ESTJ', smoke:'X', drink:'O', tags:['#야구','#애교'], extras:[{label:'학력',value:'건국대 경제학'},{label:'종교',value:'무교'},{label:'취미',value:'골프 · 야구직관'},{label:'이상형',value:'활발하고 계획적인 분'}], memo:'', comment:'저희 사촌 동생. 애교가 있고 사람 좋아하는 게 티가 나요.', agent:'ag4', status:'available'},
+  {id:'p14', gender:'M', birth:1991, height:180, region:'서울 동작구', workArea:'서울 강서구 마곡동', job:'대기업 영업', company:'LG전자', mbti:'ESFP', smoke:'X', drink:'O', tags:['#헬스','#인싸'], extras:[{label:'학력',value:'중앙대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'헬스 · 페스티벌'},{label:'이상형',value:'같이 신나게 놀 수 있는 분'}], memo:'', comment:'흑석동 자취 5년차. 사람 만나는 걸 좋아해서 소개팅 자리도 즐깁니다.', agent:'ag5', status:'progress'},
+  {id:'p15', gender:'M', birth:1996, height:177, region:'서울 서대문구', workArea:'서울 서대문구 연희동', job:'치과의사', company:'연희치과의원', mbti:'INTJ', smoke:'X', drink:'X', tags:['#스키','#성사'], extras:[{label:'학력',value:'연세대 치의학'},{label:'종교',value:'기독교'},{label:'취미',value:'스키 · 와인'},{label:'이상형',value:'신앙심 있고 차분한 분'}], memo:'', comment:'작년에 매칭돼서 지금 잘 만나고 있어요. 제 중개 인생 최고의 성과입니다.', agent:'ag6', status:'matched'},
 
-  {id:'p16', name:'이하윤', gender:'F', birth:1995, height:165, region:'서울 강남구', workArea:'서울 용산구 한강대로', job:'마케팅 매니저', company:'아모레퍼시픽', mbti:'ENFP', smoke:'X', drink:'O', tags:['#필라테스','#센스'], extras:[{label:'학력',value:'이화여대 광고홍보학'},{label:'종교',value:'무교'},{label:'취미',value:'필라테스 · 전시회'},{label:'이상형',value:'유머 코드가 맞는 분'}], memo:'', comment:'제 9년 지기. 밝고 센스 있는 친구라 처음 만나는 자리도 어색할 틈이 없어요.', agent:'ag1', status:'available'},
-  {id:'p17', name:'김나연', gender:'F', birth:1993, height:162, region:'서울 마포구', workArea:'서울 서대문구 신촌동', job:'간호사', company:'세브란스병원', mbti:'ISFJ', smoke:'X', drink:'X', tags:['#요가','#다정함'], extras:[{label:'학력',value:'가톨릭대 간호학'},{label:'종교',value:'천주교'},{label:'취미',value:'요가 · 베이킹'},{label:'이상형',value:'배려심 깊고 안정적인 분'}], memo:'교대 근무라 시간대가 조금 특이해요.', comment:'만나면 정말 잘 챙겨주는 사람이에요.', agent:'ag2', status:'progress'},
-  {id:'p18', name:'박서연', gender:'F', birth:1996, height:168, region:'서울 송파구', workArea:'경기 성남시 분당구 정자동', job:'UX 디자이너', company:'네이버', mbti:'INFP', smoke:'X', drink:'O', tags:['#그림','#브런치'], extras:[{label:'학력',value:'국민대 시각디자인'},{label:'종교',value:'무교'},{label:'취미',value:'드로잉 · 브런치'},{label:'이상형',value:'자기 일에 진심인 분'}], memo:'', comment:'잠실에서 혼자 살아요. 조용한 편이지만 취향 이야기가 시작되면 눈이 반짝입니다.', agent:'ag3', status:'available'},
-  {id:'p19', name:'최유진', gender:'F', birth:1994, height:160, region:'서울 성동구', workArea:'서울 영등포구 여의도동', job:'공인회계사', company:'딜로이트안진', mbti:'ESTJ', smoke:'X', drink:'X', tags:['#테니스','#일잘러'], extras:[{label:'학력',value:'서강대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'테니스 · 독서'},{label:'이상형',value:'자기 관리가 확실한 분'}], memo:'', comment:'일 잘하는 친구. 대화가 명확해서 만나면 시간이 금방 갑니다.', agent:'ag4', status:'progress'},
-  {id:'p20', name:'정다은', gender:'F', birth:1992, height:163, region:'서울 용산구', workArea:'서울 용산구 한남동', job:'초등교사', company:'한남초등학교', mbti:'ISFP', smoke:'X', drink:'O', tags:['#꽃','#산책'], extras:[{label:'학력',value:'서울교육대학교'},{label:'종교',value:'기독교'},{label:'취미',value:'플라워클래스 · 산책'},{label:'이상형',value:'말보다 행동으로 보여주는 분'}], memo:'', comment:'한남동에서 7년째. 꽃을 좋아하고 주말엔 남산을 걸어요. 정말 순한 사람입니다.', agent:'ag5', status:'available'},
-  {id:'p21', name:'강하늘', gender:'F', birth:1997, height:166, region:'서울 서초구', workArea:'서울 강남구 삼성동', job:'스타트업 마케터', company:'푸드테크 스타트업', mbti:'ENTP', smoke:'X', drink:'O', tags:['#클라이밍','#액티브'], extras:[{label:'학력',value:'한양대 미디어커뮤니케이션'},{label:'종교',value:'무교'},{label:'취미',value:'클라이밍 · 캠핑'},{label:'이상형',value:'새로운 걸 같이 시도하는 분'}], memo:'', comment:'에너지가 좋은 후배. 주말마다 뭔가 새로운 걸 하고 있어요.', agent:'ag6', status:'available'},
-  {id:'p22', name:'윤소희', gender:'F', birth:1991, height:164, region:'서울 영등포구', workArea:'서울 중구 을지로', job:'대기업 인사', company:'롯데지주', mbti:'ESFJ', smoke:'X', drink:'O', tags:['#골프','#리더십'], extras:[{label:'학력',value:'중앙대 심리학'},{label:'종교',value:'불교'},{label:'취미',value:'골프 · 여행'},{label:'이상형',value:'가족과 가까운 분'}], memo:'', comment:'직장에서 10년째 인사 업무. 사람 보는 눈이 좋고 챙기는 걸 좋아합니다.', agent:'ag7', status:'available'},
-  {id:'p23', name:'임지원', gender:'F', birth:1995, height:161, region:'성남 분당구', workArea:'경기 성남시 분당구 서현동', job:'약사', company:'분당온누리약국', mbti:'ISTJ', smoke:'X', drink:'X', tags:['#필라테스','#자립적'], extras:[{label:'학력',value:'이화여대 약학'},{label:'종교',value:'무교'},{label:'취미',value:'필라테스 · 독서'},{label:'이상형',value:'생활 습관이 건강한 분'}], memo:'', comment:'약국을 직접 운영해요. 성실하고 계획적인 성격이라 만나는 사람도 편안해집니다.', agent:'ag8', status:'progress'},
-  {id:'p24', name:'한채린', gender:'F', birth:1993, height:167, region:'서울 광진구', workArea:'서울 마포구 상암동', job:'콘텐츠 PD', company:'CJ ENM', mbti:'ENFJ', smoke:'X', drink:'O', tags:['#요리','#이야기꾼'], extras:[{label:'학력',value:'한양대 미디어커뮤니케이션'},{label:'종교',value:'무교'},{label:'취미',value:'요리 · 음악'},{label:'이상형',value:'표현을 아끼지 않는 분'}], memo:'', comment:'예능 PD 7년차. 이야기꾼이라 자리가 지루할 일이 없어요.', agent:'ag9', status:'progress'},
-  {id:'p25', name:'오지민', gender:'F', birth:1996, height:163, region:'서울 관악구', workArea:'서울 중구 소공동', job:'재무 분석가', company:'신세계', mbti:'INTJ', smoke:'X', drink:'X', tags:['#러닝','#똑부러짐'], extras:[{label:'학력',value:'서울시립대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'러닝 · 영화'},{label:'이상형',value:'생각이 깊은 분'}], memo:'', comment:'똑부러지는 후배. 말은 직설적이지만 속은 정 많고, 러닝 크루에서 만났어요.', agent:'ag1', status:'available'},
-  {id:'p26', name:'배수아', gender:'F', birth:1994, height:159, region:'고양 일산', workArea:'경기 고양시 일산동구', job:'물리치료사', company:'일산재활의학과', mbti:'ESFP', smoke:'', drink:'O', tags:['#댄스','#분위기메이커'], extras:[{label:'학력',value:'을지대 물리치료학'},{label:'종교',value:'천주교'},{label:'취미',value:'댄스 · 브런치'},{label:'이상형',value:'같이 춤출 수 있는 분'}], memo:'', comment:'분위기 메이커. 노래방 가면 마이크를 놓지 않아요.', agent:'ag2', status:'available'},
-  {id:'p27', name:'신예린', gender:'F', birth:1992, height:162, region:'수원 영통구', workArea:'경기 수원시 영통구', job:'중등 영어교사', company:'영통중학교', mbti:'INFJ', smoke:'X', drink:'X', tags:['#독서','#성사'], extras:[{label:'학력',value:'이화여대 영어교육'},{label:'종교',value:'기독교'},{label:'취미',value:'독서 · 플루트'},{label:'이상형',value:'신앙이 있고 따뜻한 분'}], memo:'', comment:'작년에 매칭돼서 지금 결혼을 준비하고 있어요.', agent:'ag3', status:'matched'},
-  {id:'p28', name:'조아라', gender:'F', birth:1998, height:165, region:'서울 중랑구', workArea:'서울 중랑구 면목동', job:'은행원', company:'우리은행', mbti:'ESTJ', smoke:'X', drink:'O', tags:['#배드민턴','#추진력'], extras:[{label:'학력',value:'경희대 경제학'},{label:'종교',value:'무교'},{label:'취미',value:'배드민턴 · 여행'},{label:'이상형',value:'계획 세우는 걸 좋아하는 분'}], memo:'', comment:'막내. 밝고 추진력 있어요. 여행 계획은 늘 본인이 짭니다.', agent:'ag4', status:'available'},
-  {id:'p29', name:'노유나', gender:'F', birth:1991, height:166, region:'서울 동작구', workArea:'서울 동작구 흑석동', job:'변호사', company:'법무법인 한결', mbti:'INTJ', smoke:'X', drink:'O', tags:['#골프','#독립적'], extras:[{label:'학력',value:'이화여대 법학'},{label:'종교',value:'무교'},{label:'취미',value:'골프 · 전시회'},{label:'이상형',value:'자기 세계가 확실한 분'}], memo:'', comment:'흑석동에서 사무실을 열었어요. 서로의 시간을 존중하는 관계를 원합니다.', agent:'ag5', status:'available'},
-  {id:'p30', name:'서지안', gender:'F', birth:1995, height:164, region:'서울 서대문구', workArea:'서울 서대문구 신촌동', job:'피부과 의사', company:'신촌 피부과', mbti:'ISFJ', smoke:'X', drink:'X', tags:['#요가','#차분함'], extras:[{label:'학력',value:'연세대 의학'},{label:'종교',value:'천주교'},{label:'취미',value:'요가 · 클래식'},{label:'이상형',value:'차분하게 오래 곁에 있을 분'}], memo:'전공의 마치고 개원 준비 중이라 지금은 잠시 보류 상태입니다.', comment:'', agent:'ag6', status:'hold'}
+  {id:'p16', gender:'F', birth:1995, height:165, region:'서울 강남구', workArea:'서울 용산구 한강대로', job:'마케팅 매니저', company:'아모레퍼시픽', mbti:'ENFP', smoke:'X', drink:'O', tags:['#필라테스','#센스'], extras:[{label:'학력',value:'이화여대 광고홍보학'},{label:'종교',value:'무교'},{label:'취미',value:'필라테스 · 전시회'},{label:'이상형',value:'유머 코드가 맞는 분'}], memo:'', comment:'제 9년 지기. 밝고 센스 있는 친구라 처음 만나는 자리도 어색할 틈이 없어요.', agent:'ag1', status:'available'},
+  {id:'p17', gender:'F', birth:1993, height:162, region:'서울 마포구', workArea:'서울 서대문구 신촌동', job:'간호사', company:'세브란스병원', mbti:'ISFJ', smoke:'X', drink:'X', tags:['#요가','#다정함'], extras:[{label:'학력',value:'가톨릭대 간호학'},{label:'종교',value:'천주교'},{label:'취미',value:'요가 · 베이킹'},{label:'이상형',value:'배려심 깊고 안정적인 분'}], memo:'교대 근무라 시간대가 조금 특이해요.', comment:'만나면 정말 잘 챙겨주는 사람이에요.', agent:'ag2', status:'progress'},
+  {id:'p18', gender:'F', birth:1996, height:168, region:'서울 송파구', workArea:'경기 성남시 분당구 정자동', job:'UX 디자이너', company:'네이버', mbti:'INFP', smoke:'X', drink:'O', tags:['#그림','#브런치'], extras:[{label:'학력',value:'국민대 시각디자인'},{label:'종교',value:'무교'},{label:'취미',value:'드로잉 · 브런치'},{label:'이상형',value:'자기 일에 진심인 분'}], memo:'', comment:'잠실에서 혼자 살아요. 조용한 편이지만 취향 이야기가 시작되면 눈이 반짝입니다.', agent:'ag3', status:'available'},
+  {id:'p19', gender:'F', birth:1994, height:160, region:'서울 성동구', workArea:'서울 영등포구 여의도동', job:'공인회계사', company:'딜로이트안진', mbti:'ESTJ', smoke:'X', drink:'X', tags:['#테니스','#일잘러'], extras:[{label:'학력',value:'서강대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'테니스 · 독서'},{label:'이상형',value:'자기 관리가 확실한 분'}], memo:'', comment:'일 잘하는 친구. 대화가 명확해서 만나면 시간이 금방 갑니다.', agent:'ag4', status:'progress'},
+  {id:'p20', gender:'F', birth:1992, height:163, region:'서울 용산구', workArea:'서울 용산구 한남동', job:'초등교사', company:'한남초등학교', mbti:'ISFP', smoke:'X', drink:'O', tags:['#꽃','#산책'], extras:[{label:'학력',value:'서울교육대학교'},{label:'종교',value:'기독교'},{label:'취미',value:'플라워클래스 · 산책'},{label:'이상형',value:'말보다 행동으로 보여주는 분'}], memo:'', comment:'한남동에서 7년째. 꽃을 좋아하고 주말엔 남산을 걸어요. 정말 순한 사람입니다.', agent:'ag5', status:'available'},
+  {id:'p21', gender:'F', birth:1997, height:166, region:'서울 서초구', workArea:'서울 강남구 삼성동', job:'스타트업 마케터', company:'푸드테크 스타트업', mbti:'ENTP', smoke:'X', drink:'O', tags:['#클라이밍','#액티브'], extras:[{label:'학력',value:'한양대 미디어커뮤니케이션'},{label:'종교',value:'무교'},{label:'취미',value:'클라이밍 · 캠핑'},{label:'이상형',value:'새로운 걸 같이 시도하는 분'}], memo:'', comment:'에너지가 좋은 후배. 주말마다 뭔가 새로운 걸 하고 있어요.', agent:'ag6', status:'available'},
+  {id:'p22', gender:'F', birth:1991, height:164, region:'서울 영등포구', workArea:'서울 중구 을지로', job:'대기업 인사', company:'롯데지주', mbti:'ESFJ', smoke:'X', drink:'O', tags:['#골프','#리더십'], extras:[{label:'학력',value:'중앙대 심리학'},{label:'종교',value:'불교'},{label:'취미',value:'골프 · 여행'},{label:'이상형',value:'가족과 가까운 분'}], memo:'', comment:'직장에서 10년째 인사 업무. 사람 보는 눈이 좋고 챙기는 걸 좋아합니다.', agent:'ag7', status:'available'},
+  {id:'p23', gender:'F', birth:1995, height:161, region:'성남 분당구', workArea:'경기 성남시 분당구 서현동', job:'약사', company:'분당온누리약국', mbti:'ISTJ', smoke:'X', drink:'X', tags:['#필라테스','#자립적'], extras:[{label:'학력',value:'이화여대 약학'},{label:'종교',value:'무교'},{label:'취미',value:'필라테스 · 독서'},{label:'이상형',value:'생활 습관이 건강한 분'}], memo:'', comment:'약국을 직접 운영해요. 성실하고 계획적인 성격이라 만나는 사람도 편안해집니다.', agent:'ag8', status:'progress'},
+  {id:'p24', gender:'F', birth:1993, height:167, region:'서울 광진구', workArea:'서울 마포구 상암동', job:'콘텐츠 PD', company:'CJ ENM', mbti:'ENFJ', smoke:'X', drink:'O', tags:['#요리','#이야기꾼'], extras:[{label:'학력',value:'한양대 미디어커뮤니케이션'},{label:'종교',value:'무교'},{label:'취미',value:'요리 · 음악'},{label:'이상형',value:'표현을 아끼지 않는 분'}], memo:'', comment:'예능 PD 7년차. 이야기꾼이라 자리가 지루할 일이 없어요.', agent:'ag9', status:'progress'},
+  {id:'p25', gender:'F', birth:1996, height:163, region:'서울 관악구', workArea:'서울 중구 소공동', job:'재무 분석가', company:'신세계', mbti:'INTJ', smoke:'X', drink:'X', tags:['#러닝','#똑부러짐'], extras:[{label:'학력',value:'서울시립대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'러닝 · 영화'},{label:'이상형',value:'생각이 깊은 분'}], memo:'', comment:'똑부러지는 후배. 말은 직설적이지만 속은 정 많고, 러닝 크루에서 만났어요.', agent:'ag1', status:'available'},
+  {id:'p26', gender:'F', birth:1994, height:159, region:'고양 일산', workArea:'경기 고양시 일산동구', job:'물리치료사', company:'일산재활의학과', mbti:'ESFP', smoke:'', drink:'O', tags:['#댄스','#분위기메이커'], extras:[{label:'학력',value:'을지대 물리치료학'},{label:'종교',value:'천주교'},{label:'취미',value:'댄스 · 브런치'},{label:'이상형',value:'같이 춤출 수 있는 분'}], memo:'', comment:'분위기 메이커. 노래방 가면 마이크를 놓지 않아요.', agent:'ag2', status:'available'},
+  {id:'p27', gender:'F', birth:1992, height:162, region:'수원 영통구', workArea:'경기 수원시 영통구', job:'중등 영어교사', company:'영통중학교', mbti:'INFJ', smoke:'X', drink:'X', tags:['#독서','#성사'], extras:[{label:'학력',value:'이화여대 영어교육'},{label:'종교',value:'기독교'},{label:'취미',value:'독서 · 플루트'},{label:'이상형',value:'신앙이 있고 따뜻한 분'}], memo:'', comment:'작년에 매칭돼서 지금 결혼을 준비하고 있어요.', agent:'ag3', status:'matched'},
+  {id:'p28', gender:'F', birth:1998, height:165, region:'서울 중랑구', workArea:'서울 중랑구 면목동', job:'은행원', company:'우리은행', mbti:'ESTJ', smoke:'X', drink:'O', tags:['#배드민턴','#추진력'], extras:[{label:'학력',value:'경희대 경제학'},{label:'종교',value:'무교'},{label:'취미',value:'배드민턴 · 여행'},{label:'이상형',value:'계획 세우는 걸 좋아하는 분'}], memo:'', comment:'막내. 밝고 추진력 있어요. 여행 계획은 늘 본인이 짭니다.', agent:'ag4', status:'available'},
+  {id:'p29', gender:'F', birth:1991, height:166, region:'서울 동작구', workArea:'서울 동작구 흑석동', job:'변호사', company:'법무법인 한결', mbti:'INTJ', smoke:'X', drink:'O', tags:['#골프','#독립적'], extras:[{label:'학력',value:'이화여대 법학'},{label:'종교',value:'무교'},{label:'취미',value:'골프 · 전시회'},{label:'이상형',value:'자기 세계가 확실한 분'}], memo:'', comment:'흑석동에서 사무실을 열었어요. 서로의 시간을 존중하는 관계를 원합니다.', agent:'ag5', status:'available'},
+  {id:'p30', gender:'F', birth:1995, height:164, region:'서울 서대문구', workArea:'서울 서대문구 신촌동', job:'피부과 의사', company:'신촌 피부과', mbti:'ISFJ', smoke:'X', drink:'X', tags:['#요가','#차분함'], extras:[{label:'학력',value:'연세대 의학'},{label:'종교',value:'천주교'},{label:'취미',value:'요가 · 클래식'},{label:'이상형',value:'차분하게 오래 곁에 있을 분'}], memo:'전공의 마치고 개원 준비 중이라 지금은 잠시 보류 상태입니다.', comment:'', agent:'ag6', status:'hold'}
 ];
 
 var SEED_MATCHES = [
@@ -898,6 +924,11 @@ function agentName(id){ return agentById(id).name; }
 function ageOf(p){ return new Date().getFullYear() - p.birth; }
 function birthLabel(p){ return String(p.birth).slice(2) + '년생'; }
 function ageLabel(p){ return birthLabel(p) + ' / ' + ageOf(p) + '세'; }
+function assetNo(a){
+  var n = String((a && a.id) || '').replace(/[^0-9]/g, '') || '0';
+  return n.length < 2 ? '0' + n : n;
+}
+function assetTitle(a){ return '매물 #' + assetNo(a); }
 function today(){
   var d = new Date();
   var m = String(d.getMonth()+1); if(m.length<2) m='0'+m;
@@ -960,7 +991,7 @@ function avatarSVG(p, v){
       '<path d="M95 95 h10" stroke-width="1.6"/></g>'
     : '';
 
-  return '<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + esc(p.name) + ' 프로필 일러스트">' +
+  return '<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + esc(assetTitle(p)) + ' 프로필 일러스트">' +
     '<defs><linearGradient id="' + uid + '" x1="0" y1="0" x2="1" y2="1">' +
     '<stop offset="0" stop-color="' + pal[0] + '"/><stop offset="1" stop-color="' + pal[1] + '"/>' +
     '</linearGradient></defs>' +
@@ -1026,13 +1057,13 @@ function seed(){
     var a = byId[m.aId], b = byId[m.bId];
     if(!a || !b) return;
     if(m.stage === '성사'){
-      a.history.push({at:m.at, by:agentName(a.agent), text:b.name + ' 님과 최종 성사 🎉 두 분 모두 진지하게 만남 중.'});
-      b.history.push({at:m.at, by:agentName(b.agent), text:a.name + ' 님과 최종 성사 🎉 결혼 준비 중.'});
+      a.history.push({at:m.at, by:agentName(a.agent), text:assetTitle(b) + ' 상대와 최종 성사 🎉 두 분 모두 진지하게 만남 중.'});
+      b.history.push({at:m.at, by:agentName(b.agent), text:assetTitle(a) + ' 상대와 최종 성사 🎉 결혼 준비 중.'});
       a.history.push({at:'2026-10-02', by:agentName(a.agent), text:'3회 만남 후 교제 확정. 서로 호감 표시 확인.'});
       b.history.push({at:'2026-10-02', by:agentName(b.agent), text:'3회 만남 후 교제 확정. 서로 호감 표시 확인.'});
     } else {
-      a.history.push({at:m.at, by:agentName(a.agent), text:b.name + ' 님과 매칭 제안 → 현재 "' + m.stage + '" 단계.'});
-      b.history.push({at:m.at, by:agentName(b.agent), text:a.name + ' 님과 매칭 제안 도착 → 현재 "' + m.stage + '" 단계.'});
+      a.history.push({at:m.at, by:agentName(a.agent), text:assetTitle(b) + ' 상대와 매칭 제안 → 현재 "' + m.stage + '" 단계.'});
+      b.history.push({at:m.at, by:agentName(b.agent), text:assetTitle(a) + '의 매칭 제안 도착 → 현재 "' + m.stage + '" 단계.'});
       if(m.stage !== '제안중'){
         a.history.push({at:'2026-11-12', by:agentName(a.agent), text:'상대 주선자와 통화. 다음 단계 일정 확인함.'});
       }
@@ -1098,8 +1129,8 @@ function filteredAssets(){
     }
     if(q){
       var extras = (a.extras || []).map(function(e){ return e.label + ' ' + e.value; }).join(' ');
-      var hay = [a.name, a.job, a.company, a.region, a.workArea, a.mbti, a.memo, extras,
-                 (a.tags||[]).join(' '), agentName(a.agent), a.smoke, a.drink,
+      var hay = [assetTitle(a), assetNo(a), '#' + assetNo(a), a.job, a.company, a.region, a.workArea,
+                 a.mbti, a.memo, extras, (a.tags||[]).join(' '), agentName(a.agent), a.smoke, a.drink,
                  (a.gender === 'M' ? '남성 남' : '여성 여')].join(' ').toLowerCase();
       if(hay.indexOf(q) === -1) return false;
     }
@@ -1180,15 +1211,17 @@ function cardHTML(a){
   var tags = (a.tags || []).slice(0,1).map(function(t){
     return '<span class="tag hl">' + esc(t) + '</span>';
   }).join('');
-  return '<button class="card" data-id="' + a.id + '" aria-label="' + esc(a.name) + ' 매물 상세 보기">' +
+  return '<button class="card" data-id="' + a.id + '" aria-label="' + esc(assetTitle(a)) + ' 상세 보기">' +
     '<div class="thumb">' + avatarSVG(a,0) + '</div>' +
     '<div class="body">' +
-      '<div class="l1"><span class="nm">' + esc(a.name) + '</span><span class="tag-pseudo">가명</span>' +
+      '<div class="l1"><span class="nm">' + esc(assetTitle(a)) + '</span>' +
+        '<span class="nmsum">' + birthLabel(a) + '/' + ageOf(a) + '세</span>' +
         '<span class="badge ' + st.cls + '">' + st.emoji + ' ' + st.label + '</span></div>' +
-      '<div class="ln">' + (a.gender === 'M' ? '남' : '여') + ' <span class="sep">·</span> ' + birthLabel(a) + '/' + ageOf(a) + '세 <span class="sep">·</span> <b>' + a.height + 'cm</b></div>' +
+      '<div class="ln">' + (a.gender === 'M' ? '남' : '여') + ' <span class="sep">·</span> <b>' + a.height + 'cm</b></div>' +
       '<div class="ln"><span class="lab">거주</span>' + esc(a.region) + ' <span class="sep">·</span> <span class="lab">근무</span>' + esc(a.workArea) + '</div>' +
       '<div class="ln"><b>' + esc(a.job) + '</b>' + (a.company ? ' <span class="sep">·</span> ' + esc(a.company) : '') + '</div>' +
-      '<div class="tags">' + oxChip('흡연', a.smoke) + oxChip('음주', a.drink) + tags +
+      '<div class="tags">' + oxChip('흡연', a.smoke) + oxChip('음주', a.drink) +
+        (a.mbti ? '<span class="tag mb">' + esc(a.mbti) + '</span>' : '') + tags +
         '<span class="agent-pill">' + agentById(a.agent).emoji + ' ' + esc(agentName(a.agent)) + '</span></div>' +
     '</div>' +
   '</button>';
@@ -1238,8 +1271,8 @@ function stepsHTML(stage){
 function personHTML(a){
   return '<div class="person" data-open="' + a.id + '" role="button" tabindex="0">' +
     '<span class="ava">' + avatarSVG(a,0) + '</span>' +
-    '<span class="pi"><span class="pn">' + esc(a.name) + ' · ' + ageOf(a) + '</span>' +
-    '<span class="pm">' + esc(a.region) + '</span>' +
+    '<span class="pi"><span class="pn">' + esc(assetTitle(a)) + '</span>' +
+    '<span class="pm">' + ageOf(a) + '세 · ' + esc(a.region) + '</span>' +
     '<span class="pa">' + agentById(a.agent).emoji + ' ' + esc(agentName(a.agent)) + ' 주선</span></span>' +
   '</div>';
 }
@@ -1339,10 +1372,10 @@ function shareLink(id){
 function shareMessage(target, mine){
   var who = agentName(target.agent);
   var head = '[만나방 매칭 제안 💘] ' + who + ' 중개사님! ';
-  var spec = target.name + '(' + birthLabel(target) + '/' + ageOf(target) + '세·' + target.region + '·' + target.job + ')';
+  var spec = assetTitle(target) + '(' + birthLabel(target) + '/' + ageOf(target) + '세·' + target.region + '·' + target.job + ')';
   var tail;
   if(mine){
-    tail = '에게 우리 ' + mine.name + '(' + birthLabel(mine) + '/' + ageOf(mine) + '세·' + mine.region + '·' + mine.job + ') 소개팅 한번 물어봐 주세요!';
+    tail = '에게 우리 ' + assetTitle(mine) + '(' + birthLabel(mine) + '/' + ageOf(mine) + '세·' + mine.region + '·' + mine.job + ') 소개팅 한번 물어봐 주세요!';
   } else {
     tail = '에게 우리 쪽 매물 소개팅 한번 물어봐 주세요!';
   }
@@ -1367,7 +1400,7 @@ function shareBlockHTML(a){
     ? mine.map(function(x){
         var other = x.agent !== state.session;
         return '<button class="spick' + (picked && picked.id === x.id ? ' on' : '') + '" data-action="share-pick" data-id="' + x.id + '">' +
-          '<b>' + esc(x.name) + '</b> ' + ageOf(x) + '세 · ' + esc(x.region) +
+          '<b>' + esc(assetTitle(x)) + '</b> ' + ageOf(x) + '세 · ' + esc(x.region) +
           (other ? ' <span style="font-size:10px;font-weight:700;color:#2C5FA8">' + esc(agentName(x.agent)) + ' 담당</span>' : '') +
           '</button>';
       }).join('')
@@ -1461,6 +1494,7 @@ function renderDetail(){
   oxRow += a.drink
     ? '<span class="ox-big">음주 <b class="' + (a.drink==='O'?'o':'x') + '">' + a.drink + '</b></span>'
     : '<span class="ox-big none">음주 미입력</span>';
+  if(a.mbti) oxRow += '<span class="ox-big mb">MBTI <b>' + esc(a.mbti) + '</b></span>';
 
   var tl = a.history.map(function(h){
     return '<div class="tl-item"><div class="dt">' + fmtDate(h.at) + ' · ' + esc(h.by) + '</div>' +
@@ -1476,7 +1510,7 @@ function renderDetail(){
   var danger = '';
   if(deleteArmed){
     danger = '<div class="danger-bar"><div class="dt">🗑 이 매물을 삭제할까요?</div>' +
-      '<p>' + esc(a.name) + ' 님이 목록에서 사라지고, 연결된 매칭 ' + related.length + '건도 함께 정리됩니다. 되돌릴 수 없어요.</p>' +
+      '<p>' + esc(assetTitle(a)) + '이 목록에서 사라지고, 연결된 매칭 ' + related.length + '건도 함께 정리됩니다. 되돌릴 수 없어요.</p>' +
       '<div class="row"><button class="btn ghost" data-action="delete-cancel">취소</button>' +
       '<button class="btn danger solid" data-action="delete-confirm">삭제하기</button></div></div>';
   }
@@ -1488,13 +1522,13 @@ function renderDetail(){
       proposal = '<div class="proposal"><h4>💌 매칭 제안하기</h4><p class="hint">제안할 수 있는 이성 매물이 없어요. 먼저 매물을 등록해 주세요.</p></div>';
     } else {
       proposal = '<div class="proposal"><h4>💌 매칭 제안하기</h4>' +
-        '<p class="hint">' + esc(a.name) + ' 님에게 소개할 이성 매물을 골라 주세요. 제안하면 두 매물이 <b>🟡 진행중</b>으로 바뀌고 매칭 현황판에 바로 올라갑니다.</p>' +
+        '<p class="hint">' + esc(assetTitle(a)) + '에 소개할 이성 매물을 골라 주세요. 제안하면 두 매물이 <b>🟡 진행중</b>으로 바뀌고 매칭 현황판에 바로 올라갑니다.</p>' +
         cands.map(function(c){
           var s = STATUS[c.status];
           var disabled = c.status === 'matched';
           return '<button class="cand' + (proposalPick === c.id ? ' on' : '') + (disabled ? ' off' : '') + '" data-action="pick" data-id="' + c.id + '"' + (disabled?' disabled':'') + '>' +
             '<span class="ca">' + avatarSVG(c,0) + '</span>' +
-            '<span class="ci"><span class="cn">' + esc(c.name) + ' · ' + ageOf(c) + '세 · ' + c.height + 'cm</span>' +
+            '<span class="ci"><span class="cn">' + esc(assetTitle(c)) + ' · ' + ageOf(c) + '세 · ' + c.height + 'cm</span>' +
             '<span class="cm">' + esc(c.region) + ' · ' + esc(c.workArea) + ' · ' + esc(c.job) + '</span></span>' +
             '<span class="cc">' + s.emoji + ' ' + s.label + '</span>' +
             '<span class="pick"></span>' +
@@ -1515,7 +1549,8 @@ function renderDetail(){
       '<div class="g-dots">' + dots + '</div>' +
     '</div>' +
     '<div class="detail-body">' +
-      '<div class="dhead"><h2 id="dName">' + esc(a.name) + '</h2>' +
+      '<div class="dhead"><h2 id="dName">' + esc(assetTitle(a)) +
+        '<span class="h2sum">' + esc(a.job) + (a.company ? ' · ' + esc(a.company) : '') + '</span></h2>' +
         '<span class="badge ' + st.cls + '" style="margin-left:auto;margin-top:6px">' + st.emoji + ' ' + st.label + '</span></div>' +
       '<div class="dsub">' + (a.gender === 'M' ? '남성' : '여성') + ' <span class="sep">|</span> ' + ageLabel(a) + ' <span class="sep">|</span> ' + a.height + 'cm <span class="sep">|</span> ' + esc(a.region) + '</div>' +
 
@@ -1528,7 +1563,7 @@ function renderDetail(){
         '<div class="spec"><dt>직업 · 직장</dt><dd>' + esc(a.job) + (a.company ? ' · ' + esc(a.company) : '') + '</dd></div>' +
       '</div>' +
 
-      '<div class="block"><h4>흡연 · 음주</h4><div class="ox-row">' + oxRow + '</div></div>' +
+      '<div class="block"><h4>흡연 · 음주' + (a.mbti ? ' · MBTI' : '') + '</h4><div class="ox-row">' + oxRow + '</div></div>' +
 
       ((a.extras && a.extras.length) ? '<div class="block"><h4>추가 정보</h4><div class="opt-list">' + extras + '</div></div>' : '') +
 
@@ -1586,7 +1621,7 @@ function setAssetStatus(id, status, silent){
     text: '상태 변경: ' + STATUS[prev].emoji + ' ' + STATUS[prev].label + ' → ' + STATUS[status].emoji + ' ' + STATUS[status].label
   });
   save(); renderAll();
-  if(!silent) toast(a.name + ' 님 상태를 ' + STATUS[status].label + '로 바꿨어요.');
+  if(!silent) toast(assetTitle(a) + ' 상태를 ' + STATUS[status].label + '로 바꿨어요.');
 }
 
 function setMatchStage(mid, stage){
@@ -1599,8 +1634,8 @@ function setMatchStage(mid, stage){
   if(stage === '성사'){ a.status = 'matched'; b.status = 'matched'; }
   else if(stage === '패스'){ a.status = 'available'; b.status = 'available'; }
   else { a.status = 'progress'; b.status = 'progress'; }
-  a.history.unshift({at: today(), by: agentName(state.session), text: '매칭 #' + mid.replace('mt','') + ' 단계 변경: ' + prev + ' → ' + stage + ' (' + b.name + ' 님)'});
-  b.history.unshift({at: today(), by: agentName(state.session), text: '매칭 #' + mid.replace('mt','') + ' 단계 변경: ' + prev + ' → ' + stage + ' (' + a.name + ' 님)'});
+  a.history.unshift({at: today(), by: agentName(state.session), text: '매칭 #' + mid.replace('mt','') + ' 단계 변경: ' + prev + ' → ' + stage + ' (' + assetTitle(b) + ')'});
+  b.history.unshift({at: today(), by: agentName(state.session), text: '매칭 #' + mid.replace('mt','') + ' 단계 변경: ' + prev + ' → ' + stage + ' (' + assetTitle(a) + ')'});
   save(); renderAll();
   if(detailId === a.id || detailId === b.id) renderDetail();
   toast('매칭 #' + mid.replace('mt','') + ' → ' + stage);
@@ -1612,8 +1647,8 @@ function propose(aId, bId){
   var mid = 'mt' + (state.seq.match++);
   state.matches.push({id:mid, aId:aId, bId:bId, stage:'제안중', at:today()});
   a.status = 'progress'; b.status = 'progress';
-  a.history.unshift({at: today(), by: agentName(state.session), text: b.name + ' 님(' + agentName(b.agent) + ' 담당)에게 매칭 제안. 매칭 #' + mid.replace('mt','') + ' 생성.'});
-  b.history.unshift({at: today(), by: agentName(state.session), text: a.name + ' 님(' + agentName(a.agent) + ' 담당)의 매칭 제안 도착. 매칭 #' + mid.replace('mt','') + '.'});
+  a.history.unshift({at: today(), by: agentName(state.session), text: assetTitle(b) + '(' + agentName(b.agent) + ' 담당)에게 매칭 제안. 매칭 #' + mid.replace('mt','') + ' 생성.'});
+  b.history.unshift({at: today(), by: agentName(state.session), text: assetTitle(a) + '(' + agentName(a.agent) + ' 담당)의 매칭 제안 도착. 매칭 #' + mid.replace('mt','') + '.'});
   save();
   proposalOpen = false; proposalPick = null;
   renderAll(); renderDetail();
@@ -1640,7 +1675,7 @@ function deleteAsset(id){
     var other = getAsset(otherId);
     if(other){
       if(other.status === 'progress' || other.status === 'matched') other.status = 'available';
-      other.history.unshift({at: today(), by: agentName(state.session), text: a.name + ' 님 매물이 삭제되어 매칭 #' + m.id.replace('mt','') + '이(가) 정리되었습니다.'});
+      other.history.unshift({at: today(), by: agentName(state.session), text: assetTitle(a) + '이(가) 삭제되어 매칭 #' + m.id.replace('mt','') + '이(가) 정리되었습니다.'});
     }
   });
   state.matches = state.matches.filter(function(m){ return m.aId !== id && m.bId !== id; });
@@ -1649,7 +1684,7 @@ function deleteAsset(id){
   if(detailId === id) closeDetail();
   if(editingId === id) closeForm();
   renderAll();
-  toast(a.name + ' 매물을 삭제했어요' + (related.length ? ' (매칭 ' + related.length + '건 정리)' : ''));
+  toast(assetTitle(a) + '을 삭제했어요' + (related.length ? ' (매칭 ' + related.length + '건 정리)' : ''));
 }
 
 /* ---------------- form modal ---------------- */
@@ -1709,7 +1744,6 @@ function openForm(id){
   document.getElementById('formDanger').innerHTML = '';
 
   function set(elId, v){ document.getElementById(elId).value = v == null ? '' : v; }
-  set('f-name', a ? a.name : '');
   set('f-birth', a ? a.birth : '');
   set('f-height', a ? a.height : '');
   set('f-region', a ? a.region : '');
@@ -1744,8 +1778,8 @@ function openForm(id){
 
   document.getElementById('formOverlay').hidden = false;
   document.body.style.overflow = 'hidden';
-  var nameEl = document.getElementById('f-name');
-  setTimeout(function(){ try { nameEl.focus(); } catch(e){} }, 60);
+  var firstEl = document.getElementById('f-birth');
+  setTimeout(function(){ try { firstEl.focus(); } catch(e){} }, 60);
 }
 
 function wireFormFoot(){
@@ -1758,7 +1792,7 @@ function wireFormFoot(){
     var n = relatedMatches(editingId).length;
     document.getElementById('formDanger').innerHTML =
       '<div class="danger-bar" style="margin:0 18px 8px"><div class="dt">🗑 정말 삭제할까요?</div>' +
-      '<p>' + esc(a ? a.name : '') + ' 님이 목록에서 사라지고, 연결된 매칭 ' + n + '건도 함께 정리됩니다. 되돌릴 수 없어요.</p>' +
+      '<p>' + (a ? esc(assetTitle(a)) : '') + '이 목록에서 사라지고, 연결된 매칭 ' + n + '건도 함께 정리됩니다. 되돌릴 수 없어요.</p>' +
       '<div class="row"><button type="button" class="btn ghost" id="formDeleteCancel">취소</button>' +
       '<button type="button" class="btn danger solid" id="formDeleteOk">삭제하기</button></div></div>';
     document.getElementById('formDeleteCancel').addEventListener('click', function(){
@@ -2030,13 +2064,12 @@ document.getElementById('assetForm').addEventListener('submit', function(e){
   e.preventDefault();
   var errEl = document.getElementById('formErr');
   var val = function(id){ return document.getElementById(id).value.trim(); };
-  var name = val('f-name'), region = val('f-region'), work = val('f-work'), job = val('f-job');
+  var region = val('f-region'), work = val('f-work'), job = val('f-job');
   var birth = Number(val('f-birth')), height = Number(val('f-height'));
   var bad = [];
-  ['f-name','f-region','f-work','f-job','f-birth','f-height'].forEach(function(id){
+  ['f-region','f-work','f-job','f-birth','f-height'].forEach(function(id){
     document.getElementById(id).classList.remove('bad');
   });
-  if(!name){ bad.push(['f-name','이름(가명)']); }
   if(!birth || birth < 1980 || birth > 2004){ bad.push(['f-birth','출생연도']); }
   if(!height || height < 140 || height > 210){ bad.push(['f-height','키']); }
   if(!region){ bad.push(['f-region','거주지']); }
@@ -2057,7 +2090,6 @@ document.getElementById('assetForm').addEventListener('submit', function(e){
     .filter(function(x){ return x.label || x.value; });
 
   var data = {
-    name: name,
     gender: formGender,
     birth: birth,
     height: height,
@@ -2087,14 +2119,15 @@ document.getElementById('assetForm').addEventListener('submit', function(e){
   } else {
     var id = 'p' + (state.seq.asset++);
     state.assets.push({
-      id: id, name: data.name, gender: data.gender, birth: data.birth, height: data.height,
+      id: id, gender: data.gender, birth: data.birth, height: data.height,
       region: data.region, workArea: data.workArea, job: data.job, company: data.company,
       mbti: data.mbti, smoke: data.smoke, drink: data.drink, tags: data.tags.length ? data.tags : [],
       extras: data.extras, memo: data.memo, comment: data.comment, agent: data.agent, status: data.status,
       history: [{at: today(), by: agentName(state.session), text: '새 매물로 등록했습니다.'}]
     });
     save(); renderAll(); closeForm();
-    toast(name + ' 님을 매물로 등록했어요 🏠');
+    var no = String(id).replace(/[^0-9]/g, ''); if(no.length < 2) no = '0' + no;
+    toast('매물 #' + no + '을 등록했어요 🏠');
   }
 });
 
