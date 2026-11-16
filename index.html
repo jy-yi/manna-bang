@@ -772,8 +772,9 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
           <option value="custom">직접 입력 (범위)</option>
         </select>
         <select id="fAgent" aria-label="담당 주선자 필터"></select>
-        <select id="fSort" aria-label="정렬 기준">
-          <option value="default">기본순</option>
+        <select id="fSort" aria-label="정렬 기준 (등록순·나이순)">
+          <option value="created-desc" selected>최신 등록순</option>
+          <option value="created-asc">오래된 등록순</option>
           <option value="age-asc">나이 어린 순</option>
           <option value="age-desc">나이 많은 순</option>
         </select>
@@ -1277,7 +1278,7 @@ function getMatch(id){
 }
 
 /* ---------------- filters ---------------- */
-var F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'default'};
+var F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'created-desc'};
 
 function ageRangeOf(){
   if(F.age === 'all') return null;
@@ -1322,11 +1323,15 @@ function filteredAssets(){
     }
     return true;
   }).sort(function(x,y){
-    if(F.sort === 'age-asc') return (ageOf(x) - ageOf(y)) || (Number(assetNo(x)) - Number(assetNo(y)));
-    if(F.sort === 'age-desc') return (ageOf(y) - ageOf(x)) || (Number(assetNo(x)) - Number(assetNo(y)));
-    var d = Number(assetNo(y)) - Number(assetNo(x));   /* 기본: 최신 등록(번호) 순 */
-    if(d !== 0) return d;
-    return STATUS[x.status].order - STATUS[y.status].order;
+    /* 등록 번호(id 일련번호) = 등록 순서. 신규 매물은 state.seq.asset 이 증가하며 p31, p32… 로 발급된다. */
+    var noX = Number(assetNo(x)), noY = Number(assetNo(y));
+    var seqAsc = noX - noY;
+    var seqDesc = noY - noX;
+    var statusOrder = STATUS[x.status].order - STATUS[y.status].order;
+    if(F.sort === 'age-asc') return (ageOf(x) - ageOf(y)) || seqAsc;
+    if(F.sort === 'age-desc') return (ageOf(y) - ageOf(x)) || seqAsc;
+    if(F.sort === 'created-asc') return seqAsc || statusOrder;   /* 오래된 등록순 */
+    return seqDesc || statusOrder;                               /* 최신 등록순(기본) */
   });
 }
 
@@ -1522,9 +1527,10 @@ function renderList(){
   }
   if(F.mine) parts.push('내 매물만 (' + agentName(state.session) + ')');
   if(F.q.trim()) parts.push('“' + esc(F.q.trim()) + '” 검색');
+  if(F.sort === 'created-asc') parts.push('오래된 등록순');
   if(F.sort === 'age-asc') parts.push('나이 어린 순');
   if(F.sort === 'age-desc') parts.push('나이 많은 순');
-  var filtered = (F.status!=='all' || F.gender!=='all' || F.age!=='all' || F.height!=='all' || F.agent!=='all' || F.mine || F.q.trim() || F.sort!=='default');
+  var filtered = (F.status!=='all' || F.gender!=='all' || F.age!=='all' || F.height!=='all' || F.agent!=='all' || F.mine || F.q.trim() || F.sort!=='created-desc');
   document.getElementById('resultLine').innerHTML = parts.filter(Boolean).join(' · ') +
     (filtered ? ' <button class="clear" id="resetFilter">필터 초기화</button>' : '');
 
@@ -2269,13 +2275,13 @@ function exitToGate(){
   document.getElementById('gate').hidden = false;
   document.getElementById('app').classList.remove('mode-guest');
   DEEP_ITEM = null;
-  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'default'};
+  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'created-desc'};
   qEl.value = '';
   document.getElementById('fGender').value = 'all';
   document.getElementById('fAge').value = 'all';
   document.getElementById('fHeight').value = 'all';
   document.getElementById('fAgent').value = 'all';
-  document.getElementById('fSort').value = 'default';
+  document.getElementById('fSort').value = 'created-desc';
   pwInput.value = '';
   gateErr.textContent = '';
   showGuestForm(false);
@@ -2385,13 +2391,13 @@ document.getElementById('fSort').addEventListener('change', function(e){ F.sort 
 document.getElementById('fMine').addEventListener('click', function(){ F.mine = !F.mine; renderList(); });
 document.getElementById('resultLine').addEventListener('click', function(e){
   if(e.target && e.target.id === 'resetFilter'){
-    F.status = 'all'; F.q = ''; F.gender = 'all'; F.age = 'all'; F.height = 'all'; F.agent = 'all'; F.mine = false; F.sort = 'default';
+    F.status = 'all'; F.q = ''; F.gender = 'all'; F.age = 'all'; F.height = 'all'; F.agent = 'all'; F.mine = false; F.sort = 'created-desc';
     qEl.value = '';
     document.getElementById('fGender').value = 'all';
     document.getElementById('fAge').value = 'all';
     document.getElementById('fHeight').value = 'all';
     document.getElementById('fAgent').value = 'all';
-    document.getElementById('fSort').value = 'default';
+    document.getElementById('fSort').value = 'created-desc';
     renderChips(); renderList();
   }
 });
@@ -2609,13 +2615,13 @@ document.getElementById('btnReset').addEventListener('click', function(){
   if(!window.confirm('데모 데이터를 처음 상태로 되돌릴까요? 등록·수정한 내용은 사라집니다.')) return;
   store.clear();
   state = seed();
-  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'default'};
+  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'created-desc'};
   qEl.value = '';
   document.getElementById('fGender').value = 'all';
   document.getElementById('fAge').value = 'all';
   document.getElementById('fHeight').value = 'all';
   document.getElementById('fAgent').value = 'all';
-  document.getElementById('fSort').value = 'default';
+  document.getElementById('fSort').value = 'created-desc';
   save(); renderAll();
   toast('데모 데이터를 초기화했어요.');
 });
