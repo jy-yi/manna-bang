@@ -484,6 +484,16 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .g-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:5px}
 .g-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:.2s}
 .g-dots i.on{background:#fff;width:16px;border-radius:99px}
+/* 주선자 전용 사진 저장·공유 (갤러리·라이트박스) */
+.g-tools{position:absolute;right:10px;top:10px;display:flex;gap:6px;z-index:3}
+.shot-btn{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 10px;border-radius:99px;
+  background:rgba(255,255,255,.93);color:var(--ink);font-size:11.5px;font-weight:800;white-space:nowrap;
+  box-shadow:0 3px 12px rgba(40,20,10,.22);backdrop-filter:blur(4px)}
+.shot-btn:active{transform:scale(.96)}
+.lightbox .lb-tools{position:absolute;bottom:44px;left:0;right:0;display:flex;justify-content:center;gap:8px}
+.lightbox .lb-btn{display:inline-flex;align-items:center;gap:5px;height:38px;padding:0 16px;border-radius:99px;
+  background:rgba(255,255,255,.94);color:#2C2320;font-size:13px;font-weight:850;box-shadow:0 6px 18px rgba(0,0,0,.34)}
+.lightbox .lb-btn:active{transform:scale(.97)}
 .detail-body{padding:16px 16px 22px}
 .dhead{display:flex;align-items:flex-start;gap:9px;margin-bottom:4px}
 .dhead h2{font-size:22px;font-weight:850;letter-spacing:-.045em;line-height:1.2;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 7px}
@@ -1143,6 +1153,10 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
   <button type="button" class="lb-nav l" data-lb="-1" aria-label="이전 사진">‹</button>
   <button type="button" class="lb-nav r" data-lb="1" aria-label="다음 사진">›</button>
   <div class="lb-n" id="lightboxNo"></div>
+  <div class="lb-tools" id="lbTools" hidden>
+    <button type="button" class="lb-btn" id="lbSave">📥 사진 저장</button>
+    <button type="button" class="lb-btn" id="lbShare" hidden>📤 공유</button>
+  </div>
 </div>
 
 <div class="toast-wrap" id="toastWrap"></div>
@@ -1153,6 +1167,9 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 
 /* ---------------- constants ---------------- */
 var STORAGE_KEY = 'mannabang.prototype.v3';
+var AUTH_KEY = 'mannabang.auth.v1';          /* 주선자 로그인 · localStorage · 1시간 */
+var GUEST_AUTH_KEY = 'mannabang.guest.v1';   /* 손님 입장 · sessionStorage · 탭을 닫으면 해제 */
+var AUTH_TTL = 60 * 60 * 1000;               /* 주선자 로그인 유지 기간: 1시간 */
 var MODE = 'agent';             /* 'agent' | 'guest' */
 
 var AGENTS = [
@@ -1353,7 +1370,54 @@ function agentById(id){
   for(var i=0;i<AGENTS.length;i++){ if(AGENTS[i].id===id) return AGENTS[i]; }
   return AGENTS[0];
 }
+function isAgentId(id){
+  if(!id) return false;
+  for(var i=0;i<AGENTS.length;i++){ if(AGENTS[i].id===id) return true; }
+  return false;
+}
 function agentName(id){ return agentById(id).name; }
+
+/* ---------------- auth (로그인 상태 유지) ---------------- */
+/* 주선자는 localStorage에 1시간, 손님은 sessionStorage에 탭이 살아있는 동안만 저장한다.
+   저장된 상태는 새로고침 후 복원되고, 명시적으로 나가기 하거나 주선자 1시간이 지나면 지운다. */
+var authExpired = false;
+function lsGet(k){ try { return window.localStorage.getItem(k); } catch(e){ return null; } }
+function lsSet(k,v){ try { window.localStorage.setItem(k,v); return true; } catch(e){ return false; } }
+function lsDel(k){ try { window.localStorage.removeItem(k); } catch(e){} }
+function ssGet(k){ try { return window.sessionStorage.getItem(k); } catch(e){ return null; } }
+function ssSet(k,v){ try { window.sessionStorage.setItem(k,v); return true; } catch(e){ return false; } }
+function ssDel(k){ try { window.sessionStorage.removeItem(k); } catch(e){} }
+
+function loadAuth(){
+  authExpired = false;
+  var raw = lsGet(AUTH_KEY);
+  if(raw){
+    var a = null;
+    try { a = JSON.parse(raw); } catch(e){ a = null; }
+    if(a && a.mode === 'agent' && isAgentId(a.session) && typeof a.expiresAt === 'number'){
+      if(Date.now() <= a.expiresAt) return {mode:'agent', session:a.session};
+      authExpired = true;
+    }
+    lsDel(AUTH_KEY);
+  }
+  var graw = ssGet(GUEST_AUTH_KEY);
+  if(graw){
+    var g = null;
+    try { g = JSON.parse(graw); } catch(e){ g = null; }
+    if(g && g.mode === 'guest') return {mode:'guest', session:'guest'};
+    ssDel(GUEST_AUTH_KEY);
+  }
+  return null;
+}
+function saveAgentAuth(id){
+  ssDel(GUEST_AUTH_KEY);
+  return lsSet(AUTH_KEY, JSON.stringify({mode:'agent', session:id, expiresAt: Date.now() + AUTH_TTL}));
+}
+function saveGuestAuth(){
+  lsDel(AUTH_KEY);
+  return ssSet(GUEST_AUTH_KEY, JSON.stringify({mode:'guest', session:'guest'}));
+}
+function clearAuth(){ lsDel(AUTH_KEY); ssDel(GUEST_AUTH_KEY); }
 function ageOf(p){ return new Date().getFullYear() - p.birth; }
 function birthLabel(p){ return String(p.birth).slice(2) + '년생'; }
 function ageLabel(p){ return birthLabel(p) + ' / ' + ageOf(p) + '세'; }
@@ -2351,6 +2415,12 @@ function renderDetail(){
     '<div class="gallery' + (ph.length ? ' has-shot' : '') + '">' + slides +
       (slideN > 1 ? '<button class="g-arrow l" data-action="slide" data-dir="-1" aria-label="이전 사진">‹</button>' +
       '<button class="g-arrow r" data-action="slide" data-dir="1" aria-label="다음 사진">›</button>' : '') +
+      ((ph.length && !guest)
+        ? '<div class="g-tools">' +
+            '<button type="button" class="shot-btn" data-action="save-photo" data-i="' + slideIdx + '">📥 사진 저장</button>' +
+            (canSharePhoto() ? '<button type="button" class="shot-btn" data-action="share-photo" data-i="' + slideIdx + '">📤 공유</button>' : '') +
+          '</div>'
+        : '') +
       '<div class="g-dots">' + dots + '</div>' +
     '</div>' +
     '<div class="detail-body">' +
@@ -2573,6 +2643,76 @@ function thumbHTML(a){
     (ph.length > 1 ? '<span class="ph-n">📷 ' + ph.length + '</span>' : '');
 }
 function slideNOf(a){ var n = photosOf(a).length; return n || 3; }
+
+/* ---------------- 사진 저장·공유 (주선자 전용) ----------------
+   등록된 사진(Data URL)을 Blob으로 바꿔 내려받거나, 파일 공유가 되는 브라우저에서는
+   navigator.share로 바로 카톡·문자에 보낸다. 손님 모드(isGuest)에서는 노출하지 않는다. */
+function dataUrlToBlob(dataUrl){
+  var s = String(dataUrl || '');
+  var comma = s.indexOf(',');
+  if(comma < 0) return null;
+  var head = s.slice(0, comma), body = s.slice(comma + 1);
+  var m = head.match(/data:([^;,]+)/);
+  var mime = (m && m[1]) || 'image/jpeg';
+  var bin;
+  try { bin = atob(body); } catch(e){ return null; }
+  var n = bin.length, arr = new Uint8Array(n);
+  for(var i=0;i<n;i++) arr[i] = bin.charCodeAt(i);
+  try { return new Blob([arr], {type: mime}); } catch(e){ return null; }
+}
+function photoNo(a){
+  var no = String(a && a.id ? a.id : '').replace(/[^0-9]/g, '');
+  if(no.length < 2) no = '0' + no;
+  return no;
+}
+function photoFileName(a, idx){ return '만나방_매물' + photoNo(a) + '_' + (idx + 1) + '.jpg'; }
+function canSharePhoto(){
+  try { return !!(window.File && navigator.canShare && navigator.share); } catch(e){ return false; }
+}
+function savePhoto(idx){
+  if(isGuest()) return;
+  var a = getAsset(detailId);
+  if(!a) return;
+  var ph = photosOf(a);
+  if(!ph.length) return;
+  if(!(idx >= 0 && idx < ph.length)) idx = 0;
+  var blob = dataUrlToBlob(ph[idx]);
+  if(!blob){ toast('사진을 저장하지 못했어요 · 사진을 길게 눌러 저장해 주세요'); return; }
+  var name = photoFileName(a, idx);
+  var url;
+  try { url = URL.createObjectURL(blob); } catch(e){ url = ph[idx]; }
+  var link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  link.rel = 'noopener';
+  document.body.appendChild(link);
+  try { link.click(); } catch(e){}
+  setTimeout(function(){
+    if(link.parentNode) link.parentNode.removeChild(link);
+    if(url && url.indexOf('blob:') === 0){ try { URL.revokeObjectURL(url); } catch(e){} }
+  }, 4000);
+  toast('사진을 저장했어요 📥 안 되면 사진을 길게 눌러 저장할 수도 있어요');
+}
+function sharePhoto(idx){
+  if(isGuest()) return;
+  var a = getAsset(detailId);
+  if(!a) return;
+  var ph = photosOf(a);
+  if(!ph.length) return;
+  if(!(idx >= 0 && idx < ph.length)) idx = 0;
+  var blob = dataUrlToBlob(ph[idx]);
+  if(!blob){ savePhoto(idx); return; }
+  var file;
+  try { file = new File([blob], photoFileName(a, idx), {type: blob.type || 'image/jpeg'}); }
+  catch(e){ savePhoto(idx); return; }
+  var data = {files: [file], title: '만나방 · ' + assetTitle(a), text: '이 사람 어때요? 🏠 만나방' };
+  if(!(navigator.canShare && navigator.canShare({files: [file]}))){ savePhoto(idx); return; }
+  navigator.share(data).catch(function(err){
+    if(err && err.name === 'AbortError') return;
+    toast('공유가 막혀 있어 사진으로 저장했어요 📥');
+    savePhoto(idx);
+  });
+}
 function photoBytes(dataUrl){
   if(typeof dataUrl !== 'string') return 0;
   var i = dataUrl.indexOf(',');
@@ -2720,6 +2860,10 @@ function openLightbox(a, i){
   document.getElementById('lightboxNo').textContent = ph.length > 1 ? (i + 1) + ' / ' + ph.length : '';
   var navs = document.querySelectorAll('#lightbox .lb-nav');
   Array.prototype.forEach.call(navs, function(b){ b.hidden = ph.length < 2; });
+  var tools = document.getElementById('lbTools');
+  if(tools) tools.hidden = isGuest();
+  var shBtn = document.getElementById('lbShare');
+  if(shBtn) shBtn.hidden = !canSharePhoto();
   document.getElementById('lightbox').hidden = false;
   if(!lightOpen){
     lightOpen = true;
@@ -3021,7 +3165,7 @@ try {
   DEEP_ITEM = qp.get('item');
 } catch(e){ DEEP_ITEM = null; }
 
-function enterApp(deepId, mode){
+function enterApp(deepId, mode, restored){
   MODE = (mode === 'guest') ? 'guest' : 'agent';
   document.getElementById('gate').hidden = true;
   document.getElementById('app').hidden = false;
@@ -3031,6 +3175,8 @@ function enterApp(deepId, mode){
   if(deepId && getAsset(deepId)){
     openDetail(deepId);
     toast(isGuest() ? '공유 링크로 열었어요 · 읽기 전용 📩' : '공유 링크로 매물을 열었어요 📩');
+  } else if(restored){
+    /* 새로고침 복원 · 환영 토스트는 생략 */
   } else if(isGuest()){
     toast('👀 손님 모드로 둘러보는 중 · 읽기 전용이에요');
   } else {
@@ -3061,11 +3207,13 @@ function tryLogin(){
   pwInput.value = '';
   state.session = gateAgent;
   save();
+  saveAgentAuth(gateAgent);
   enterApp(DEEP_ITEM, 'agent');
   return true;
 }
 
 function exitToGate(){
+  clearAuth();
   MODE = 'agent';
   closeDetail(true);
   closeForm(true);
@@ -3117,6 +3265,7 @@ function submitGuest(){
   ge.textContent = '';
   el.value = '';
   showGuestForm(false);
+  saveGuestAuth();
   enterApp(DEEP_ITEM, 'guest');
 }
 document.getElementById('guestEnter').addEventListener('click', submitGuest);
@@ -3241,6 +3390,10 @@ detailOverlay.addEventListener('click', function(e){
     renderDetail();
   } else if(act === 'zoom'){
     openLightbox(a, Number(btn.getAttribute('data-i')) || 0);
+  } else if(act === 'save-photo'){
+    savePhoto(Number(btn.getAttribute('data-i')) || 0);
+  } else if(act === 'share-photo'){
+    sharePhoto(Number(btn.getAttribute('data-i')) || 0);
   } else if(act === 'status'){
     deleteArmed = false;
     setAssetStatus(detailId, btn.getAttribute('data-status'));
@@ -3340,6 +3493,8 @@ document.getElementById('photoGrid').addEventListener('click', function(e){
   if(!lb) return;
   lb.addEventListener('click', function(e){
     if(e.target.closest('#lightboxClose')){ closeLightbox(); return; }
+    if(e.target.closest('#lbSave')){ savePhoto(lightIdx); return; }
+    if(e.target.closest('#lbShare')){ sharePhoto(lightIdx); return; }
     var nav = e.target.closest('[data-lb]');
     if(nav){ moveLightbox(Number(nav.getAttribute('data-lb'))); return; }
     closeLightbox();
@@ -3552,7 +3707,16 @@ document.addEventListener('keydown', function(e){
 renderAll();
 window.__mannabang = {get state(){ return state; }, get mode(){ return MODE; }, setMode:function(m){ MODE = m; },
   render:renderAll, filtered:filteredAssets, shareMessage:shareMessage, guestMessage:guestMessage, shareLink:shareLink};
-if(DEEP_ITEM && getAsset(DEEP_ITEM)) enterApp(DEEP_ITEM, 'guest');
+/* 저장된 로그인 상태가 유효하면 게이트를 건너뛰고 그 모드로 바로 복원한다.
+   ?item= 공유 링크로 들어와도 이미 주선자로 로그인돼 있으면 주선자 권한을 유지한다. */
+var savedAuth = loadAuth();
+if(savedAuth){
+  if(savedAuth.mode === 'agent' && state.session !== savedAuth.session){ state.session = savedAuth.session; save(); }
+  enterApp(DEEP_ITEM, savedAuth.mode, true);
+} else {
+  if(authExpired) gateErr.textContent = '보안을 위해 1시간이 지나 자동으로 로그아웃됐어요. 다시 로그인해 주세요.';
+  if(DEEP_ITEM && getAsset(DEEP_ITEM)) enterApp(DEEP_ITEM, 'guest');
+}
 })();
 </script>
 </body>
