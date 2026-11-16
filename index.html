@@ -2371,7 +2371,7 @@ function renderDetail(){
   oxRow += a.drink
     ? '<span class="ox-big">음주 <b class="' + (a.drink==='O'?'o':'x') + '">' + a.drink + '</b></span>'
     : '<span class="ox-big none">음주 미입력</span>';
-  if(a.mbti) oxRow += '<span class="ox-big mb">MBTI <b>' + esc(a.mbti) + '</b></span>';
+  if(a.mbti) oxRow += '<span class="ox-big mb"><b>' + esc(a.mbti) + '</b></span>';
 
   var tl = a.history.map(function(h){
     return '<div class="tl-item"><div class="dt">' + fmtDate(h.at) + ' · ' + esc(h.by) + '</div>' +
