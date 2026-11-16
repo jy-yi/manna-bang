@@ -323,6 +323,66 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .card .l4 .agent-pill{margin-left:auto}
 .agent-pill{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--ink-2);background:var(--bg-2);padding:2px 7px;border-radius:99px}
 
+/* 바라는 조건 (이상형·필수 조건) */
+.card .wish{margin-top:5px;display:flex;align-items:center;gap:5px;min-width:0;
+  background:#FDF4F0;border:1px solid #F7E1D8;border-radius:8px;padding:4px 7px}
+.card .wish .wk{flex:0 0 auto;font-size:10px;font-weight:820;color:#A9564A;letter-spacing:-.02em}
+.card .wish .wv{font-size:11px;font-weight:700;color:#7C574C;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .wish .wmore{font-weight:850;color:#A9564A}
+.wish-list{display:flex;flex-wrap:wrap;gap:5px}
+.wish-chip{font-size:12px;font-weight:700;padding:5px 10px;border-radius:99px;background:#FDF4F0;
+  border:1px solid #F7E1D8;color:#A9564A;white-space:nowrap;letter-spacing:-.01em}
+
+/* 마담 리뷰 */
+.rev-block .rev-n{font-weight:700;color:#85716A;letter-spacing:0;text-transform:none}
+.rev-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 11px;margin-bottom:6px}
+.rev-item.pri{background:#FBF7FD;border-color:#EDE0F4}
+.rev-top{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--ink-2);font-weight:650}
+.rev-top b{font-weight:820;color:var(--ink)}
+.rev-av{font-size:12.5px;line-height:1}
+.rev-tag{font-size:10px;font-weight:800;padding:2px 6px;border-radius:5px;letter-spacing:-.01em}
+.rev-tag.pub{background:var(--mint-soft);color:var(--mint-ink)}
+.rev-tag.pri{background:var(--violet-soft);color:#7C5E9E}
+.rev-tag.m{background:var(--bg-2);color:var(--muted);font-weight:750}
+.rev-hint{font-size:11px;font-weight:650;color:var(--muted);line-height:1.5;margin:2px 0 6px}
+.rev-done{margin-top:2px;font-size:11.5px;font-weight:750;color:var(--mint-ink);background:var(--mint-soft);border-radius:10px;padding:9px 11px;line-height:1.45}
+.rev-form-top{font-size:11.5px;font-weight:820;color:var(--ink-2);letter-spacing:-.02em}
+.rev-date{margin-left:auto;font-size:10.5px;font-weight:650;color:var(--muted);white-space:nowrap}
+.rev-text{font-size:12.5px;line-height:1.58;color:var(--ink-2);margin-top:5px}
+.rev-foot{display:flex;align-items:center;gap:6px;margin-top:7px}
+.rev-ask{font-size:10.5px;font-weight:800;color:#A95344}
+.rev-mini{font-size:10.5px;font-weight:750;color:var(--ink-2);background:var(--bg-2);border-radius:7px;padding:4px 8px}
+.rev-mini:hover{background:#F1E6DE}
+.rev-mini.del{color:#A95344;background:#FAE6DC}
+.rev-mini del:hover{background:#F6D9CB}
+.rev-empty{font-size:12px;color:var(--muted);background:var(--bg-2);border-radius:10px;padding:9px 11px;line-height:1.5}
+.rev-new{width:100%;margin-top:2px;padding:10px;border-radius:11px;border:1.5px dashed var(--line-2);
+  background:#fff;font-size:12.5px;font-weight:800;color:var(--mint-ink);transition:.14s}
+.rev-new:hover{border-color:var(--mint);background:var(--mint-soft)}
+.rev-form{margin-top:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;
+  display:flex;flex-direction:column;gap:7px;box-shadow:var(--shadow-s)}
+.rev-seg{background:var(--bg-2)}
+.rev-seg button{font-size:11.5px;font-weight:800;padding:8px 6px}
+.rev-input{width:100%;min-height:72px;border:1.5px solid var(--line);border-radius:10px;padding:9px 10px;
+  font-size:12.5px;line-height:1.5;resize:vertical;outline:none;background:#fff;transition:.14s}
+.rev-input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(212,121,106,.1)}
+.rev-form .hint{font-size:10.5px;color:var(--muted);font-weight:650;line-height:1.45;margin-top:-3px}
+.rev-form-row{display:flex;gap:6px}
+.rev-form-row .btn{flex:1;justify-content:center;padding:10px}
+
+/* 매칭 현황판 안의 리뷰 진입 */
+.brev-row{display:flex;gap:6px;margin-top:10px}
+.brev-pick{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:750;
+  color:var(--ink-2);background:var(--bg-2);border-radius:9px;padding:7px 6px;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;transition:.14s}
+.brev-pick:hover{background:#F2E7DF;color:var(--ink)}
+.brev-pick.on{background:var(--mint-soft);color:var(--mint-ink)}
+.brev-pick b{font-weight:850}
+.brev-pick .bp-n{font-weight:650;color:#B4A099}
+.brev-panel{margin-top:9px;border-top:1px dashed var(--line-2);padding-top:10px}
+.brev-head{font-size:11.5px;font-weight:820;color:var(--ink-2);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.brev-head .bp-close{margin-left:auto;font-size:11px;font-weight:750;color:var(--muted);background:var(--bg-2);border-radius:7px;padding:3px 8px}
+
 .empty{
   text-align:center;padding:52px 18px;background:#fff;border:1px dashed var(--line-2);border-radius:var(--r-md);color:var(--muted);
 }
@@ -562,6 +622,20 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
   border:1.5px dashed var(--line-2);background:#fff;font-size:12.5px;font-weight:750;color:var(--ink-2);
 }
 .add-extra:hover{border-color:var(--mint);color:var(--mint-ink);background:var(--mint-soft)}
+.wchips{display:flex;flex-wrap:wrap;gap:6px}
+.wchip{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;padding:7px 11px;border-radius:99px;
+  background:var(--bg-2);border:1.5px solid var(--line);color:var(--ink-2);transition:.14s;white-space:nowrap;letter-spacing:-.01em}
+.wchip:hover{border-color:var(--line-2);color:var(--ink)}
+.wchip.on{background:var(--mint-soft);border-color:var(--mint);color:var(--mint-ink);font-weight:820}
+.wchip.on::after{content:'✓';font-size:9.5px;font-weight:900;line-height:1}
+.wadd{display:flex;gap:6px}
+.wadd input{width:auto;flex:1;min-width:0;background:#fff;border:1.5px solid var(--line);border-radius:11px;
+  padding:10px 11px;font-size:12.5px;outline:none;transition:.14s}
+.wadd input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(212,121,106,.1)}
+.wadd button{flex:0 0 auto;padding:0 15px;border-radius:11px;background:var(--mint-soft);color:var(--mint-ink);
+  font-size:12.5px;font-weight:800;border:1.5px solid transparent;transition:.14s}
+.wadd button:hover{border-color:var(--mint)}
+.field label .lbl-sub{font-size:10.5px;font-weight:650;color:var(--muted)}
 .form-foot{display:flex;gap:8px;padding:6px 18px 18px;position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 72%,rgba(252,249,245,.2))}
 .form-foot .btn{flex:1;justify-content:center;padding:13px}
 
@@ -749,7 +823,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
       <div class="filters">
         <div class="search">
           <span class="ico">🔍</span>
-          <input id="q" type="search" placeholder="번호 · 직업 · 거주지 · 근무지 검색" aria-label="매물 검색">
+          <input id="q" type="search" placeholder="번호 · 직업 · 거주지 · 바라는 조건 검색" aria-label="매물 검색">
           <button class="clr" id="qClear" hidden aria-label="검색어 지우기">✕</button>
         </div>
         <select id="fGender" aria-label="성별 필터">
@@ -931,13 +1005,23 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
         </div>
 
         <div class="field wide">
+          <label>💘 바라는 조건 <span class="lbl-sub">이상형 · 필수 조건</span></label>
+          <div class="wchips" id="wantsChips" role="group" aria-label="자주 쓰는 바라는 조건"></div>
+          <div class="wadd">
+            <input id="f-wantInput" type="text" placeholder="직접 입력 후 Enter (예: 자녀 없음, 같은 동네)" aria-label="바라는 조건 직접 입력" autocomplete="off">
+            <button type="button" id="wantsAdd">추가</button>
+          </div>
+          <span class="hint">칩을 눌러 고르고, 목록에 없으면 직접 입력해 추가하세요. 쉼표(,)로 여러 개를 한 번에 넣을 수 있어요.</span>
+        </div>
+
+        <div class="field wide">
           <label for="f-tags">매력 태그 (쉼표 구분)</label>
           <input id="f-tags" placeholder="러닝, 연봉상위">
         </div>
 
         <div class="field wide">
           <label for="f-ideal">비고 (자유 메모)</label>
-          <textarea id="f-ideal" placeholder="학력, 종교, 이상형 등 정해진 항목이 아닌 내용은 여기에 자유롭게 적어 주세요."></textarea>
+          <textarea id="f-ideal" placeholder="학력, 종교 등 정해진 항목이 아닌 내용은 여기에 자유롭게 적어 주세요."></textarea>
         </div>
 
         <div class="field wide">
@@ -1009,6 +1093,96 @@ var STATUS = {
 var STAGES = ['제안중','일정 조율','만남 완료','애프터','성사','패스'];
 var LIVE_STAGES = ['제안중','일정 조율','만남 완료','애프터'];
 
+/* ---------------- 바라는 조건 (이상형·필수 조건) ---------------- */
+var WANT_PRESETS = ['담배 X','종교 X','음주 적당히','비슷한 나이','서울/수도권','키 175cm 이상','초혼','주말 데이트 가능','연락 자주','반려동물 OK'];
+
+function cleanWants(list){
+  var out = [], seen = {};
+  (list || []).forEach(function(w){
+    var s = String(w == null ? '' : w).replace(/\s+/g, ' ').trim().replace(/^#/, '');
+    if(!s) return;
+    var k = s.toLowerCase();
+    if(seen[k]) return;
+    seen[k] = 1;
+    out.push(s);
+  });
+  return out;
+}
+function wantsOf(a){ return cleanWants((a && a.wants) || []); }
+function wishLineHTML(a){
+  var w = wantsOf(a);
+  var head = w.slice(0, 2).join(' · ');
+  var more = w.length > 2 ? ' +' + (w.length - 2) : '';
+  return '<div class="wish"><span class="wk">💘 바라는 조건</span>' +
+    '<span class="wv">' + esc(head) + (more ? '<b class="wmore">' + more + '</b>' : '') + '</span></div>';
+}
+
+/* ---------------- 마담 리뷰 (주선자 전용 후기) ----------------
+   vis: 'public' → 주선자 9명 모두 공개 / 'private' → 작성한 주선자만 보임.
+   손님(guest) 모드에서는 목록·작성 전면 숨김. */
+var REV_VIS = {
+  public:  {short:'🌐 공개',   long:'🌐 마담 공개',  cls:'pub'},
+  private: {short:'🔒 비공개', long:'🔒 나만 보기', cls:'pri'}
+};
+
+/* 샘플 리뷰 — 실제 매칭(mt1~mt6)에 연결된 것만. m: 매칭 id */
+var SEED_REVIEWS = {
+  /* 매칭 #1 — p3(ag3) ↔ p17(ag2) */
+  p17: [{id:'rv1', by:'ag3', m:'mt1', at:'2026-11-08', vis:'public',
+         text:'매칭 #1로 두 번 만났어요. 말은 적은데 배려가 몸에 배어 있고, 시간 약속은 꼭 지킵니다. 조용한 분과 잘 맞을 것 같아요.'}],
+  p3:  [{id:'rv2', by:'ag2', m:'mt1', at:'2026-11-09', vis:'private',
+         text:'상대가 “대화가 편했다”고 했지만 첫 만남에서 긴장을 조금 탔어요. 두 번째 만남에서 훨씬 좋아졌으니 참고만 해 주세요.'}],
+  /* 매칭 #2 — p9(ag9) ↔ p19(ag4) */
+  p19: [{id:'rv3', by:'ag9', m:'mt2', at:'2026-11-06', vis:'public',
+         text:'일정 조율 단계까지 왔는데 서로 연락이 빨라요. 명확하게 이야기하는 편이라 진행이 수월합니다.'}],
+  /* 매칭 #3 — p11(ag7) ↔ p23(ag8) */
+  p23: [{id:'rv4', by:'ag7', m:'mt3', at:'2026-10-30', vis:'public',
+         text:'매칭 #3으로 만남 완료. 상대가 “대화가 차분해서 좋았다”고 했어요. 제 매물과 성향이 잘 맞습니다.'}],
+  p11: [{id:'rv5', by:'ag8', m:'mt3', at:'2026-10-31', vis:'public',
+         text:'서로 인사가 편했던 것 같아요. 일산-서울 이동을 걱정했는데 상대가 먼저 배려해 줬습니다.'}],
+  /* 매칭 #4 — p14(ag5) ↔ p24(ag9) */
+  p24: [{id:'rv6', by:'ag5', m:'mt4', at:'2026-10-22', vis:'private',
+         text:'애프터까지 갔는데 상대가 “말이 많은 편”이라고 했어요. 저는 괜찮았지만, 조용한 분을 원하시면 미리 말씀드리는 게 좋겠습니다.'}],
+  /* 매칭 #5 — p15(ag6) ↔ p27(ag3) : 성사 */
+  p15: [{id:'rv7', by:'ag3', m:'mt5', at:'2026-10-05', vis:'public',
+         text:'성사된 매칭이에요. 처음부터 서로 예의가 좋았고, 결혼 준비도 차분하게 진행 중이라고 들었습니다.'}],
+  p27: [{id:'rv8', by:'ag6', m:'mt5', at:'2026-10-06', vis:'private',
+         text:'제 매물이 “상대가 신앙생활을 존중해 줘서 좋다”고 했어요. 이 부분은 다음 소개에도 참고하겠습니다.'}],
+  /* 매칭 #6 — p16(ag1) ↔ p2(ag7) */
+  p16: [{id:'rv9', by:'ag7', m:'mt6', at:'2026-11-15', vis:'public',
+         text:'매칭 #6으로 제안했어요. 첫 통화에서 대화가 자연스럽게 이어졌다는 이야기를 들었습니다.'}]
+};
+
+function cloneReview(r){
+  return {id:r.id, by:r.by, m:r.m, at:r.at, vis:r.vis === 'private' ? 'private' : 'public', text:r.text};
+}
+function reviewsOf(a){ return (a && Array.isArray(a.reviews)) ? a.reviews : []; }
+function visibleReviews(a){
+  if(isGuest()) return [];
+  return reviewsOf(a).filter(function(r){ return r.vis !== 'private' || r.by === state.session; })
+    .slice().sort(function(x, y){ return (x.at === y.at) ? (x.id < y.id ? 1 : -1) : (x.at < y.at ? 1 : -1); });
+}
+function findReview(a, rid){
+  var list = reviewsOf(a);
+  for(var i=0;i<list.length;i++){ if(list[i].id === rid) return list[i]; }
+  return null;
+}
+function matchNo(m){ return String((m && m.id) || '').replace(/[^0-9]/g, ''); }
+
+/* 이 매물에 리뷰를 쓸 수 있는 매칭: 매칭 상대 매물의 담당이 나(state.session)일 때만 */
+function reviewableMatches(a){
+  var out = [];
+  if(!a || isGuest()) return out;
+  (state.matches || []).forEach(function(m){
+    if(m.aId !== a.id && m.bId !== a.id) return;
+    var other = getAsset(m.aId === a.id ? m.bId : m.aId);
+    if(!other || other.agent !== state.session) return;
+    var done = reviewsOf(a).some(function(r){ return r.by === state.session && r.m === m.id; });
+    out.push({m:m, other:other, done:done});
+  });
+  return out;
+}
+
 /* ---------------- 내 이모지 (중개사 개인화) ---------------- */
 var EMOJI_KEY = 'mannabang.emoji.v1';
 var EMOJI_SUGGEST = ['🌿','🌸','🍑','🍋','☕','🌙','⭐','🍒','🦋','🐻','🍀','💐','🎬','🎧','🍷','📚','🧭','🕊️','🌻','🐰'];
@@ -1041,35 +1215,35 @@ loadEmojiPrefs();
    선택: smoke/drink (O · X · 미입력), tags, extras[], memo(비고), comment
 ------------------------------------------------ */
 var RAW = [
-  {id:'p1', gender:'M', birth:1994, height:178, region:'서울 강남구', workArea:'서울 강남구 테헤란로', job:'IT 개발자', company:'토스', mbti:'ENTJ', smoke:'X', drink:'X', tags:['#러닝','#연봉상위'], extras:[{label:'학력',value:'연세대 컴퓨터공학'},{label:'종교',value:'무교'},{label:'취미',value:'러닝 · 위스키 · 전시회'},{label:'이상형',value:'대화가 잘 통하고 자기 생활이 뚜렷한 분'}], memo:'', comment:'3년 지기 직장 동료예요. 말수는 적지만 약속은 꼭 지키는 타입이고, 주말엔 한강 러닝을 합니다.', agent:'ag2', status:'available'},
-  {id:'p2', gender:'M', birth:1992, height:175, region:'서울 마포구', workArea:'서울 영등포구 여의도동', job:'회계사', company:'삼정KPMG', mbti:'ISTJ', smoke:'X', drink:'O', tags:['#성실함','#주말골퍼'], extras:[{label:'학력',value:'고려대 경영학'},{label:'종교',value:'기독교'},{label:'취미',value:'골프 · 맛집탐방'},{label:'이상형',value:'계획적이고 안정적인 분'}], memo:'결혼까지 진지하게 생각 중이에요. 맞벌이 가능.', comment:'대학 동기 남동생. 성실함 하나는 제가 보증합니다.', agent:'ag7', status:'available'},
-  {id:'p3', gender:'M', birth:1995, height:182, region:'서울 송파구', workArea:'서울 송파구 잠실동', job:'초등교사', company:'잠실초등학교', mbti:'ENFJ', smoke:'X', drink:'X', tags:['#키큰','#다정함'], extras:[{label:'학력',value:'서울교육대학교'},{label:'종교',value:'무교'},{label:'취미',value:'등산 · 베이킹'},{label:'이상형',value:'아이 같은 미소를 가진 분'}], memo:'', comment:'제 소개로 세 커플이 결혼했어요. 이 친구도 그 기운을 받을 차례입니다.', agent:'ag3', status:'progress'},
+  {id:'p1', wants:['담배 X','비슷한 나이','서울/수도권'], gender:'M', birth:1994, height:178, region:'서울 강남구', workArea:'서울 강남구 테헤란로', job:'IT 개발자', company:'토스', mbti:'ENTJ', smoke:'X', drink:'X', tags:['#러닝','#연봉상위'], extras:[{label:'학력',value:'연세대 컴퓨터공학'},{label:'종교',value:'무교'},{label:'취미',value:'러닝 · 위스키 · 전시회'},{label:'이상형',value:'대화가 잘 통하고 자기 생활이 뚜렷한 분'}], memo:'', comment:'3년 지기 직장 동료예요. 말수는 적지만 약속은 꼭 지키는 타입이고, 주말엔 한강 러닝을 합니다.', agent:'ag2', status:'available'},
+  {id:'p2', wants:['기독교','담배 X','초혼'], gender:'M', birth:1992, height:175, region:'서울 마포구', workArea:'서울 영등포구 여의도동', job:'회계사', company:'삼정KPMG', mbti:'ISTJ', smoke:'X', drink:'O', tags:['#성실함','#주말골퍼'], extras:[{label:'학력',value:'고려대 경영학'},{label:'종교',value:'기독교'},{label:'취미',value:'골프 · 맛집탐방'},{label:'이상형',value:'계획적이고 안정적인 분'}], memo:'결혼까지 진지하게 생각 중이에요. 맞벌이 가능.', comment:'대학 동기 남동생. 성실함 하나는 제가 보증합니다.', agent:'ag7', status:'available'},
+  {id:'p3', wants:['담배 X','음주 적당히','주말 데이트 가능'], gender:'M', birth:1995, height:182, region:'서울 송파구', workArea:'서울 송파구 잠실동', job:'초등교사', company:'잠실초등학교', mbti:'ENFJ', smoke:'X', drink:'X', tags:['#키큰','#다정함'], extras:[{label:'학력',value:'서울교육대학교'},{label:'종교',value:'무교'},{label:'취미',value:'등산 · 베이킹'},{label:'이상형',value:'아이 같은 미소를 가진 분'}], memo:'', comment:'제 소개로 세 커플이 결혼했어요. 이 친구도 그 기운을 받을 차례입니다.', agent:'ag3', status:'progress'},
   {id:'p4', gender:'M', birth:1993, height:176, region:'성남 분당구', workArea:'경기 성남시 분당구', job:'반도체 엔지니어', company:'SK하이닉스', mbti:'INTP', smoke:'X', drink:'O', tags:['#이과감성','#자전거'], extras:[{label:'학력',value:'KAIST 전자공학'},{label:'종교',value:'무교'},{label:'취미',value:'자전거 · 독서'},{label:'이상형',value:'조용히 오래 이야기할 수 있는 분'}], memo:'', comment:'말은 느린데 한번 빠지면 끝까지 가는 사람. 사회성은 생각보다 좋아요.', agent:'ag4', status:'available'},
-  {id:'p5', gender:'M', birth:1996, height:180, region:'서울 성동구', workArea:'서울 성동구 성수동', job:'스타트업 PM', company:'시리즈A 스타트업', mbti:'ENTP', smoke:'X', drink:'O', tags:['#와인','#여행러'], extras:[{label:'학력',value:'한양대 산업공학'},{label:'종교',value:'무교'},{label:'취미',value:'와인 · 여행 · 사진'},{label:'이상형',value:'밝고 리액션 좋은 분'}], memo:'', comment:'성수에서 와인바 다니는 걸 좋아해요. 대화의 텐션이 좋아서 어디든 분위기를 살립니다.', agent:'ag5', status:'available'},
+  {id:'p5', wants:['담배 X','서울/수도권','밝은 성격'], gender:'M', birth:1996, height:180, region:'서울 성동구', workArea:'서울 성동구 성수동', job:'스타트업 PM', company:'시리즈A 스타트업', mbti:'ENTP', smoke:'X', drink:'O', tags:['#와인','#여행러'], extras:[{label:'학력',value:'한양대 산업공학'},{label:'종교',value:'무교'},{label:'취미',value:'와인 · 여행 · 사진'},{label:'이상형',value:'밝고 리액션 좋은 분'}], memo:'', comment:'성수에서 와인바 다니는 걸 좋아해요. 대화의 텐션이 좋아서 어디든 분위기를 살립니다.', agent:'ag5', status:'available'},
   {id:'p6', gender:'M', birth:1991, height:183, region:'서울 용산구', workArea:'서울 용산구 한남동', job:'건축사', company:'개인 건축사무소', mbti:'ISFP', smoke:'', drink:'O', tags:['#캠핑','#금손'], extras:[{label:'학력',value:'홍익대 건축학'},{label:'종교',value:'천주교'},{label:'취미',value:'캠핑 · 드로잉'},{label:'이상형',value:'자기 세계가 있는 분'}], memo:'본인 요청으로 잠시 보류 중. 12월 이후 재개 예정.', comment:'집을 직접 고쳐 쓰는 분.', agent:'ag6', status:'hold'},
-  {id:'p7', gender:'M', birth:1994, height:177, region:'서울 서초구', workArea:'서울 서초구 서초동', job:'변호사', company:'법무법인 대륜', mbti:'INTJ', smoke:'X', drink:'X', tags:['#테니스','#지적'], extras:[{label:'학력',value:'서울대 법학'},{label:'종교',value:'무교'},{label:'취미',value:'테니스 · 클래식'},{label:'이상형',value:'지적이고 독립적인 분'}], memo:'', comment:'반포에서 일해요. 말투는 차분한데 유머 코드가 있어서 두 번째 만남부터 편해진대요.', agent:'ag8', status:'available'},
+  {id:'p7', wants:['담배 X','종교 X','비슷한 나이'], gender:'M', birth:1994, height:177, region:'서울 서초구', workArea:'서울 서초구 서초동', job:'변호사', company:'법무법인 대륜', mbti:'INTJ', smoke:'X', drink:'X', tags:['#테니스','#지적'], extras:[{label:'학력',value:'서울대 법학'},{label:'종교',value:'무교'},{label:'취미',value:'테니스 · 클래식'},{label:'이상형',value:'지적이고 독립적인 분'}], memo:'', comment:'반포에서 일해요. 말투는 차분한데 유머 코드가 있어서 두 번째 만남부터 편해진대요.', agent:'ag8', status:'available'},
   {id:'p8', gender:'M', birth:1990, height:172, region:'서울 영등포구', workArea:'서울 중구 세종대로', job:'공무원', company:'서울시청', mbti:'ISFJ', smoke:'X', drink:'O', tags:['#요리','#안정적'], extras:[{label:'학력',value:'성균관대 행정학'},{label:'종교',value:'무교'},{label:'취미',value:'축구 · 요리'},{label:'이상형',value:'편안하고 따뜻한 분'}], memo:'', comment:'같은 동네(영등포)에 사는 직장 후배예요. 요리를 진짜 잘합니다.', agent:'ag1', status:'available'},
-  {id:'p9', gender:'M', birth:1997, height:179, region:'서울 관악구', workArea:'서울 관악구 봉천동', job:'약사', company:'한빛약국', mbti:'ENFP', smoke:'X', drink:'X', tags:['#클라이밍','#밝음'], extras:[{label:'학력',value:'서울대 약학'},{label:'종교',value:'기독교'},{label:'취미',value:'클라이밍 · 커피'},{label:'이상형',value:'웃음이 많은 분'}], memo:'', comment:'동네 약국 사장님. 텐션이 높고 리액션이 좋아서 처음 만난 사람도 금방 편해져요.', agent:'ag9', status:'progress'},
+  {id:'p9', wants:['기독교','담배 X','음주 X'], gender:'M', birth:1997, height:179, region:'서울 관악구', workArea:'서울 관악구 봉천동', job:'약사', company:'한빛약국', mbti:'ENFP', smoke:'X', drink:'X', tags:['#클라이밍','#밝음'], extras:[{label:'학력',value:'서울대 약학'},{label:'종교',value:'기독교'},{label:'취미',value:'클라이밍 · 커피'},{label:'이상형',value:'웃음이 많은 분'}], memo:'', comment:'동네 약국 사장님. 텐션이 높고 리액션이 좋아서 처음 만난 사람도 금방 편해져요.', agent:'ag9', status:'progress'},
   {id:'p10', gender:'M', birth:1993, height:174, region:'서울 광진구', workArea:'경기 성남시 판교', job:'프론트엔드 개발자', company:'카카오', mbti:'INFP', smoke:'X', drink:'O', tags:['#LP','#영화광'], extras:[{label:'학력',value:'숭실대 소프트웨어학'},{label:'종교',value:'무교'},{label:'취미',value:'LP · 영화'},{label:'이상형',value:'조용한 데이트를 좋아하는 분'}], memo:'', comment:'제 대학 후배. 감성적인 사람이라 LP 들으면서 이야기하는 걸 좋아해요.', agent:'ag2', status:'available'},
   {id:'p11', gender:'M', birth:1995, height:181, region:'고양 일산', workArea:'경기 고양시 일산동구', job:'물리치료사', company:'일산재활의학과', mbti:'ESFJ', smoke:'X', drink:'X', tags:['#운동러','#부지런'], extras:[{label:'학력',value:'연세대 물리치료학'},{label:'종교',value:'천주교'},{label:'취미',value:'수영 · 러닝'},{label:'이상형',value:'건강한 습관을 가진 분'}], memo:'일산-서울 왕복이 힘들어서 서울 사는 분을 원해요.', comment:'운동을 정말 꾸준히 하는 사람.', agent:'ag7', status:'progress'},
-  {id:'p12', gender:'M', birth:1992, height:176, region:'수원 영통구', workArea:'경기 화성시 팔탄면', job:'제약 연구원', company:'한미약품', mbti:'ISTJ', smoke:'X', drink:'O', tags:['#등산','#한결같음'], extras:[{label:'학력',value:'성균관대 약학'},{label:'종교',value:'무교'},{label:'취미',value:'등산 · 정원가꾸기'},{label:'이상형',value:'차분하고 정돈된 분'}], memo:'', comment:'연구소에서 8년째. 말수 적지만 한 번 마음을 주면 오래가는 스타일이에요.', agent:'ag3', status:'available'},
-  {id:'p13', gender:'M', birth:1998, height:178, region:'서울 중랑구', workArea:'서울 중랑구 상봉동', job:'은행원', company:'KB국민은행', mbti:'ESTJ', smoke:'X', drink:'O', tags:['#야구','#애교'], extras:[{label:'학력',value:'건국대 경제학'},{label:'종교',value:'무교'},{label:'취미',value:'골프 · 야구직관'},{label:'이상형',value:'활발하고 계획적인 분'}], memo:'', comment:'저희 사촌 동생. 애교가 있고 사람 좋아하는 게 티가 나요.', agent:'ag4', status:'available'},
+  {id:'p12', wants:['서울/수도권','담배 X','차분한 성격'], gender:'M', birth:1992, height:176, region:'수원 영통구', workArea:'경기 화성시 팔탄면', job:'제약 연구원', company:'한미약품', mbti:'ISTJ', smoke:'X', drink:'O', tags:['#등산','#한결같음'], extras:[{label:'학력',value:'성균관대 약학'},{label:'종교',value:'무교'},{label:'취미',value:'등산 · 정원가꾸기'},{label:'이상형',value:'차분하고 정돈된 분'}], memo:'', comment:'연구소에서 8년째. 말수 적지만 한 번 마음을 주면 오래가는 스타일이에요.', agent:'ag3', status:'available'},
+  {id:'p13', wants:['비슷한 나이','담배 X','연락 자주'], gender:'M', birth:1998, height:178, region:'서울 중랑구', workArea:'서울 중랑구 상봉동', job:'은행원', company:'KB국민은행', mbti:'ESTJ', smoke:'X', drink:'O', tags:['#야구','#애교'], extras:[{label:'학력',value:'건국대 경제학'},{label:'종교',value:'무교'},{label:'취미',value:'골프 · 야구직관'},{label:'이상형',value:'활발하고 계획적인 분'}], memo:'', comment:'저희 사촌 동생. 애교가 있고 사람 좋아하는 게 티가 나요.', agent:'ag4', status:'available'},
   {id:'p14', gender:'M', birth:1991, height:180, region:'서울 동작구', workArea:'서울 강서구 마곡동', job:'대기업 영업', company:'LG전자', mbti:'ESFP', smoke:'X', drink:'O', tags:['#헬스','#인싸'], extras:[{label:'학력',value:'중앙대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'헬스 · 페스티벌'},{label:'이상형',value:'같이 신나게 놀 수 있는 분'}], memo:'', comment:'흑석동 자취 5년차. 사람 만나는 걸 좋아해서 소개팅 자리도 즐깁니다.', agent:'ag5', status:'progress'},
   {id:'p15', gender:'M', birth:1996, height:177, region:'서울 서대문구', workArea:'서울 서대문구 연희동', job:'치과의사', company:'연희치과의원', mbti:'INTJ', smoke:'X', drink:'X', tags:['#스키','#성사'], extras:[{label:'학력',value:'연세대 치의학'},{label:'종교',value:'기독교'},{label:'취미',value:'스키 · 와인'},{label:'이상형',value:'신앙심 있고 차분한 분'}], memo:'', comment:'작년에 매칭돼서 지금 잘 만나고 있어요. 제 중개 인생 최고의 성과입니다.', agent:'ag6', status:'matched'},
 
-  {id:'p16', gender:'F', birth:1995, height:165, region:'서울 강남구', workArea:'서울 용산구 한강대로', job:'마케팅 매니저', company:'아모레퍼시픽', mbti:'ENFP', smoke:'X', drink:'O', tags:['#필라테스','#센스'], extras:[{label:'학력',value:'이화여대 광고홍보학'},{label:'종교',value:'무교'},{label:'취미',value:'필라테스 · 전시회'},{label:'이상형',value:'유머 코드가 맞는 분'}], memo:'', comment:'제 9년 지기. 밝고 센스 있는 친구라 처음 만나는 자리도 어색할 틈이 없어요.', agent:'ag1', status:'available'},
-  {id:'p17', gender:'F', birth:1993, height:162, region:'서울 마포구', workArea:'서울 서대문구 신촌동', job:'간호사', company:'세브란스병원', mbti:'ISFJ', smoke:'X', drink:'X', tags:['#요가','#다정함'], extras:[{label:'학력',value:'가톨릭대 간호학'},{label:'종교',value:'천주교'},{label:'취미',value:'요가 · 베이킹'},{label:'이상형',value:'배려심 깊고 안정적인 분'}], memo:'교대 근무라 시간대가 조금 특이해요.', comment:'만나면 정말 잘 챙겨주는 사람이에요.', agent:'ag2', status:'progress'},
+  {id:'p16', wants:['담배 X','키 175cm 이상','서울/수도권'], gender:'F', birth:1995, height:165, region:'서울 강남구', workArea:'서울 용산구 한강대로', job:'마케팅 매니저', company:'아모레퍼시픽', mbti:'ENFP', smoke:'X', drink:'O', tags:['#필라테스','#센스'], extras:[{label:'학력',value:'이화여대 광고홍보학'},{label:'종교',value:'무교'},{label:'취미',value:'필라테스 · 전시회'},{label:'이상형',value:'유머 코드가 맞는 분'}], memo:'', comment:'제 9년 지기. 밝고 센스 있는 친구라 처음 만나는 자리도 어색할 틈이 없어요.', agent:'ag1', status:'available'},
+  {id:'p17', wants:['천주교','담배 X','음주 적당히'], gender:'F', birth:1993, height:162, region:'서울 마포구', workArea:'서울 서대문구 신촌동', job:'간호사', company:'세브란스병원', mbti:'ISFJ', smoke:'X', drink:'X', tags:['#요가','#다정함'], extras:[{label:'학력',value:'가톨릭대 간호학'},{label:'종교',value:'천주교'},{label:'취미',value:'요가 · 베이킹'},{label:'이상형',value:'배려심 깊고 안정적인 분'}], memo:'교대 근무라 시간대가 조금 특이해요.', comment:'만나면 정말 잘 챙겨주는 사람이에요.', agent:'ag2', status:'progress'},
   {id:'p18', gender:'F', birth:1996, height:168, region:'서울 송파구', workArea:'경기 성남시 분당구 정자동', job:'UX 디자이너', company:'네이버', mbti:'INFP', smoke:'X', drink:'O', tags:['#그림','#브런치'], extras:[{label:'학력',value:'국민대 시각디자인'},{label:'종교',value:'무교'},{label:'취미',value:'드로잉 · 브런치'},{label:'이상형',value:'자기 일에 진심인 분'}], memo:'', comment:'잠실에서 혼자 살아요. 조용한 편이지만 취향 이야기가 시작되면 눈이 반짝입니다.', agent:'ag3', status:'available'},
   {id:'p19', gender:'F', birth:1994, height:160, region:'서울 성동구', workArea:'서울 영등포구 여의도동', job:'공인회계사', company:'딜로이트안진', mbti:'ESTJ', smoke:'X', drink:'X', tags:['#테니스','#일잘러'], extras:[{label:'학력',value:'서강대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'테니스 · 독서'},{label:'이상형',value:'자기 관리가 확실한 분'}], memo:'', comment:'일 잘하는 친구. 대화가 명확해서 만나면 시간이 금방 갑니다.', agent:'ag4', status:'progress'},
-  {id:'p20', gender:'F', birth:1992, height:163, region:'서울 용산구', workArea:'서울 용산구 한남동', job:'초등교사', company:'한남초등학교', mbti:'ISFP', smoke:'X', drink:'O', tags:['#꽃','#산책'], extras:[{label:'학력',value:'서울교육대학교'},{label:'종교',value:'기독교'},{label:'취미',value:'플라워클래스 · 산책'},{label:'이상형',value:'말보다 행동으로 보여주는 분'}], memo:'', comment:'한남동에서 7년째. 꽃을 좋아하고 주말엔 남산을 걸어요. 정말 순한 사람입니다.', agent:'ag5', status:'available'},
+  {id:'p20', wants:['기독교','담배 X','초혼'], gender:'F', birth:1992, height:163, region:'서울 용산구', workArea:'서울 용산구 한남동', job:'초등교사', company:'한남초등학교', mbti:'ISFP', smoke:'X', drink:'O', tags:['#꽃','#산책'], extras:[{label:'학력',value:'서울교육대학교'},{label:'종교',value:'기독교'},{label:'취미',value:'플라워클래스 · 산책'},{label:'이상형',value:'말보다 행동으로 보여주는 분'}], memo:'', comment:'한남동에서 7년째. 꽃을 좋아하고 주말엔 남산을 걸어요. 정말 순한 사람입니다.', agent:'ag5', status:'available'},
   {id:'p21', gender:'F', birth:1997, height:166, region:'서울 서초구', workArea:'서울 강남구 삼성동', job:'스타트업 마케터', company:'푸드테크 스타트업', mbti:'ENTP', smoke:'X', drink:'O', tags:['#클라이밍','#액티브'], extras:[{label:'학력',value:'한양대 미디어커뮤니케이션'},{label:'종교',value:'무교'},{label:'취미',value:'클라이밍 · 캠핑'},{label:'이상형',value:'새로운 걸 같이 시도하는 분'}], memo:'', comment:'에너지가 좋은 후배. 주말마다 뭔가 새로운 걸 하고 있어요.', agent:'ag6', status:'available'},
-  {id:'p22', gender:'F', birth:1991, height:164, region:'서울 영등포구', workArea:'서울 중구 을지로', job:'대기업 인사', company:'롯데지주', mbti:'ESFJ', smoke:'X', drink:'O', tags:['#골프','#리더십'], extras:[{label:'학력',value:'중앙대 심리학'},{label:'종교',value:'불교'},{label:'취미',value:'골프 · 여행'},{label:'이상형',value:'가족과 가까운 분'}], memo:'', comment:'직장에서 10년째 인사 업무. 사람 보는 눈이 좋고 챙기는 걸 좋아합니다.', agent:'ag7', status:'available'},
+  {id:'p22', wants:['담배 X','비슷한 나이','주말 데이트 가능'], gender:'F', birth:1991, height:164, region:'서울 영등포구', workArea:'서울 중구 을지로', job:'대기업 인사', company:'롯데지주', mbti:'ESFJ', smoke:'X', drink:'O', tags:['#골프','#리더십'], extras:[{label:'학력',value:'중앙대 심리학'},{label:'종교',value:'불교'},{label:'취미',value:'골프 · 여행'},{label:'이상형',value:'가족과 가까운 분'}], memo:'', comment:'직장에서 10년째 인사 업무. 사람 보는 눈이 좋고 챙기는 걸 좋아합니다.', agent:'ag7', status:'available'},
   {id:'p23', gender:'F', birth:1995, height:161, region:'성남 분당구', workArea:'경기 성남시 분당구 서현동', job:'약사', company:'분당온누리약국', mbti:'ISTJ', smoke:'X', drink:'X', tags:['#필라테스','#자립적'], extras:[{label:'학력',value:'이화여대 약학'},{label:'종교',value:'무교'},{label:'취미',value:'필라테스 · 독서'},{label:'이상형',value:'생활 습관이 건강한 분'}], memo:'', comment:'약국을 직접 운영해요. 성실하고 계획적인 성격이라 만나는 사람도 편안해집니다.', agent:'ag8', status:'progress'},
   {id:'p24', gender:'F', birth:1993, height:167, region:'서울 광진구', workArea:'서울 마포구 상암동', job:'콘텐츠 PD', company:'CJ ENM', mbti:'ENFJ', smoke:'X', drink:'O', tags:['#요리','#이야기꾼'], extras:[{label:'학력',value:'한양대 미디어커뮤니케이션'},{label:'종교',value:'무교'},{label:'취미',value:'요리 · 음악'},{label:'이상형',value:'표현을 아끼지 않는 분'}], memo:'', comment:'예능 PD 7년차. 이야기꾼이라 자리가 지루할 일이 없어요.', agent:'ag9', status:'progress'},
-  {id:'p25', gender:'F', birth:1996, height:163, region:'서울 관악구', workArea:'서울 중구 소공동', job:'재무 분석가', company:'신세계', mbti:'INTJ', smoke:'X', drink:'X', tags:['#러닝','#똑부러짐'], extras:[{label:'학력',value:'서울시립대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'러닝 · 영화'},{label:'이상형',value:'생각이 깊은 분'}], memo:'', comment:'똑부러지는 후배. 말은 직설적이지만 속은 정 많고, 러닝 크루에서 만났어요.', agent:'ag1', status:'available'},
+  {id:'p25', wants:['담배 X','음주 X','비슷한 나이'], gender:'F', birth:1996, height:163, region:'서울 관악구', workArea:'서울 중구 소공동', job:'재무 분석가', company:'신세계', mbti:'INTJ', smoke:'X', drink:'X', tags:['#러닝','#똑부러짐'], extras:[{label:'학력',value:'서울시립대 경영학'},{label:'종교',value:'무교'},{label:'취미',value:'러닝 · 영화'},{label:'이상형',value:'생각이 깊은 분'}], memo:'', comment:'똑부러지는 후배. 말은 직설적이지만 속은 정 많고, 러닝 크루에서 만났어요.', agent:'ag1', status:'available'},
   {id:'p26', gender:'F', birth:1994, height:159, region:'고양 일산', workArea:'경기 고양시 일산동구', job:'물리치료사', company:'일산재활의학과', mbti:'ESFP', smoke:'', drink:'O', tags:['#댄스','#분위기메이커'], extras:[{label:'학력',value:'을지대 물리치료학'},{label:'종교',value:'천주교'},{label:'취미',value:'댄스 · 브런치'},{label:'이상형',value:'같이 춤출 수 있는 분'}], memo:'', comment:'분위기 메이커. 노래방 가면 마이크를 놓지 않아요.', agent:'ag2', status:'available'},
   {id:'p27', gender:'F', birth:1992, height:162, region:'수원 영통구', workArea:'경기 수원시 영통구', job:'중등 영어교사', company:'영통중학교', mbti:'INFJ', smoke:'X', drink:'X', tags:['#독서','#성사'], extras:[{label:'학력',value:'이화여대 영어교육'},{label:'종교',value:'기독교'},{label:'취미',value:'독서 · 플루트'},{label:'이상형',value:'신앙이 있고 따뜻한 분'}], memo:'', comment:'작년에 매칭돼서 지금 결혼을 준비하고 있어요.', agent:'ag3', status:'matched'},
-  {id:'p28', gender:'F', birth:1998, height:165, region:'서울 중랑구', workArea:'서울 중랑구 면목동', job:'은행원', company:'우리은행', mbti:'ESTJ', smoke:'X', drink:'O', tags:['#배드민턴','#추진력'], extras:[{label:'학력',value:'경희대 경제학'},{label:'종교',value:'무교'},{label:'취미',value:'배드민턴 · 여행'},{label:'이상형',value:'계획 세우는 걸 좋아하는 분'}], memo:'', comment:'막내. 밝고 추진력 있어요. 여행 계획은 늘 본인이 짭니다.', agent:'ag4', status:'available'},
+  {id:'p28', wants:['담배 X','키 175cm 이상','서울/수도권'], gender:'F', birth:1998, height:165, region:'서울 중랑구', workArea:'서울 중랑구 면목동', job:'은행원', company:'우리은행', mbti:'ESTJ', smoke:'X', drink:'O', tags:['#배드민턴','#추진력'], extras:[{label:'학력',value:'경희대 경제학'},{label:'종교',value:'무교'},{label:'취미',value:'배드민턴 · 여행'},{label:'이상형',value:'계획 세우는 걸 좋아하는 분'}], memo:'', comment:'막내. 밝고 추진력 있어요. 여행 계획은 늘 본인이 짭니다.', agent:'ag4', status:'available'},
   {id:'p29', gender:'F', birth:1991, height:166, region:'서울 동작구', workArea:'서울 동작구 흑석동', job:'변호사', company:'법무법인 한결', mbti:'INTJ', smoke:'X', drink:'O', tags:['#골프','#독립적'], extras:[{label:'학력',value:'이화여대 법학'},{label:'종교',value:'무교'},{label:'취미',value:'골프 · 전시회'},{label:'이상형',value:'자기 세계가 확실한 분'}], memo:'', comment:'흑석동에서 사무실을 열었어요. 서로의 시간을 존중하는 관계를 원합니다.', agent:'ag5', status:'available'},
   {id:'p30', gender:'F', birth:1995, height:164, region:'서울 서대문구', workArea:'서울 서대문구 신촌동', job:'피부과 의사', company:'신촌 피부과', mbti:'ISFJ', smoke:'X', drink:'X', tags:['#요가','#차분함'], extras:[{label:'학력',value:'연세대 의학'},{label:'종교',value:'천주교'},{label:'취미',value:'요가 · 클래식'},{label:'이상형',value:'차분하게 오래 곁에 있을 분'}], memo:'전공의 마치고 개원 준비 중이라 지금은 잠시 보류 상태입니다.', comment:'', agent:'ag6', status:'hold'}
 ];
@@ -1079,7 +1253,8 @@ var SEED_MATCHES = [
   {id:'mt2', aId:'p9',  bId:'p19', stage:'일정 조율', at:'2026-11-05'},
   {id:'mt3', aId:'p11', bId:'p23', stage:'만남 완료', at:'2026-10-28'},
   {id:'mt4', aId:'p14', bId:'p24', stage:'애프터',    at:'2026-10-18'},
-  {id:'mt5', aId:'p15', bId:'p27', stage:'성사',      at:'2026-09-30'}
+  {id:'mt5', aId:'p15', bId:'p27', stage:'성사',      at:'2026-09-30'},
+  {id:'mt6', aId:'p16', bId:'p2',  stage:'제안중',    at:'2026-11-14'}
 ];
 
 /* ---------------- utils ---------------- */
@@ -1199,6 +1374,8 @@ function seed(){
     var o = {};
     for(var k in r){ if(Object.prototype.hasOwnProperty.call(r,k)) o[k] = r[k]; }
     o.tags = (r.tags || []).slice();
+    o.wants = (r.wants || []).slice();
+    o.reviews = (SEED_REVIEWS[r.id] || []).map(cloneReview);
     o.extras = (r.extras || []).map(function(e){ return {label:e.label, value:e.value}; });
     o.history = [];
     return o;
@@ -1253,7 +1430,7 @@ function seed(){
     matches: SEED_MATCHES.map(function(m){
       var o = {}; for(var k in m){ if(Object.prototype.hasOwnProperty.call(m,k)) o[k]=m[k]; } return o;
     }),
-    seq: {asset: 31, match: 6}
+    seq: {asset: 31, match: 6, review: 100}
   };
 }
 
@@ -1262,10 +1439,22 @@ function load(){
   if(raw){
     try {
       var s = JSON.parse(raw);
-      if(s && s.assets && s.assets.length && s.matches && s.seq){ return s; }
+      if(s && s.assets && s.assets.length && s.matches && s.seq){ migrate(s); return s; }
     } catch(e){ /* fall back to seed */ }
   }
   return seed();
+}
+
+/* 이전 버전(localStorage) 데이터에 새 필드(바라는 조건 · 마담 리뷰)를 채워 넣는다. */
+function migrate(s){
+  var seedWants = {};
+  RAW.forEach(function(r){ seedWants[r.id] = r.wants || []; });
+  (s.assets || []).forEach(function(a){
+    if(!Array.isArray(a.wants)) a.wants = (seedWants[a.id] || []).slice();
+    if(!Array.isArray(a.reviews)) a.reviews = (SEED_REVIEWS[a.id] || []).map(cloneReview);
+  });
+  if(typeof s.seq.review !== 'number') s.seq.review = 100;
+  try { store.set(JSON.stringify(s)); } catch(e){}
 }
 
 var state = load();
@@ -1354,6 +1543,7 @@ function filteredAssets(){
       var extras = (a.extras || []).map(function(e){ return e.label + ' ' + e.value; }).join(' ');
       var hay = [assetTitle(a), assetNo(a), '#' + assetNo(a), a.job, a.company, a.region, a.workArea,
                  a.mbti, a.memo, extras, (a.tags||[]).join(' '), agentName(a.agent), a.smoke, a.drink,
+                 wantsOf(a).join(' '),
                  (a.gender === 'M' ? '남성 남' : '여성 여')].join(' ').toLowerCase();
       if(hay.indexOf(q) === -1) return false;
     }
@@ -1535,6 +1725,7 @@ function cardHTML(a){
       '<div class="ln"><b>' + esc(a.job) + '</b>' + (a.company ? ' <span class="sep">·</span> ' + esc(a.company) : '') + '</div>' +
       '<div class="tags">' + oxChip('흡연', a.smoke) + oxChip('음주', a.drink) +
         (a.mbti ? '<span class="tag mb">' + esc(a.mbti) + '</span>' : '') + tags + '</div>' +
+      (wantsOf(a).length ? wishLineHTML(a) : '') +
       '<div class="l4"><span class="agent-pill">' + agentById(a.agent).emoji + ' ' + esc(agentName(a.agent)) + '</span></div>' +
     '</div>' +
   '</button>';
@@ -1610,6 +1801,10 @@ function matchHTML(m){
       '<span class="when">' + fmtDate(m.at) + ' 제안</span>' +
       '<span class="stage-tag ' + tagCls + '">' + m.stage + '</span></div>' +
     '<div class="pair">' + personHTML(a) + '<div class="link">💌</div>' + personHTML(b) + '</div>' +
+    ((boardReviewHTML(m, a) || boardReviewHTML(m, b))
+      ? '<div class="brev-row">' + boardReviewHTML(m, a) + boardReviewHTML(m, b) + '</div>'
+      : '') +
+    boardReviewPanelHTML(m, a, b) +
     stepsHTML(m.stage) +
     '<div class="mstage">' + btns + '</div>' +
   '</article>';
@@ -1667,6 +1862,177 @@ var proposalPick = null;
 var deleteArmed = false;
 var shareMine = null;
 var returnFocus = null;
+/* 마담 리뷰 작성 상태 */
+var revOpenKey = null;   /* '매물id@매칭id' */
+var revVis = 'public';
+var revDraft = '';
+var revDelArmed = null;
+
+function revKey(a, m){ return a.id + '@' + m.id; }
+
+function reviewItemHTML(a, r){
+  var by = agentById(r.by);
+  var own = !isGuest() && r.by === state.session;
+  var v = REV_VIS[r.vis] || REV_VIS.public;
+  var foot = '';
+  if(own){
+    foot = (revDelArmed === r.id)
+      ? '<div class="rev-foot"><span class="rev-ask">삭제할까요?</span>' +
+        '<button type="button" class="rev-mini" data-action="rev-del-cancel" data-id="' + a.id + '" data-rid="' + r.id + '">취소</button>' +
+        '<button type="button" class="rev-mini del" data-action="rev-del-ok" data-id="' + a.id + '" data-rid="' + r.id + '">삭제</button></div>'
+      : '<div class="rev-foot">' +
+        '<button type="button" class="rev-mini" data-action="rev-vis" data-id="' + a.id + '" data-rid="' + r.id + '">' +
+          (r.vis === 'private' ? '🌐 마담 공개로' : '🔒 나만 보기로') + '</button>' +
+        '<button type="button" class="rev-mini del" data-action="rev-del" data-id="' + a.id + '" data-rid="' + r.id + '">삭제</button></div>';
+  }
+  return '<div class="rev-item' + (r.vis === 'private' ? ' pri' : '') + '">' +
+    '<div class="rev-top"><span class="rev-av">' + esc(by.emoji) + '</span><b>' + esc(by.name) + '</b>' +
+      '<span class="rev-tag ' + v.cls + '">' + v.short + '</span>' +
+      (r.m ? '<span class="rev-tag m">매칭 #' + esc(matchNo({id:r.m})) + '</span>' : '') +
+      '<span class="rev-date">' + fmtDate(r.at) + '</span></div>' +
+    '<p class="rev-text">' + esc(r.text) + '</p>' + foot +
+  '</div>';
+}
+
+function reviewListHTML(a){
+  var list = visibleReviews(a);
+  if(!list.length) return '<div class="rev-empty">아직 공유된 리뷰가 없어요.</div>';
+  return list.map(function(r){ return reviewItemHTML(a, r); }).join('');
+}
+
+function reviewComposerHTML(a, m, compact){
+  return '<div class="rev-form">' +
+    (compact ? '' : '<div class="rev-form-top">매칭 #' + matchNo(m) + ' 기준 · ' + esc(assetTitle(a)) + ' 리뷰</div>') +
+    '<div class="seg sm rev-seg">' +
+      '<button type="button" data-action="rev-vis-set" data-id="' + a.id + '" data-vis="public" class="' + (revVis === 'public' ? 'on' : '') + '">🌐 마담 공개</button>' +
+      '<button type="button" data-action="rev-vis-set" data-id="' + a.id + '" data-vis="private" class="' + (revVis === 'private' ? 'on' : '') + '">🔒 나만 보기</button>' +
+    '</div>' +
+    '<span class="hint">공개는 주선자 9명 모두에게 · 나만 보기는 내 계정에서만 보여요</span>' +
+    '<textarea class="rev-input" data-key="' + esc(revKey(a, m)) + '" placeholder="이 매칭에서 느낀 점, 다음 소개에 참고할 점을 적어 주세요">' + esc(revDraft) + '</textarea>' +
+    '<div class="rev-form-row">' +
+      '<button type="button" class="btn ghost sm" data-action="rev-cancel" data-id="' + a.id + '">취소</button>' +
+      '<button type="button" class="btn primary sm" data-action="rev-save" data-id="' + a.id + '" data-mid="' + m.id + '">등록</button>' +
+    '</div></div>';
+}
+
+function reviewBlockHTML(a){
+  if(isGuest()) return '';
+  var list = visibleReviews(a);
+  var cands = reviewableMatches(a);
+  var items = list.length ? list.map(function(r){ return reviewItemHTML(a, r); }).join('')
+    : '<div class="rev-empty">아직 공유된 리뷰가 없어요.</div>';
+  if(!cands.length) items += '<div class="rev-hint">리뷰 작성은 이 매물과 매칭된 적 있는 주선자만 할 수 있어요. 공개 리뷰는 참고용으로 볼 수 있습니다.</div>';
+  var wr = cands.map(function(x){
+    var key = revKey(a, x.m);
+    if(x.done) return '<div class="rev-done">✅ 매칭 #' + matchNo(x.m) + ' 리뷰 작성 완료 · 아래에서 공개 범위를 바꿀 수 있어요</div>';
+    if(revOpenKey === key) return reviewComposerHTML(a, x.m);
+    return '<button type="button" class="rev-new" data-action="rev-open" data-id="' + a.id + '" data-mid="' + x.m.id + '">' +
+      '📝 매칭 #' + matchNo(x.m) + ' 상대 매물 리뷰 남기기</button>';
+  }).join('');
+  return '<div class="block rev-block"><h4>📝 마담 리뷰 <span class="rev-n">' + list.length + '건</span></h4>' +
+    items + wr + '</div>';
+}
+
+function boardReviewHTML(m, a){
+  if(isGuest() || !a) return '';
+  var allowed = reviewableMatches(a).some(function(x){ return x.m.id === m.id; });
+  if(!allowed) return '';
+  var key = revKey(a, m);
+  var done = reviewsOf(a).some(function(r){ return r.by === state.session && r.m === m.id; });
+  var n = visibleReviews(a).length;
+  return '<button type="button" class="brev-pick' + (revOpenKey === key ? ' on' : '') + '" data-action="rev-open" data-id="' + a.id + '" data-mid="' + m.id + '">' +
+    (done ? '✅ ' + esc(assetTitle(a)) + ' 리뷰 완료' : '📝 ' + esc(assetTitle(a)) + ' 상대 리뷰 남기기') +
+    ' <b>' + n + '</b></button>';
+}
+
+function boardReviewPanelHTML(m, a, b){
+  if(isGuest() || !revOpenKey || detailId) return '';
+  var target = null;
+  if(revOpenKey === revKey(a, m)) target = a;
+  else if(revOpenKey === revKey(b, m)) target = b;
+  if(!target) return '';
+  return '<div class="brev-panel">' +
+    '<div class="brev-head">📝 매칭 #' + matchNo(m) + ' 기준 · ' + esc(assetTitle(target)) + ' 마담 리뷰' +
+      '<button type="button" class="bp-close" data-action="rev-cancel" data-id="' + target.id + '">닫기</button></div>' +
+    reviewListHTML(target) + reviewComposerHTML(target, m, true) + '</div>';
+}
+
+function refreshReviewUI(){
+  if(detailId) renderDetail();
+  renderBoard();
+}
+
+function addReview(a, m, text, vis){
+  text = String(text || '').replace(/\s+/g, ' ').trim();
+  if(!a || !m || !text) return false;
+  var other = getAsset(m.aId === a.id ? m.bId : m.aId);
+  if(!other || other.agent !== state.session) return false;
+  if(reviewsOf(a).some(function(r){ return r.by === state.session && r.m === m.id; })) return false;
+  if(!Array.isArray(a.reviews)) a.reviews = [];
+  a.reviews.unshift({id:'rv' + (state.seq.review++), by:state.session, m:m.id, at:today(),
+    vis: vis === 'private' ? 'private' : 'public', text:text});
+  return true;
+}
+
+/* 리뷰 관련 클릭을 처리. 처리했으면 true */
+function reviewAction(btn){
+  var act = btn.getAttribute('data-action') || '';
+  if(act.indexOf('rev-') !== 0) return false;
+  if(isGuest()) return true;
+  var a = getAsset(btn.getAttribute('data-id'));
+  if(!a) return true;
+
+  if(act === 'rev-open'){
+    var m = getMatch(btn.getAttribute('data-mid'));
+    if(!m) return true;
+    var key = revKey(a, m);
+    if(revOpenKey === key){ revOpenKey = null; revDraft = ''; }
+    else { revOpenKey = key; revVis = 'public'; revDraft = ''; }
+    refreshReviewUI();
+    var ta = document.querySelector('.rev-input');
+    if(ta){ try { ta.focus(); } catch(e){} }
+  } else if(act === 'rev-cancel'){
+    revOpenKey = null; revDraft = ''; refreshReviewUI();
+  } else if(act === 'rev-vis-set'){
+    revVis = btn.getAttribute('data-vis') === 'private' ? 'private' : 'public';
+    refreshReviewUI();
+  } else if(act === 'rev-save'){
+    var mm = getMatch(btn.getAttribute('data-mid'));
+    var formEl = btn.closest('.rev-form');
+    var ta2 = formEl ? formEl.querySelector('.rev-input') : document.querySelector('.rev-input');
+    var text = ta2 ? ta2.value : revDraft;
+    if(!mm) return true;
+    if(!addReview(a, mm, text, revVis)){
+      toast('리뷰 내용을 입력해 주세요.');
+      if(ta2) ta2.focus();
+      return true;
+    }
+    revOpenKey = null; revDraft = ''; revDelArmed = null;
+    save(); refreshReviewUI();
+    toast(revVis === 'public' ? '마담 공개 리뷰로 남겼어요 🌐' : '나만 보는 리뷰로 남겼어요 🔒');
+  } else if(act === 'rev-vis'){
+    var r = findReview(a, btn.getAttribute('data-rid'));
+    if(!r || r.by !== state.session) return true;
+    r.vis = (r.vis === 'public') ? 'private' : 'public';
+    revDelArmed = null;
+    save(); refreshReviewUI();
+    toast(r.vis === 'public' ? '리뷰를 마담 공개로 바꿨어요 🌐' : '리뷰를 나만 보기로 바꿨어요 🔒');
+  } else if(act === 'rev-del'){
+    revDelArmed = btn.getAttribute('data-rid');
+    refreshReviewUI();
+  } else if(act === 'rev-del-cancel'){
+    revDelArmed = null; refreshReviewUI();
+  } else if(act === 'rev-del-ok'){
+    var rid = btn.getAttribute('data-rid');
+    var rr = findReview(a, rid);
+    if(!rr || rr.by !== state.session) return true;
+    a.reviews = reviewsOf(a).filter(function(x){ return x.id !== rid; });
+    revDelArmed = null;
+    save(); refreshReviewUI();
+    toast('리뷰를 삭제했어요.');
+  }
+  return true;
+}
 
 function candidatesFor(a){
   return state.assets.filter(function(x){
@@ -1903,6 +2269,12 @@ function renderDetail(){
 
       '<div class="block"><h4>흡연 · 음주' + (a.mbti ? ' · MBTI' : '') + '</h4><div class="ox-row">' + oxRow + '</div></div>' +
 
+      (wantsOf(a).length
+        ? '<div class="block"><h4>💘 바라는 조건</h4><div class="wish-list">' +
+          wantsOf(a).map(function(w){ return '<span class="wish-chip">' + esc(w) + '</span>'; }).join('') +
+          '</div></div>'
+        : '') +
+
       ((a.extras && a.extras.length) ? '<div class="block"><h4>추가 정보</h4><div class="opt-list">' + extras + '</div></div>' : '') +
 
       (a.memo && !guest ? '<div class="block"><h4>비고</h4><div class="memo-box">' + esc(a.memo) + '</div></div>' : '') +
@@ -1911,6 +2283,8 @@ function renderDetail(){
 
       (a.comment ? '<div class="block"><h4>주선자 코멘트</h4><div class="quote">' + esc(a.comment) +
         '<div class="by"><span class="av">' + by.emoji + '</span>' + esc(by.name) + ' 주선자</div></div></div>' : '') +
+
+      reviewBlockHTML(a) +
 
       (owner ? '<div class="block"><h4>상태 변경</h4><div class="status-row">' + statusBtns + '</div></div>' : '') +
 
@@ -1939,6 +2313,7 @@ function renderDetail(){
 
 function openDetail(id){
   detailId = id; slideIdx = 0; proposalOpen = false; proposalPick = null; deleteArmed = false; shareMine = null;
+  revOpenKey = null; revDraft = ''; revDelArmed = null;
   renderDetail();
   returnFocus = document.activeElement;
   document.getElementById('detailOverlay').hidden = false;
@@ -2039,6 +2414,7 @@ var formGender = 'M';
 var formSmoke = '';
 var formDrink = '';
 var formExtras = [];
+var formWants = [];
 var formDeleteArmed = false;
 
 function fillAgentSelects(){
@@ -2076,6 +2452,33 @@ function renderExtras(){
       '<button type="button" class="del" data-i="' + i + '" aria-label="항목 삭제">✕</button>' +
     '</div>';
   }).join('');
+}
+
+function renderWantsChips(){
+  var box = document.getElementById('wantsChips');
+  if(!box) return;
+  var opts = WANT_PRESETS.slice();
+  formWants.forEach(function(w){ if(opts.indexOf(w) === -1) opts.push(w); });
+  box.innerHTML = opts.map(function(w){
+    var on = formWants.indexOf(w) !== -1;
+    return '<button type="button" class="wchip' + (on ? ' on' : '') + '" data-want="' + esc(w) +
+      '" aria-pressed="' + (on ? 'true' : 'false') + '">' + esc(w) + '</button>';
+  }).join('');
+}
+
+function addWantsFromInput(){
+  var input = document.getElementById('f-wantInput');
+  if(!input) return;
+  var parts = String(input.value || '').split(',');
+  var added = 0;
+  parts.forEach(function(p){
+    var s = p.replace(/\s+/g, ' ').trim();
+    if(!s) return;
+    if(formWants.indexOf(s) === -1){ formWants.push(s); added++; }
+  });
+  input.value = '';
+  renderWantsChips();
+  return added;
 }
 
 function updateBirthHint(){
@@ -2119,6 +2522,9 @@ function openForm(id){
   formSmoke = a ? (a.smoke || '') : '';
   formDrink = a ? (a.drink || '') : '';
   formExtras = a ? (a.extras || []).map(function(e){ return {label:e.label, value:e.value}; }) : [];
+  formWants = a ? wantsOf(a) : [];
+  document.getElementById('f-wantInput').value = '';
+  renderWantsChips();
 
   setSeg('segGender', formGender);
   setSeg('segSmoke', formSmoke);
@@ -2445,6 +2851,8 @@ document.getElementById('cards').addEventListener('click', function(e){
 
 /* board */
 document.getElementById('panel-board').addEventListener('click', function(e){
+  var revBtn = e.target.closest('[data-action^="rev-"]');
+  if(revBtn){ reviewAction(revBtn); return; }
   var sbtn = e.target.closest('.sbtn');
   if(sbtn){
     if(isGuest()) return;
@@ -2462,6 +2870,7 @@ detailOverlay.addEventListener('click', function(e){
   if(e.target.closest('[data-close]')){ closeDetail(); return; }
   var btn = e.target.closest('[data-action]');
   if(!btn) return;
+  if(reviewAction(btn)) return;
   var act = btn.getAttribute('data-action');
   var a = getAsset(detailId);
   if(!a) return;
@@ -2547,6 +2956,29 @@ document.getElementById('segDrink').addEventListener('click', function(e){
   formDrink = b.getAttribute('data-v');
   setSeg('segDrink', formDrink);
 });
+
+/* 바라는 조건: 칩 토글 + 직접 입력 */
+document.addEventListener('input', function(e){
+  var el = e.target;
+  if(el && el.classList && el.classList.contains('rev-input')) revDraft = el.value;
+});
+document.getElementById('wantsChips').addEventListener('click', function(e){
+  var b = e.target.closest('.wchip');
+  if(!b) return;
+  var w = b.getAttribute('data-want') || '';
+  if(!w) return;
+  var i = formWants.indexOf(w);
+  if(i === -1) formWants.push(w); else formWants.splice(i, 1);
+  renderWantsChips();
+});
+document.getElementById('wantsAdd').addEventListener('click', addWantsFromInput);
+document.getElementById('f-wantInput').addEventListener('keydown', function(e){
+  if(e.key === 'Enter' || e.key === ',' || e.keyCode === 13 || e.keyCode === 188){
+    e.preventDefault();
+    addWantsFromInput();
+  }
+});
+document.getElementById('f-wantInput').addEventListener('blur', addWantsFromInput);
 document.getElementById('f-birth').addEventListener('input', updateBirthHint);
 
 document.getElementById('addExtra').addEventListener('click', function(){
@@ -2595,6 +3027,8 @@ document.getElementById('assetForm').addEventListener('submit', function(e){
   errEl.textContent = '';
 
   var tags = splitList(val('f-tags')).map(function(t){ return t.charAt(0) === '#' ? t : '#' + t; });
+  addWantsFromInput();   /* 입력 중이던 조건이 남아 있지 않게 */
+  var wants = cleanWants(formWants);
   var extras = formExtras
     .map(function(x){ return {label:(x.label||'').trim(), value:(x.value||'').trim()}; })
     .filter(function(x){ return x.label || x.value; });
@@ -2611,6 +3045,7 @@ document.getElementById('assetForm').addEventListener('submit', function(e){
     smoke: formSmoke,
     drink: formDrink,
     tags: tags,
+    wants: wants,
     extras: extras,
     memo: val('f-ideal'),
     comment: val('f-comment'),
@@ -2632,7 +3067,7 @@ document.getElementById('assetForm').addEventListener('submit', function(e){
       id: id, gender: data.gender, birth: data.birth, height: data.height,
       region: data.region, workArea: data.workArea, job: data.job, company: data.company,
       mbti: data.mbti, smoke: data.smoke, drink: data.drink, tags: data.tags.length ? data.tags : [],
-      extras: data.extras, memo: data.memo, comment: data.comment, agent: data.agent, status: data.status,
+      wants: data.wants, extras: data.extras, memo: data.memo, comment: data.comment, agent: data.agent, status: data.status,
       history: [{at: today(), by: agentName(state.session), text: '새 매물로 등록했습니다.'}]
     });
     save(); renderAll(); closeForm();
