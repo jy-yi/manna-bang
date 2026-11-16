@@ -59,11 +59,6 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .pill-row span{font-size:12px;font-weight:600;padding:6px 11px;border-radius:99px;background:#fff;border:1px solid var(--line);color:var(--ink-2);box-shadow:var(--shadow-s)}
 .gate-card{margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow-m)}
 .code-label{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;font-weight:700;color:var(--ink-2);margin-bottom:8px}
-.code-hint{
-  font-size:12px;font-weight:700;color:var(--mint-ink);background:var(--mint-soft);
-  padding:5px 10px;border-radius:99px;border:1px dashed #A8E3D0;
-}
-.code-hint:hover{background:#D8F3EA}
 .code-row{display:flex;gap:8px}
 #codeInput{
   flex:1;min-width:0;background:var(--bg-2);border:1.5px solid #E8DDD0;border-radius:14px;
@@ -84,6 +79,21 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .gate-err{margin-top:10px;font-size:12.5px;font-weight:650;color:#D9432F;min-height:18px}
 .gate-foot{margin-top:16px;font-size:11.5px;color:var(--muted);line-height:1.7;text-align:center}
 .gate-foot b{color:var(--ink-2)}
+.code-note{font-size:10.5px;font-weight:650;color:var(--muted)}
+.gate-chips{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:11px}
+.gchip{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 4px;border-radius:10px;background:#fff;
+  border:1px solid var(--line);font-size:11.5px;font-weight:750;color:var(--ink-2);box-shadow:var(--shadow-s);transition:.14s;white-space:nowrap}
+.gchip .em{font-size:12px;line-height:1}
+.gchip b{font-weight:850;color:var(--mint-ink);letter-spacing:.03em}
+.gchip:hover{border-color:#A8E3D0;background:var(--mint-soft);color:var(--mint-ink);transform:translateY(-1px)}
+.gate-div{display:flex;align-items:center;gap:9px;margin:14px 0 10px;font-size:10.5px;font-weight:700;color:var(--muted)}
+.gate-div::before,.gate-div::after{content:'';flex:1;height:1px;background:var(--line)}
+.btn-guest{width:100%;display:flex;align-items:center;justify-content:center;gap:6px;padding:12px;border-radius:13px;
+  background:#fff;border:1.5px dashed var(--line-2);font-size:13px;font-weight:750;color:var(--ink-2);
+  box-shadow:var(--shadow-s);transition:.14s}
+.btn-guest small{font-size:11px;font-weight:650;color:var(--muted)}
+.btn-guest:hover{border-color:var(--mint);color:var(--mint-ink);background:var(--mint-soft);transform:translateY(-1px)}
+.btn-guest:hover small{color:var(--mint-ink);opacity:.8}
 
 /* ============ APP SHELL ============ */
 .topbar{
@@ -97,11 +107,15 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .brand .brk{color:#BFB3A5;font-weight:700}
 .who{margin-left:auto;display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:99px;padding:5px 6px 5px 12px;box-shadow:var(--shadow-s)}
 .who .who-lab{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.02em}
-.who select{
-  border:0;background:transparent;font-size:13.5px;font-weight:750;padding:4px 2px 4px 0;outline:none;
-  cursor:pointer;max-width:104px;color:var(--ink);
-}
+.who .who-name{font-size:13px;font-weight:780;color:var(--ink);letter-spacing:-.02em;white-space:nowrap}
+.who .who-btn{font-size:11px;font-weight:750;color:var(--ink-2);background:var(--bg-2);border-radius:99px;padding:5px 9px;white-space:nowrap;transition:.14s}
+.who .who-btn:hover{background:#EDE4D8;color:var(--ink)}
 .who .ava-dot{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:14px;background:var(--bg-2)}
+.who.guest{border-color:#DED7F8;background:linear-gradient(120deg,#F6F4FF,#fff 72%)}
+.who.guest .who-name{font-size:11.5px;font-weight:750;color:#4A3BA8}
+.who.guest .who-btn{background:#EFECFD;color:#5A49C0}
+.who.guest .who-btn:hover{background:#E5E1FB}
+@media (max-width:430px){ .who{gap:6px;padding:4px 5px 4px 10px} .who .who-lab{display:none} }
 .wrap{max-width:1080px;margin:0 auto;padding:16px 16px 72px}
 
 /* dashboard */
@@ -501,6 +515,15 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .appfoot{max-width:1080px;margin:0 auto;padding:0 16px 46px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:11.5px;color:var(--muted)}
 .appfoot .lnk{font-weight:700;color:var(--ink-2);text-decoration:underline;text-underline-offset:2px;background:none;padding:0;font-size:11.5px;color:inherit}
 
+/* permission modes */
+.mode-guest #dashNew,.mode-guest #btnNew,.mode-guest #fMine,.mode-guest #btnReset{display:none !important}
+.mode-guest #fAgent{grid-column:1 / -1}
+.guest-note{margin:14px 0 0;padding:11px 13px;border-radius:12px;background:#F6F4FF;border:1px dashed #DED7F8;
+  font-size:11.5px;line-height:1.6;color:#4A3BA8;font-weight:650}
+.guest-note b{font-weight:800}
+.share-box.guest{border-color:#DED7F8;background:linear-gradient(140deg,#F7F5FF,#fff 72%)}
+.share-box.guest h4{color:#4A3BA8}
+
 /* PC */
 @media (min-width:760px){
   .wrap{padding:22px 24px 80px}
@@ -568,15 +591,18 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
     <form class="gate-card" id="gateForm" autocomplete="off">
       <div class="code-label">
         <span>중개사 입장 코드</span>
-        <button type="button" class="code-hint" id="hintBtn">힌트 · 체험용 0824</button>
+        <span class="code-note">아래 칩을 누르면 바로 입장</span>
       </div>
       <div class="code-row">
         <input id="codeInput" inputmode="numeric" maxlength="4" placeholder="4자리 코드" aria-label="입장 코드">
         <button type="submit" class="btn-enter">입장</button>
       </div>
       <div class="gate-err" id="gateErr" role="status"></div>
+      <div class="gate-chips" id="gateChips" aria-label="주선자별 체험용 입장 코드"></div>
+      <div class="gate-div">또는</div>
+      <button type="button" class="btn-guest" id="guestBtn">👀 손님으로 둘러보기 <small>(읽기 전용)</small></button>
       <div class="gate-foot">
-        <b>프로토타입</b> · 실제 중개 서비스가 아니며, 입력한 정보는 이 브라우저에만 저장됩니다.
+        <b>프로토타입</b> · 손님 코드는 <b>0000</b> · 입력한 정보는 이 브라우저에만 저장됩니다.
       </div>
     </form>
   </div>
@@ -590,10 +616,11 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
         <span class="brand-mark">🏠</span>
         <span><span class="brk">&lt;</span>만나방<span class="brk">&gt;</span></span>
       </div>
-      <div class="who">
-        <span class="who-lab">접속 중</span>
-        <select id="agentSelect" aria-label="접속 중인 주선자 선택"></select>
+      <div class="who" id="whoBox">
+        <span class="who-lab">중개사</span>
+        <span class="who-name" id="whoName">· 종윤 님</span>
         <span class="ava-dot" id="whoAva">🌿</span>
+        <button type="button" class="who-btn" id="whoExit">전환</button>
       </div>
     </div>
   </header>
@@ -845,8 +872,10 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 'use strict';
 
 /* ---------------- constants ---------------- */
-var ENTRY_CODE = '0824';
+var ENTRY_CODE = '0824';        /* 예전 단일 코드 → 종윤(ag1)으로 연결 */
+var GUEST_CODE = '0000';
 var STORAGE_KEY = 'mannabang.prototype.v3';
+var MODE = 'agent';             /* 'agent' | 'guest' */
 
 var AGENTS = [
   {id:'ag1', name:'종윤', emoji:'🌿', role:'중개소 대표'},
@@ -916,6 +945,14 @@ var SEED_MATCHES = [
 ];
 
 /* ---------------- utils ---------------- */
+function isGuest(){ return MODE === 'guest'; }
+function canManage(a){ return !isGuest() && !!a && a.agent === state.session; }
+function actAllowed(act, a){
+  if(isGuest()) return act === 'slide' || act === 'share' || act === 'copy';
+  if((act === 'status' || act === 'memo' || act === 'edit' || act === 'delete' ||
+      act === 'delete-cancel' || act === 'delete-confirm') && a.agent !== state.session) return false;
+  return true;
+}
 function agentById(id){
   for(var i=0;i<AGENTS.length;i++){ if(AGENTS[i].id===id) return AGENTS[i]; }
   return AGENTS[0];
@@ -1159,11 +1196,20 @@ function counts(){
 }
 
 function renderHeader(){
-  var sel = document.getElementById('agentSelect');
-  sel.innerHTML = AGENTS.map(function(ag){
-    return '<option value="' + ag.id + '"' + (ag.id===state.session?' selected':'') + '>' + esc(ag.name) + '</option>';
-  }).join('');
-  document.getElementById('whoAva').textContent = agentById(state.session).emoji;
+  var box = document.getElementById('whoBox');
+  if(isGuest()){
+    box.className = 'who guest';
+    box.innerHTML = '<span class="who-name">👀 손님 모드 (읽기 전용)</span>' +
+      '<button type="button" class="who-btn" id="whoExit">나가기</button>';
+  } else {
+    var ag = agentById(state.session);
+    box.className = 'who';
+    box.innerHTML = '<span class="who-lab">중개사</span>' +
+      '<span class="who-name">· ' + esc(ag.name) + ' 님</span>' +
+      '<span class="ava-dot">' + ag.emoji + '</span>' +
+      '<button type="button" class="who-btn" id="whoExit">전환</button>';
+  }
+  document.getElementById('whoExit').addEventListener('click', exitToGate);
 }
 
 function renderDash(){
@@ -1181,8 +1227,12 @@ function renderDash(){
   document.getElementById('tabCntBoard').textContent = live.length;
   document.getElementById('headCount').textContent = c.all + '건';
   document.getElementById('boardCount').textContent = '진행 ' + live.length + '쌍';
-  var myCount = state.assets.filter(function(a){ return a.agent === state.session; }).length;
-  document.getElementById('dSub').textContent = agentName(state.session) + ' 님 담당 매물 ' + myCount + '건 · 오늘도 좋은 소개는 조건보다 사람에서 나옵니다.';
+  if(isGuest()){
+    document.getElementById('dSub').textContent = '👀 읽기 전용으로 둘러보는 중 · 마음에 드는 매물은 담당 주선자에게 물어보세요.';
+  } else {
+    var myCount = state.assets.filter(function(a){ return a.agent === state.session; }).length;
+    document.getElementById('dSub').textContent = agentName(state.session) + ' 님 담당 매물 ' + myCount + '건 · 오늘도 좋은 소개는 조건보다 사람에서 나옵니다.';
+  }
 }
 
 /* ---------------- render: list ---------------- */
@@ -1381,6 +1431,23 @@ function shareMessage(target, mine){
   }
   return head + spec + tail + '\n' + shareLink(target.id);
 }
+function guestMessage(target){
+  return '[만나방 💬] ' + agentName(target.agent) + ' 중개사님! ' + assetTitle(target) +
+    '(' + birthLabel(target) + '/' + ageOf(target) + '세·' + target.region + '·' + target.job + ') 소개팅 한번 물어봐 주세요!\n' +
+    shareLink(target.id);
+}
+function guestShareBlockHTML(a){
+  var text = guestMessage(a);
+  return '<div class="share-box guest">' +
+    '<h4>💬 주선자에게 이분 물어보기</h4>' +
+    '<p class="hint">담당 주선자 ' + esc(agentName(a.agent)) + ' 님에게 그대로 보내면 됩니다. 문구를 복사하거나 카톡으로 바로 보내 보세요.</p>' +
+    '<div class="share-preview" id="sharePreview">' + esc(text) + '</div>' +
+    '<div class="share-btns">' +
+      '<button class="btn kakao" data-action="share">💬 카톡으로 물어보기</button>' +
+      '<button class="btn ghost" data-action="copy">📋 문구 복사</button>' +
+    '</div>' +
+  '</div>';
+}
 function myAssetsFor(a){
   var mine = state.assets.filter(function(x){ return x.agent === state.session && x.gender !== a.gender; });
   if(shareMine){
@@ -1420,6 +1487,7 @@ function shareBlockHTML(a){
 function currentShareText(){
   var a = getAsset(detailId);
   if(!a) return '';
+  if(isGuest()) return guestMessage(a);
   var picked = shareMine ? getAsset(shareMine) : null;
   if(picked && picked.gender === a.gender) picked = null;
   return shareMessage(a, picked);
@@ -1476,6 +1544,8 @@ function renderDetail(){
   if(!a){ closeDetail(); return; }
   var st = STATUS[a.status];
   var by = agentById(a.agent);
+  var guest = isGuest();
+  var owner = !guest && a.agent === state.session;
 
   var slides = [0,1,2].map(function(v){
     return '<div class="slide' + (v === slideIdx ? ' on' : '') + '">' + avatarSVG(a, v) + '</div>';
@@ -1508,7 +1578,7 @@ function renderDetail(){
 
   var related = relatedMatches(a.id);
   var danger = '';
-  if(deleteArmed){
+  if(deleteArmed && owner){
     danger = '<div class="danger-bar"><div class="dt">🗑 이 매물을 삭제할까요?</div>' +
       '<p>' + esc(assetTitle(a)) + '이 목록에서 사라지고, 연결된 매칭 ' + related.length + '건도 함께 정리됩니다. 되돌릴 수 없어요.</p>' +
       '<div class="row"><button class="btn ghost" data-action="delete-cancel">취소</button>' +
@@ -1516,7 +1586,7 @@ function renderDetail(){
   }
 
   var proposal = '';
-  if(proposalOpen){
+  if(proposalOpen && !guest){
     var cands = candidatesFor(a);
     if(!cands.length){
       proposal = '<div class="proposal"><h4>💌 매칭 제안하기</h4><p class="hint">제안할 수 있는 이성 매물이 없어요. 먼저 매물을 등록해 주세요.</p></div>';
@@ -1567,30 +1637,35 @@ function renderDetail(){
 
       ((a.extras && a.extras.length) ? '<div class="block"><h4>추가 정보</h4><div class="opt-list">' + extras + '</div></div>' : '') +
 
-      (a.memo ? '<div class="block"><h4>비고</h4><div class="memo-box">' + esc(a.memo) + '</div></div>' : '') +
+      (a.memo && !guest ? '<div class="block"><h4>비고</h4><div class="memo-box">' + esc(a.memo) + '</div></div>' : '') +
 
       (tags ? '<div class="block"><h4>매력 태그</h4><div class="tags">' + tags + '</div></div>' : '') +
 
       (a.comment ? '<div class="block"><h4>주선자 코멘트</h4><div class="quote">' + esc(a.comment) +
         '<div class="by"><span class="av">' + by.emoji + '</span>' + esc(by.name) + ' 주선자</div></div></div>' : '') +
 
-      '<div class="block"><h4>상태 변경</h4><div class="status-row">' + statusBtns + '</div></div>' +
+      (owner ? '<div class="block"><h4>상태 변경</h4><div class="status-row">' + statusBtns + '</div></div>' : '') +
 
+      (guest ? '' :
       '<div class="block"><h4>진행 히스토리 <span style="font-weight:700;color:#948A80">' + a.history.length + '건</span></h4>' +
         '<div class="tl">' + (tl || '<div class="tl-item"><div class="tx">아직 기록이 없어요.</div></div>') + '</div>' +
-        '<div class="memo"><textarea id="memoInput" placeholder="상담·소개 내용을 메모로 남겨 주세요"></textarea>' +
-        '<button data-action="memo">추가</button></div>' +
-      '</div>' +
+        (owner ? '<div class="memo"><textarea id="memoInput" placeholder="상담·소개 내용을 메모로 남겨 주세요"></textarea>' +
+        '<button data-action="memo">추가</button></div>' : '') +
+      '</div>') +
 
       '<div class="block"><h4>담당 <span style="font-weight:700;color:#948A80">' + esc(by.name) + ' · ' + esc(by.role) + '</span></h4></div>' +
 
-      proposal + shareBlockHTML(a) + danger +
+      proposal + (guest ? guestShareBlockHTML(a) : shareBlockHTML(a)) + danger +
 
-      '<div class="dfooter">' +
-        '<button class="btn primary grow" data-action="proposal-open">💌 매칭 제안</button>' +
-        '<button class="btn mid" data-action="edit">✏️ 수정</button>' +
-        '<button class="btn danger icon" data-action="delete" aria-label="매물 삭제" title="매물 삭제">🗑</button>' +
-      '</div>' +
+      (guest
+        ? '<div class="dfooter"><button class="btn primary grow" data-action="share">💬 주선자에게 이분 물어보기</button></div>'
+        : '<div class="dfooter">' +
+            '<button class="btn primary grow" data-action="proposal-open">💌 매칭 제안</button>' +
+            (owner
+              ? '<button class="btn mid" data-action="edit">✏️ 수정</button>' +
+                '<button class="btn danger icon" data-action="delete" aria-label="매물 삭제" title="매물 삭제">🗑</button>'
+              : '') +
+          '</div>') +
     '</div>';
 }
 
@@ -1614,6 +1689,7 @@ function closeDetail(){
 function setAssetStatus(id, status, silent){
   var a = getAsset(id);
   if(!a || a.status === status) return;
+  if(!canManage(a)) return;
   var prev = a.status;
   a.status = status;
   a.history.unshift({
@@ -1625,6 +1701,7 @@ function setAssetStatus(id, status, silent){
 }
 
 function setMatchStage(mid, stage){
+  if(isGuest()) return;
   var m = getMatch(mid);
   if(!m || m.stage === stage) return;
   var a = getAsset(m.aId), b = getAsset(m.bId);
@@ -1642,6 +1719,7 @@ function setMatchStage(mid, stage){
 }
 
 function propose(aId, bId){
+  if(isGuest()) return;
   var a = getAsset(aId), b = getAsset(bId);
   if(!a || !b) return;
   var mid = 'mt' + (state.seq.match++);
@@ -1657,7 +1735,7 @@ function propose(aId, bId){
 
 function addMemo(id, text){
   var a = getAsset(id);
-  if(!a) return false;
+  if(!a || !canManage(a)) return false;
   text = (text || '').trim();
   if(!text) return false;
   a.history.unshift({at: today(), by: agentName(state.session), text: text});
@@ -1668,7 +1746,7 @@ function addMemo(id, text){
 
 function deleteAsset(id){
   var a = getAsset(id);
-  if(!a) return;
+  if(!a || !canManage(a)) return;
   var related = relatedMatches(id);
   related.forEach(function(m){
     var otherId = m.aId === id ? m.bId : m.aId;
@@ -1736,6 +1814,8 @@ function updateBirthHint(){
 }
 
 function openForm(id){
+  if(isGuest()) return;
+  if(id && !canManage(getAsset(id))) return;
   editingId = id || null;
   var a = id ? getAsset(id) : null;
   document.getElementById('formErr').textContent = '';
@@ -1833,10 +1913,22 @@ var gateForm = document.getElementById('gateForm');
 var codeInput = document.getElementById('codeInput');
 var gateErr = document.getElementById('gateErr');
 
-document.getElementById('hintBtn').addEventListener('click', function(){
-  codeInput.value = ENTRY_CODE;
+function codeFor(i){ var d = String(i + 1); return d + d + d + d; }
+function agentByCode(v){
+  if(v === ENTRY_CODE) return 'ag1';
+  for(var i=0;i<AGENTS.length;i++){ if(codeFor(i) === v) return AGENTS[i].id; }
+  return null;
+}
+document.getElementById('gateChips').innerHTML = AGENTS.map(function(ag, i){
+  return '<button type="button" class="gchip" data-code="' + codeFor(i) + '" title="' + esc(ag.name) + ' 님으로 입장">' +
+    '<span class="em">' + ag.emoji + '</span>' + esc(ag.name) + ' <b>' + codeFor(i) + '</b></button>';
+}).join('');
+document.getElementById('gateChips').addEventListener('click', function(e){
+  var chip = e.target.closest('.gchip');
+  if(!chip) return;
+  codeInput.value = chip.getAttribute('data-code');
   gateErr.textContent = '';
-  codeInput.focus();
+  loginWith(codeInput.value);
 });
 
 var DEEP_ITEM = null;
@@ -1845,54 +1937,89 @@ try {
   DEEP_ITEM = qp.get('item');
 } catch(e){ DEEP_ITEM = null; }
 
-function enterApp(deepId){
+function enterApp(deepId, mode){
+  MODE = (mode === 'guest') ? 'guest' : 'agent';
   document.getElementById('gate').hidden = true;
   document.getElementById('app').hidden = false;
+  document.getElementById('app').classList.toggle('mode-guest', isGuest());
+  switchTab('list');
   renderAll();
   if(deepId && getAsset(deepId)){
     openDetail(deepId);
-    toast('공유 링크로 매물을 열었어요 📩');
+    toast(isGuest() ? '공유 링크로 열었어요 · 읽기 전용 📩' : '공유 링크로 매물을 열었어요 📩');
+  } else if(isGuest()){
+    toast('👀 손님 모드로 둘러보는 중 · 읽기 전용이에요');
   } else {
-    toast('만나방에 입장했어요. 오늘도 좋은 소개 부탁해요 🌿');
+    toast(agentName(state.session) + ' 중개사님, 오늘도 좋은 소개 부탁해요 🌿');
   }
 }
 
+function loginWith(v){
+  v = String(v || '').replace(/\s/g, '');
+  if(v === GUEST_CODE){ gateErr.textContent = ''; enterApp(DEEP_ITEM, 'guest'); return true; }
+  var ag = agentByCode(v);
+  if(ag){
+    gateErr.textContent = '';
+    state.session = ag;
+    save();
+    enterApp(DEEP_ITEM, 'agent');
+    return true;
+  }
+  return false;
+}
+
+function exitToGate(){
+  MODE = 'agent';
+  closeDetail();
+  closeForm();
+  document.getElementById('app').hidden = true;
+  document.getElementById('gate').hidden = false;
+  document.getElementById('app').classList.remove('mode-guest');
+  DEEP_ITEM = null;
+  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, agent:'all', mine:false};
+  qEl.value = '';
+  document.getElementById('fGender').value = 'all';
+  document.getElementById('fAge').value = 'all';
+  document.getElementById('fAgent').value = 'all';
+  codeInput.value = '';
+  gateErr.textContent = '';
+  document.body.style.overflow = '';
+  try { history.replaceState(null, '', window.location.pathname); } catch(e){}
+  codeInput.focus();
+}
+document.getElementById('guestBtn').addEventListener('click', function(){
+  codeInput.value = '';
+  enterApp(DEEP_ITEM, 'guest');
+});
+
 gateForm.addEventListener('submit', function(e){
   e.preventDefault();
+  if(loginWith(codeInput.value)) return;
   var v = codeInput.value.replace(/\s/g,'');
-  if(v === ENTRY_CODE){
-    gateErr.textContent = '';
-    enterApp(DEEP_ITEM);
-  } else {
-    gateErr.textContent = v ? '입장 코드가 맞지 않아요. 힌트를 확인해 주세요.' : '입장 코드를 입력해 주세요.';
-    codeInput.classList.remove('shake');
-    void codeInput.offsetWidth;
-    codeInput.classList.add('shake');
-    codeInput.select();
-  }
+  gateErr.textContent = v ? '입장 코드가 맞지 않아요. 중개사 코드는 1111~9999, 손님은 0000이에요.' : '입장 코드를 입력해 주세요.';
+  codeInput.classList.remove('shake');
+  void codeInput.offsetWidth;
+  codeInput.classList.add('shake');
+  codeInput.select();
 });
 
 /* tabs */
 var tabButtons = Array.prototype.slice.call(document.querySelectorAll('.tab'));
-tabButtons.forEach(function(btn){
-  btn.addEventListener('click', function(){
-    var t = btn.getAttribute('data-tab');
-    tabButtons.forEach(function(b){
-      var on = b === btn;
-      b.classList.toggle('on', on);
-      b.setAttribute('aria-selected', on ? 'true' : 'false');
-    });
-    document.getElementById('panel-list').hidden = t !== 'list';
-    document.getElementById('panel-board').hidden = t !== 'board';
-    document.getElementById('panel-agents').hidden = t !== 'agents';
+function switchTab(t){
+  var boardBtn = document.querySelector('.tab[data-tab="board"]');
+  if(boardBtn) boardBtn.hidden = isGuest();
+  if(isGuest() && t === 'board') t = 'list';
+  tabButtons.forEach(function(b){
+    var on = b.getAttribute('data-tab') === t;
+    b.classList.toggle('on', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
   });
-});
-
-/* agent switch */
-document.getElementById('agentSelect').addEventListener('change', function(e){
-  state.session = e.target.value;
-  save(); renderAll();
-  toast(agentName(state.session) + ' 님으로 접속을 전환했어요.');
+  document.getElementById('panel-list').hidden = t !== 'list';
+  document.getElementById('panel-board').hidden = t !== 'board';
+  document.getElementById('panel-agents').hidden = t !== 'agents';
+}
+tabButtons.forEach(function(btn){
+  btn.addEventListener('click', function(){ switchTab(btn.getAttribute('data-tab')); });
 });
 
 /* chips */
@@ -1942,7 +2069,11 @@ document.getElementById('cards').addEventListener('click', function(e){
 /* board */
 document.getElementById('panel-board').addEventListener('click', function(e){
   var sbtn = e.target.closest('.sbtn');
-  if(sbtn){ setMatchStage(sbtn.getAttribute('data-mid'), sbtn.getAttribute('data-stage')); return; }
+  if(sbtn){
+    if(isGuest()) return;
+    setMatchStage(sbtn.getAttribute('data-mid'), sbtn.getAttribute('data-stage'));
+    return;
+  }
   var person = e.target.closest('.person');
   if(person) openDetail(person.getAttribute('data-open'));
 });
@@ -1957,6 +2088,7 @@ detailOverlay.addEventListener('click', function(e){
   var act = btn.getAttribute('data-action');
   var a = getAsset(detailId);
   if(!a) return;
+  if(!actAllowed(act, a)) return;
 
   if(act === 'slide'){
     slideIdx = (slideIdx + Number(btn.getAttribute('data-dir')) + 3) % 3;
@@ -2062,6 +2194,7 @@ document.getElementById('extras').addEventListener('click', function(e){
 
 document.getElementById('assetForm').addEventListener('submit', function(e){
   e.preventDefault();
+  if(isGuest()) return;
   var errEl = document.getElementById('formErr');
   var val = function(id){ return document.getElementById(id).value.trim(); };
   var region = val('f-region'), work = val('f-work'), job = val('f-job');
@@ -2163,8 +2296,9 @@ document.addEventListener('keydown', function(e){
 
 /* boot */
 renderAll();
-window.__mannabang = {get state(){ return state; }, render:renderAll, filtered:filteredAssets, shareMessage:shareMessage, shareLink:shareLink};
-if(DEEP_ITEM && getAsset(DEEP_ITEM)) enterApp(DEEP_ITEM);
+window.__mannabang = {get state(){ return state; }, get mode(){ return MODE; }, setMode:function(m){ MODE = m; },
+  render:renderAll, filtered:filteredAssets, shareMessage:shareMessage, guestMessage:guestMessage, shareLink:shareLink};
+if(DEEP_ITEM && getAsset(DEEP_ITEM)) enterApp(DEEP_ITEM, 'guest');
 })();
 </script>
 </body>
