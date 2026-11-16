@@ -2079,35 +2079,34 @@ function renderBoard(){
   if(isGuest()) boardFilter = 'all';
   var isLive = function(m){ return LIVE_STAGES.indexOf(m.stage) !== -1; };
   var allLive = state.matches.filter(isLive);
-  var mineAll = state.matches.filter(matchInvolvesMe);
-  var incAll = state.matches.filter(isIncomingProposal);
-  var outAll = state.matches.filter(isOutgoingProposal);
+  var mineLive = allLive.filter(matchInvolvesMe);
+  var incLive = allLive.filter(isIncomingProposal);
+  var outLive = allLive.filter(isOutgoingProposal);
 
-  /* 필터 칩 — 손님 모드는 전체만 보여 준다 */
+  /* 필터 칩 — 손님 모드는 전체만 보여 준다(칩 숫자는 각 필터가 보여 줄 카드 수) */
   var chipsEl = document.getElementById('boardChips');
   if(chipsEl){
     var defs = isGuest()
       ? [{k:'all', label:'전체', n:allLive.length}]
       : [{k:'all', label:'전체', n:allLive.length},
-         {k:'mine', label:'👤 내 매물', n:mineAll.length},
-         {k:'incoming', label:'📩 내게 온 제안', n:incAll.length},
-         {k:'outgoing', label:'📤 내가 보낸 제안', n:outAll.length}];
+         {k:'mine', label:'👤 내 매물', n:mineLive.length},
+         {k:'incoming', label:'📩 내게 온 제안', n:incLive.length},
+         {k:'outgoing', label:'📤 내가 보낸 제안', n:outLive.length}];
     chipsEl.innerHTML = defs.map(function(d){
       return '<button class="chip' + (boardFilter === d.k ? ' on' : '') + '" data-bfilter="' + d.k + '" aria-pressed="' + (boardFilter === d.k) + '">' +
         d.label + ' <b>' + d.n + '</b></button>';
     }).join('');
   }
 
-  var base = boardFilter === 'mine' ? mineAll
-           : boardFilter === 'incoming' ? incAll
-           : boardFilter === 'outgoing' ? outAll
-           : state.matches;
-  var live = base.filter(isLive);
+  var live = boardFilter === 'mine' ? mineLive.slice()
+           : boardFilter === 'incoming' ? incLive.slice()
+           : boardFilter === 'outgoing' ? outLive.slice()
+           : allLive.slice();
   /* 방금 올린 매칭은 맨 위에 */
   if(highlightMid){
     live.sort(function(x, y){ return (y.id === highlightMid ? 1 : 0) - (x.id === highlightMid ? 1 : 0); });
   }
-  var past = base.filter(function(m){ return !isLive(m); });
+  var past = boardFilter === 'all' ? state.matches.filter(function(m){ return !isLive(m); }) : [];
 
   var label = BOARD_FILTERS[boardFilter] ? BOARD_FILTERS[boardFilter].live : '진행 중인 매칭';
   var t = document.getElementById('boardLiveT');
