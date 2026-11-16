@@ -251,7 +251,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .chip.c-hold.on{background:linear-gradient(140deg,#A2918A,#7C6C63);border-color:transparent}
 
 .filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:12px}
-.filters .toggle{width:100%;justify-content:center;grid-column:1 / -1}
+.filters .toggle{width:100%;justify-content:center;grid-column:auto}
 .search{position:relative;grid-column:1 / -1;min-width:0}
 .search input{
   width:100%;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:12px 40px 12px 38px;
@@ -275,11 +275,11 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .toggle .knob{width:14px;height:14px;border-radius:50%;border:1.5px solid #DFCDBF;background:#fff;transition:.15s}
 .toggle.on{border-color:var(--mint);background:var(--mint-soft);color:var(--mint-ink)}
 .toggle.on .knob{background:var(--mint);border-color:var(--mint)}
-.age-range{display:flex;grid-column:1 / -1;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:8px 12px;box-shadow:var(--shadow-s)}
-.age-range span{font-size:12px;font-weight:700;color:var(--muted)}
-.age-range input{width:58px;border:0;background:var(--bg-2);border-radius:8px;padding:7px 8px;font-size:13px;font-weight:700;text-align:center;outline:none}
-.age-range input:focus{box-shadow:0 0 0 2px rgba(212,121,106,.28)}
-.age-range .unit{font-size:12px;font-weight:700;color:var(--ink-2)}
+.range-row{display:flex;grid-column:1 / -1;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:8px 12px;box-shadow:var(--shadow-s)}
+.range-row span{font-size:12px;font-weight:700;color:var(--muted)}
+.range-row input{width:58px;border:0;background:var(--bg-2);border-radius:8px;padding:7px 8px;font-size:13px;font-weight:700;text-align:center;outline:none}
+.range-row input:focus{box-shadow:0 0 0 2px rgba(212,121,106,.28)}
+.range-row .unit{font-size:12px;font-weight:700;color:var(--ink-2)}
 .result-line{font-size:12px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .result-line b{color:var(--ink);font-weight:750}
 .result-line .clear{font-size:11.5px;font-weight:700;color:var(--mint-ink);text-decoration:underline;text-underline-offset:2px}
@@ -590,7 +590,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
   .filters .search{flex:1 1 100%}
   .filters select{flex:0 0 auto;width:auto;min-width:170px}
   .filters .toggle{width:auto}
-  .filters .age-range{flex:1 1 100%}
+  .filters .range-row{flex:1 1 100%}
   .dash{padding:26px}
   .dash h1{font-size:26px}
   .stat-grid{grid-template-columns:repeat(4,1fr);gap:12px}
@@ -762,6 +762,15 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
           <option value="33-40">30대 중반+ 33~</option>
           <option value="custom">직접 입력 (범위)</option>
         </select>
+        <select id="fHeight" aria-label="키 필터">
+          <option value="all">키 전체</option>
+          <option value="160">160cm 이상</option>
+          <option value="165">165cm 이상</option>
+          <option value="170">170cm 이상</option>
+          <option value="175">175cm 이상</option>
+          <option value="180">180cm 이상</option>
+          <option value="custom">직접 입력 (범위)</option>
+        </select>
         <select id="fAgent" aria-label="담당 주선자 필터"></select>
         <select id="fSort" aria-label="정렬 기준">
           <option value="default">기본순</option>
@@ -769,12 +778,19 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
           <option value="age-desc">나이 많은 순</option>
         </select>
         <button class="toggle" id="fMine" aria-pressed="false"><span class="knob"></span>내 매물만</button>
-        <div class="age-range" id="ageRange" hidden>
+        <div class="range-row" id="ageRange" hidden>
           <span>만 나이</span>
           <input id="ageMin" type="number" min="19" max="70" value="27" aria-label="최소 나이">
           <span class="unit">세 ~</span>
           <input id="ageMax" type="number" min="19" max="70" value="36" aria-label="최대 나이">
           <span class="unit">세</span>
+        </div>
+        <div class="range-row" id="heightRange" hidden>
+          <span>키</span>
+          <input id="hMin" type="number" min="140" max="200" value="160" aria-label="최소 키">
+          <span class="unit">cm ~</span>
+          <input id="hMax" type="number" min="140" max="200" value="180" aria-label="최대 키">
+          <span class="unit">cm</span>
         </div>
       </div>
       <p class="result-line" id="resultLine"></p>
@@ -1261,7 +1277,7 @@ function getMatch(id){
 }
 
 /* ---------------- filters ---------------- */
-var F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, agent:'all', mine:false, sort:'default'};
+var F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'default'};
 
 function ageRangeOf(){
   if(F.age === 'all') return null;
@@ -1270,9 +1286,20 @@ function ageRangeOf(){
   return [Number(parts[0]), Number(parts[1])];
 }
 
+function heightRangeOf(){
+  if(F.height === 'all') return null;
+  if(F.height === 'custom'){
+    var lo = Math.min(F.heightMin, F.heightMax);
+    var hi = Math.max(F.heightMin, F.heightMax);
+    return [lo, hi];
+  }
+  return [Number(F.height), Infinity];
+}
+
 function filteredAssets(){
   var q = F.q.trim().toLowerCase();
   var range = ageRangeOf();
+  var hRange = heightRangeOf();
   return state.assets.filter(function(a){
     if(F.status !== 'all' && a.status !== F.status) return false;
     if(F.gender !== 'all' && a.gender !== F.gender) return false;
@@ -1281,6 +1308,10 @@ function filteredAssets(){
     if(range){
       var age = ageOf(a);
       if(age < range[0] || age > range[1]) return false;
+    }
+    if(hRange){
+      var h = Number(a.height);
+      if(!h || h < hRange[0] || h > hRange[1]) return false;
     }
     if(q){
       var extras = (a.extras || []).map(function(e){ return e.label + ' ' + e.value; }).join(' ');
@@ -1395,6 +1426,7 @@ function applyAgentEmoji(em){
   ag.emoji = em;
   var saved = saveEmojiPref(ag.id, em);
   renderAll();
+  fillAgentSelects();
   renderGateChips();
   if(detailId) renderDetail();
   closeEmojiPop();
@@ -1474,6 +1506,7 @@ function renderList(){
   document.getElementById('fMine').classList.toggle('on', F.mine);
   document.getElementById('fMine').setAttribute('aria-pressed', F.mine ? 'true' : 'false');
   document.getElementById('ageRange').hidden = F.age !== 'custom';
+  document.getElementById('heightRange').hidden = F.height !== 'custom';
 
   var parts = ['<b>' + list.length + '</b>명의 매물'];
   if(F.status !== 'all') parts.push(STATUS[F.status].emoji + ' ' + STATUS[F.status].label);
@@ -1483,11 +1516,15 @@ function renderList(){
     parts.push(r ? '만 ' + r[0] + '~' + r[1] + '세' : '');
   }
   if(F.agent !== 'all') parts.push('담당 ' + agentName(F.agent));
+  if(F.height !== 'all'){
+    var hr = heightRangeOf();
+    if(hr) parts.push(hr[1] === Infinity ? '키 ' + hr[0] + 'cm 이상' : '키 ' + hr[0] + '~' + hr[1] + 'cm');
+  }
   if(F.mine) parts.push('내 매물만 (' + agentName(state.session) + ')');
   if(F.q.trim()) parts.push('“' + esc(F.q.trim()) + '” 검색');
   if(F.sort === 'age-asc') parts.push('나이 어린 순');
   if(F.sort === 'age-desc') parts.push('나이 많은 순');
-  var filtered = (F.status!=='all' || F.gender!=='all' || F.age!=='all' || F.agent!=='all' || F.mine || F.q.trim() || F.sort!=='default');
+  var filtered = (F.status!=='all' || F.gender!=='all' || F.age!=='all' || F.height!=='all' || F.agent!=='all' || F.mine || F.q.trim() || F.sort!=='default');
   document.getElementById('resultLine').innerHTML = parts.filter(Boolean).join(' · ') +
     (filtered ? ' <button class="clear" id="resetFilter">필터 초기화</button>' : '');
 
@@ -1967,9 +2004,17 @@ var formDeleteArmed = false;
 
 function fillAgentSelects(){
   var opts = AGENTS.map(function(ag){
-    return '<option value="' + ag.id + '">' + ag.emoji + ' ' + ag.name + '</option>';
+    return '<option value="' + esc(ag.id) + '">' + esc(ag.emoji) + ' ' + esc(ag.name) + '</option>';
   }).join('');
-  document.getElementById('fAgent').innerHTML = '<option value="all">담당 주선자 전체</option>' + opts;
+  var el = document.getElementById('fAgent');
+  if(!el) return;
+  var prev = el.value || 'all';   /* 이모지 갱신으로 다시 채울 때도 선택값 유지 */
+  el.innerHTML = '<option value="all">담당 주선자 전체</option>' + opts;
+  for(var i=0;i<el.options.length;i++){
+    if(el.options[i].value === prev){ el.value = prev; return; }
+  }
+  el.value = 'all';
+  if(F && F.agent !== 'all'){ F.agent = 'all'; renderList(); }
 }
 
 function setSeg(containerId, value){
@@ -2224,10 +2269,11 @@ function exitToGate(){
   document.getElementById('gate').hidden = false;
   document.getElementById('app').classList.remove('mode-guest');
   DEEP_ITEM = null;
-  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, agent:'all', mine:false, sort:'default'};
+  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'default'};
   qEl.value = '';
   document.getElementById('fGender').value = 'all';
   document.getElementById('fAge').value = 'all';
+  document.getElementById('fHeight').value = 'all';
   document.getElementById('fAgent').value = 'all';
   document.getElementById('fSort').value = 'default';
   pwInput.value = '';
@@ -2324,15 +2370,26 @@ document.getElementById('ageMin').addEventListener('input', function(e){
 document.getElementById('ageMax').addEventListener('input', function(e){
   F.ageMax = Number(e.target.value) || 99; renderList();
 });
+document.getElementById('fHeight').addEventListener('change', function(e){
+  F.height = e.target.value;
+  renderList();
+});
+document.getElementById('hMin').addEventListener('input', function(e){
+  F.heightMin = Number(e.target.value) || 0; renderList();
+});
+document.getElementById('hMax').addEventListener('input', function(e){
+  F.heightMax = Number(e.target.value) || 200; renderList();
+});
 document.getElementById('fAgent').addEventListener('change', function(e){ F.agent = e.target.value; renderList(); });
 document.getElementById('fSort').addEventListener('change', function(e){ F.sort = e.target.value; renderList(); });
 document.getElementById('fMine').addEventListener('click', function(){ F.mine = !F.mine; renderList(); });
 document.getElementById('resultLine').addEventListener('click', function(e){
   if(e.target && e.target.id === 'resetFilter'){
-    F.status = 'all'; F.q = ''; F.gender = 'all'; F.age = 'all'; F.agent = 'all'; F.mine = false; F.sort = 'default';
+    F.status = 'all'; F.q = ''; F.gender = 'all'; F.age = 'all'; F.height = 'all'; F.agent = 'all'; F.mine = false; F.sort = 'default';
     qEl.value = '';
     document.getElementById('fGender').value = 'all';
     document.getElementById('fAge').value = 'all';
+    document.getElementById('fHeight').value = 'all';
     document.getElementById('fAgent').value = 'all';
     document.getElementById('fSort').value = 'default';
     renderChips(); renderList();
@@ -2552,10 +2609,11 @@ document.getElementById('btnReset').addEventListener('click', function(){
   if(!window.confirm('데모 데이터를 처음 상태로 되돌릴까요? 등록·수정한 내용은 사라집니다.')) return;
   store.clear();
   state = seed();
-  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, agent:'all', mine:false, sort:'default'};
+  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'default'};
   qEl.value = '';
   document.getElementById('fGender').value = 'all';
   document.getElementById('fAge').value = 'all';
+  document.getElementById('fHeight').value = 'all';
   document.getElementById('fAgent').value = 'all';
   document.getElementById('fSort').value = 'default';
   save(); renderAll();
