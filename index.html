@@ -2633,6 +2633,10 @@ function renderFormPhotos(){
   var total = formPhotos.reduce(function(s, p){ return s + photoBytes(p); }, 0);
   var field = document.querySelector('#formOverlay .photo-field');
   if(field && formPhotos.length) field.classList.remove('bad');
+  if(formPhotos.length){
+    var errEl = document.getElementById('formErr');
+    if(errEl && errEl.textContent && errEl.textContent.indexOf('사진을 최소') === 0) errEl.textContent = '';
+  }
   var hint = document.getElementById('photoHint');
   if(hint){
     hint.innerHTML = formPhotos.length
