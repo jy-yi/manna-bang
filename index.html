@@ -809,7 +809,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
     <nav class="tabs" role="tablist">
       <button class="tab on" data-tab="list" role="tab" aria-selected="true">🏠 매물 리스트 <span class="cnt" id="tabCntList">30</span></button>
       <button class="tab" data-tab="board" role="tab" aria-selected="false">💌 매칭 현황판 <span class="cnt" id="tabCntBoard">4</span></button>
-      <button class="tab" data-tab="agents" role="tab" aria-selected="false">🏆 중개사 9명</button>
+      <button class="tab" data-tab="agents" role="tab" aria-selected="false">🏆 주선자 9명</button>
     </nav>
 
     <!-- TAB 1 -->
@@ -889,7 +889,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
     <!-- TAB 3 -->
     <section class="panel" id="panel-agents" hidden>
       <div class="panel-head">
-        <h2>🏆 중개사 9명 <small>성사율 랭킹</small></h2>
+        <h2>🏆 주선자 9명 <small>성사율 랭킹</small></h2>
       </div>
       <div class="lb" id="lb"></div>
       <div class="lb-note">성사율 = 성사된 매물 수 ÷ 보유 매물 수. 두 사람이 한 쌍이 되면 양쪽 주선자 모두 성사 1건으로 계산됩니다.</div>
@@ -1641,11 +1641,13 @@ function openEmojiPop(){
   pop.style.top = top + 'px';
   var eb = document.getElementById('emojiBtn');
   if(eb) eb.setAttribute('aria-expanded', 'true');
+  if(document.getElementById('detailOverlay').hidden && document.getElementById('formOverlay').hidden) histEnter('emoji');
 }
-function closeEmojiPop(){
+function closeEmojiPop(noHist){
   var pop = document.getElementById('emojiPop');
   if(!pop || pop.hidden) return;
   pop.hidden = true;
+  if(noHist !== true) histLeave();
   var eb = document.getElementById('emojiBtn');
   if(eb) eb.setAttribute('aria-expanded', 'false');
 }
@@ -2311,6 +2313,44 @@ function renderDetail(){
     '</div>';
 }
 
+/* ---------------- 브라우저 뒤로가기(popstate)·히스토리 연동 ----------------
+   모달을 열 때 히스토리 엔트리를 하나 쌓아 둔다. 휴대폰/브라우저 뒤로가기(popstate)로는
+   사이트를 벗어나지 않고 열려 있는 모달만 닫히고, 화면의 X·딤 클릭으로 닫을 때는 쌓아 둔
+   엔트리를 history.back()으로 함께 정리해 뒤로가기를 두 번 눌러야 하는 일이 없게 한다. */
+var histOwned = false;   // 지금 히스토리 엔트리가 이 앱이 모달용으로 쌓은 엔트리인가
+var histSkipPop = 0;     // 화면에서 닫아 history.back()을 부른 경우, 그 popstate는 세지 않고 무시
+// 새로고침 등으로 남아 있는 예전 모달 표식은 지워, 뒤로가기가 엉뚱하게 동작하지 않게 한다
+try { if(window.history && history.state && history.state.mb) history.replaceState(null, ''); } catch(e){}
+
+function histState(kind){
+  var st = {mb: kind};
+  if(kind === 'detail' && detailId) st.id = detailId;
+  if(kind === 'form') st.id = editingId || null;
+  return st;
+}
+function histEnter(kind){
+  if(!window.history || !history.pushState) return;
+  try {
+    if(histOwned) history.replaceState(histState(kind), '');
+    else { history.pushState(histState(kind), ''); histOwned = true; }
+  } catch(e){}
+}
+function histLeave(){
+  if(!histOwned) return;
+  histOwned = false;
+  histSkipPop++;
+  try { history.back(); } catch(e){ histSkipPop = Math.max(0, histSkipPop - 1); return; }
+  setTimeout(function(){ if(histSkipPop > 0) histSkipPop = 0; }, 1200);
+}
+window.addEventListener('popstate', function(){
+  if(histSkipPop > 0){ histSkipPop--; return; }
+  histOwned = false;
+  var pop = document.getElementById('emojiPop');
+  if(pop && !pop.hidden){ closeEmojiPop(true); return; }
+  if(!document.getElementById('formOverlay').hidden){ closeForm(true); return; }
+  if(!document.getElementById('detailOverlay').hidden){ closeDetail(true); return; }
+});
+
 function openDetail(id){
   detailId = id; slideIdx = 0; proposalOpen = false; proposalPick = null; deleteArmed = false; shareMine = null;
   revOpenKey = null; revDraft = ''; revDelArmed = null;
@@ -2320,11 +2360,15 @@ function openDetail(id){
   document.body.style.overflow = 'hidden';
   var m = document.querySelector('#detailOverlay .modal');
   if(m) m.scrollTop = 0;
+  histEnter('detail');
 }
-function closeDetail(){
-  document.getElementById('detailOverlay').hidden = true;
+function closeDetail(noHist){
+  var ov = document.getElementById('detailOverlay');
+  if(ov.hidden){ detailId = null; return; }
+  ov.hidden = true;
   detailId = null;
   document.body.style.overflow = '';
+  if(noHist !== true) histLeave();
   if(returnFocus && returnFocus.focus){ try { returnFocus.focus(); } catch(e){} }
 }
 
@@ -2542,6 +2586,7 @@ function openForm(id){
 
   document.getElementById('formOverlay').hidden = false;
   document.body.style.overflow = 'hidden';
+  histEnter('form');
   var firstEl = document.getElementById('f-birth');
   setTimeout(function(){ try { firstEl.focus(); } catch(e){} }, 60);
 }
@@ -2571,9 +2616,12 @@ function wireFormFoot(){
   });
 }
 
-function closeForm(){
-  document.getElementById('formOverlay').hidden = true;
+function closeForm(noHist){
+  var ov = document.getElementById('formOverlay');
+  if(ov.hidden) return;
+  ov.hidden = true;
   document.body.style.overflow = '';
+  if(noHist !== true) histLeave();
 }
 
 function splitList(str){
@@ -2708,8 +2756,9 @@ function tryLogin(){
 
 function exitToGate(){
   MODE = 'agent';
-  closeDetail();
-  closeForm();
+  closeDetail(true);
+  closeForm(true);
+  histOwned = false; histSkipPop = 0;
   document.getElementById('app').hidden = true;
   document.getElementById('gate').hidden = false;
   document.getElementById('app').classList.remove('mode-guest');
@@ -2918,7 +2967,7 @@ detailOverlay.addEventListener('click', function(e){
     toast('카톡 문구를 준비했어요. 아래 버튼으로 보내 보세요 💬');
   } else if(act === 'edit'){
     var id = detailId;
-    closeDetail();
+    closeDetail(true);   // 수정 모달로 바로 넘어가므로 히스토리 엔트리는 교체한다
     openForm(id);
   } else if(act === 'delete'){
     deleteArmed = !deleteArmed; proposalOpen = false;
@@ -3058,7 +3107,7 @@ document.getElementById('assetForm').addEventListener('submit', function(e){
     if(!a) return;
     for(var k in data){ if(Object.prototype.hasOwnProperty.call(data,k)) a[k] = data[k]; }
     a.history.unshift({at: today(), by: agentName(state.session), text: '매물 정보 수정 (' + agentName(state.session) + ')'});
-    save(); renderAll(); closeForm();
+    save(); renderAll(); closeForm(true);   // 수정 후 상세로 돌아가므로 엔트리는 상세로 교체된다
     toast('매물 정보를 수정했어요.');
     openDetail(editingId);
   } else {
