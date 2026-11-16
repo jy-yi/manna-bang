@@ -1105,7 +1105,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
         <div class="field">
           <label for="f-birth">출생연도 <em>*</em></label>
           <input id="f-birth" type="number" min="1980" max="2004" placeholder="1994">
-          <span class="hint" id="birthHint">예: 1994 → <b>94년생 / 32세</b></span>
+          <span class="hint" id="birthHint">예: 1994 → <b>94년생 / 33세</b></span>
         </div>
 
         <div class="field">
@@ -1519,7 +1519,10 @@ function saveGuestAuth(){
   return ssSet(GUEST_AUTH_KEY, JSON.stringify({mode:'guest', session:'guest'}));
 }
 function clearAuth(){ lsDel(AUTH_KEY); ssDel(GUEST_AUTH_KEY); }
-function ageOf(p){ return new Date().getFullYear() - p.birth; }
+/* 나이 표기는 앱 전체를 한국나이(세는나이)로 통일한다: 올해 - 출생연도 + 1.
+   2026년 기준 1993년생 = 34세, 1994년생 = 33세. 목록·상세·현황판·공유 문구·검색·폼 힌트가 모두 이 함수를 거친다. */
+function koreanAge(birthYear){ return new Date().getFullYear() - Number(birthYear) + 1; }
+function ageOf(p){ return koreanAge(p.birth); }
 function birthLabel(p){ return String(p.birth).slice(2) + '년생'; }
 function ageLabel(p){ return birthLabel(p) + ' / ' + ageOf(p) + '세'; }
 function assetNo(a){
@@ -1791,7 +1794,7 @@ function filteredAssets(){
     }
     if(q){
       var extras = (a.extras || []).map(function(e){ return e.label + ' ' + e.value; }).join(' ');
-      /* 나이·출생연도로도 찾을 수 있게 “93년생 / 1993 / 33 / 33세” 형태를 모두 넣는다 */
+      /* 나이·출생연도로도 찾을 수 있게 “93년생 / 1993 / 34 / 34세” 형태를 모두 넣는다 (나이는 한국나이) */
       var ageOfA = ageOf(a);
       var hay = [assetTitle(a), assetNo(a), '#' + assetNo(a), a.job, a.company, a.region, a.workArea,
                  a.mbti, a.memo, extras, (a.tags||[]).join(' '), agentName(a.agent), a.smoke, a.drink,
@@ -3361,9 +3364,9 @@ function updateBirthHint(){
   var v = Number(document.getElementById('f-birth').value);
   var hint = document.getElementById('birthHint');
   if(v >= 1980 && v <= 2004){
-    hint.innerHTML = '예: ' + v + ' → <b>' + String(v).slice(2) + '년생 / ' + (new Date().getFullYear() - v) + '세</b>';
+    hint.innerHTML = '예: ' + v + ' → <b>' + String(v).slice(2) + '년생 / ' + koreanAge(v) + '세</b>';
   } else {
-    hint.innerHTML = '예: 1994 → <b>94년생 / 32세</b>';
+    hint.innerHTML = '예: 1994 → <b>94년생 / ' + koreanAge(1994) + '세</b>';
   }
 }
 
