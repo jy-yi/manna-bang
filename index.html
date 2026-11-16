@@ -27,7 +27,7 @@ body{
   background:var(--bg); color:var(--ink); min-height:100vh;
   font-family:'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans CJK KR',-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Malgun Gothic','AppleGothic',sans-serif;
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-  letter-spacing:-.012em; line-height:1.45;
+  letter-spacing:-.012em; line-height:1.45; word-break:keep-all; overflow-wrap:break-word;
 }
 h1,h2,h3,h4,p{margin:0}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;letter-spacing:inherit}
@@ -267,19 +267,19 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .mhead .stage-tag{margin-left:auto;font-size:11px;font-weight:780;padding:4px 9px;border-radius:99px;background:var(--mint-soft);color:var(--mint-ink)}
 .mhead .stage-tag.pass{background:#EFEBE5;color:#7D746B}
 .mhead .stage-tag.done{background:var(--coral-soft);color:#C43A2C}
-.pair{display:grid;grid-template-columns:minmax(0,1fr) 30px minmax(0,1fr);align-items:center;gap:6px}
+.pair{display:grid;grid-template-columns:minmax(0,1.15fr) 24px minmax(0,1.15fr);align-items:center;gap:4px}
 .person{display:flex;align-items:center;gap:9px;min-width:0;cursor:pointer;border-radius:12px;padding:4px;transition:.14s}
 .person:hover{background:var(--bg-2)}
-.person .ava{width:50px;height:50px;border-radius:50%;overflow:hidden;flex:0 0 auto;border:2px solid #fff;box-shadow:0 3px 9px rgba(70,45,20,.14)}
+.person .ava{width:46px;height:46px;border-radius:50%;overflow:hidden;flex:0 0 auto;border:2px solid #fff;box-shadow:0 3px 9px rgba(70,45,20,.14)}
 .person .ava svg{display:block;width:100%;height:100%}
-.person .pi{min-width:0}
-.person .pn{font-size:13.5px;font-weight:800;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.person .pm{font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.person .pa{font-size:10px;color:var(--ink-2);font-weight:700;margin-top:2px}
+.person .pi{min-width:0;display:block;overflow:hidden}
+.person .pn{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.person .pm{display:block;font-size:11px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.person .pa{display:block;font-size:10px;color:var(--ink-2);font-weight:700;margin-top:2px}
 .pair .link{display:grid;place-items:center;font-size:17px;color:var(--coral)}
 .steps{display:flex;align-items:flex-start;margin:14px 0 12px;position:relative;list-style:none;padding:0}
 .steps .step{flex:1;text-align:center;position:relative;font-size:10.5px;font-weight:700;color:var(--muted)}
-.steps .step .d{width:9px;height:9px;border-radius:50%;background:#E6DCD0;margin:0 auto 6px;position:relative;z-index:1;transition:.2s}
+.steps .step .d{display:block;width:9px;height:9px;border-radius:50%;background:#E6DCD0;margin:0 auto 6px;position:relative;z-index:1;transition:.2s}
 .steps .step::after{content:'';position:absolute;left:50%;right:-50%;top:4px;height:2px;background:#EFE7DD}
 .steps .step:last-child::after{display:none}
 .steps .step.done .d{background:#B6E7D8}
@@ -1229,17 +1229,17 @@ function renderList(){
 /* ---------------- render: board ---------------- */
 function stepsHTML(stage){
   var idx = STAGES.indexOf(stage);
-  return '<ol class="steps">' + STAGES.slice(0,5).map(function(s, i){
+  return '<div class="steps">' + STAGES.slice(0,5).map(function(s, i){
     var cls = i === idx ? 'on' : (idx > i ? 'done' : '');
-    return '<li class="step ' + cls + '"><span class="d"></span>' + s + '</li>';
-  }).join('') + '</ol>';
+    return '<div class="step ' + cls + '"><span class="d"></span>' + s + '</div>';
+  }).join('') + '</div>';
 }
 
 function personHTML(a){
   return '<div class="person" data-open="' + a.id + '" role="button" tabindex="0">' +
     '<span class="ava">' + avatarSVG(a,0) + '</span>' +
     '<span class="pi"><span class="pn">' + esc(a.name) + ' · ' + ageOf(a) + '</span>' +
-    '<span class="pm">' + esc(a.region) + ' · ' + esc(a.job) + '</span>' +
+    '<span class="pm">' + esc(a.region) + '</span>' +
     '<span class="pa">' + agentById(a.agent).emoji + ' ' + esc(agentName(a.agent)) + ' 주선</span></span>' +
   '</div>';
 }
