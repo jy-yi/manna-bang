@@ -277,7 +277,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .toggle.on .knob{background:var(--mint);border-color:var(--mint)}
 .range-row{display:flex;grid-column:1 / -1;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);border-radius:13px;padding:8px 12px;box-shadow:var(--shadow-s)}
 .range-row span{font-size:12px;font-weight:700;color:var(--muted)}
-.range-row input{width:58px;border:0;background:var(--bg-2);border-radius:8px;padding:7px 8px;font-size:13px;font-weight:700;text-align:center;outline:none}
+.range-row input{width:62px;flex:0 0 62px;min-width:0;border:0;background:var(--bg-2);border-radius:8px;padding:7px 6px;font-size:13px;font-weight:700;text-align:center;outline:none}
 .range-row input:focus{box-shadow:0 0 0 2px rgba(212,121,106,.28)}
 .range-row .unit{font-size:12px;font-weight:700;color:var(--ink-2)}
 .result-line{font-size:12px;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -591,6 +591,8 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
   .filters select{flex:0 0 auto;width:auto;min-width:170px}
   .filters .toggle{width:auto}
   .filters .range-row{flex:1 1 100%}
+  .range-row{gap:5px;padding:8px 10px}
+  .range-row input{width:58px;flex:0 0 58px;font-size:12.5px}
   .dash{padding:26px}
   .dash h1{font-size:26px}
   .stat-grid{grid-template-columns:repeat(4,1fr);gap:12px}
@@ -755,11 +757,12 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
           <option value="M">남성</option>
           <option value="F">여성</option>
         </select>
-        <select id="fAge" aria-label="나이대 필터">
+        <select id="fAge" aria-label="출생연도 필터">
           <option value="all">나이 전체</option>
-          <option value="27-29">20대 후반 27~29</option>
-          <option value="30-32">30대 초반 30~32</option>
-          <option value="33-40">30대 중반+ 33~</option>
+          <option value="y2000">00년생 이하</option>
+          <option value="y96-99">99년생~96년생</option>
+          <option value="y92-95">95년생~92년생</option>
+          <option value="y1991">91년생 이상</option>
           <option value="custom">직접 입력 (범위)</option>
         </select>
         <select id="fHeight" aria-label="키 필터">
@@ -780,11 +783,11 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
         </select>
         <button class="toggle" id="fMine" aria-pressed="false"><span class="knob"></span>내 매물만</button>
         <div class="range-row" id="ageRange" hidden>
-          <span>만 나이</span>
-          <input id="ageMin" type="number" min="19" max="70" value="27" aria-label="최소 나이">
-          <span class="unit">세 ~</span>
-          <input id="ageMax" type="number" min="19" max="70" value="36" aria-label="최대 나이">
-          <span class="unit">세</span>
+          <span>출생연도</span>
+          <input id="ageMin" type="number" min="1980" max="2004" step="1" value="1992" aria-label="시작 출생연도">
+          <span class="unit">년생 ~</span>
+          <input id="ageMax" type="number" min="1980" max="2004" step="1" value="1997" aria-label="끝 출생연도">
+          <span class="unit">년생</span>
         </div>
         <div class="range-row" id="heightRange" hidden>
           <span>키</span>
@@ -1278,13 +1281,37 @@ function getMatch(id){
 }
 
 /* ---------------- filters ---------------- */
-var F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'created-desc'};
+var F = {status:'all', q:'', gender:'all', age:'all', birthMin:1992, birthMax:1997, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'created-desc'};
 
-function ageRangeOf(){
+/* 나이 필터는 모두 출생연도 구간으로 계산한다. 반환값은 [시작연도, 끝연도] (양 끝 포함). */
+var AGE_BANDS = {
+  'y2000':  [2000, 9999],   /* 00년생 이하: 2000년생부터 더 어린 쪽 */
+  'y96-99': [1996, 1999],   /* 99년생~96년생 */
+  'y92-95': [1992, 1995],   /* 95년생~92년생 */
+  'y1991':  [0, 1991]       /* 91년생 이상: 1991년생부터 더 나이 많은 쪽 */
+};
+var AGE_BAND_LABEL = {
+  'y2000':  '00년생 이하',
+  'y96-99': '99~96년생',
+  'y92-95': '95~92년생',
+  'y1991':  '91년생 이상'
+};
+function birthRangeOf(){
   if(F.age === 'all') return null;
-  if(F.age === 'custom') return [F.ageMin, F.ageMax];
-  var parts = F.age.split('-');
-  return [Number(parts[0]), Number(parts[1])];
+  if(F.age === 'custom'){
+    var lo = Math.min(F.birthMin, F.birthMax);
+    var hi = Math.max(F.birthMin, F.birthMax);
+    return [lo, hi];
+  }
+  return AGE_BANDS[F.age] || null;
+}
+function ageFilterLabel(){
+  if(F.age === 'all') return '';
+  if(F.age === 'custom'){
+    var r = birthRangeOf();
+    return r ? '출생연도 ' + r[0] + '~' + r[1] + '년생' : '';
+  }
+  return AGE_BAND_LABEL[F.age] || '';
 }
 
 function heightRangeOf(){
@@ -1297,18 +1324,27 @@ function heightRangeOf(){
   return [Number(F.height), Infinity];
 }
 
+function resetRangeInputs(){
+  document.getElementById('ageMin').value = '1992';
+  document.getElementById('ageMax').value = '1997';
+  document.getElementById('hMin').value = '160';
+  document.getElementById('hMax').value = '180';
+  F.birthMin = 1992; F.birthMax = 1997;
+  F.heightMin = 160; F.heightMax = 180;
+}
+
 function filteredAssets(){
   var q = F.q.trim().toLowerCase();
-  var range = ageRangeOf();
+  var bRange = birthRangeOf();
   var hRange = heightRangeOf();
   return state.assets.filter(function(a){
     if(F.status !== 'all' && a.status !== F.status) return false;
     if(F.gender !== 'all' && a.gender !== F.gender) return false;
     if(F.agent !== 'all' && a.agent !== F.agent) return false;
     if(F.mine && a.agent !== state.session) return false;
-    if(range){
-      var age = ageOf(a);
-      if(age < range[0] || age > range[1]) return false;
+    if(bRange){
+      var by = Number(a.birth) || 0;
+      if(by < bRange[0] || by > bRange[1]) return false;
     }
     if(hRange){
       var h = Number(a.height);
@@ -1516,10 +1552,7 @@ function renderList(){
   var parts = ['<b>' + list.length + '</b>명의 매물'];
   if(F.status !== 'all') parts.push(STATUS[F.status].emoji + ' ' + STATUS[F.status].label);
   if(F.gender !== 'all') parts.push(F.gender === 'M' ? '남성' : '여성');
-  if(F.age !== 'all'){
-    var r = ageRangeOf();
-    parts.push(r ? '만 ' + r[0] + '~' + r[1] + '세' : '');
-  }
+  if(F.age !== 'all') parts.push(ageFilterLabel());
   if(F.agent !== 'all') parts.push('담당 ' + agentName(F.agent));
   if(F.height !== 'all'){
     var hr = heightRangeOf();
@@ -2275,13 +2308,14 @@ function exitToGate(){
   document.getElementById('gate').hidden = false;
   document.getElementById('app').classList.remove('mode-guest');
   DEEP_ITEM = null;
-  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'created-desc'};
+  F = {status:'all', q:'', gender:'all', age:'all', birthMin:1992, birthMax:1997, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'created-desc'};
   qEl.value = '';
   document.getElementById('fGender').value = 'all';
   document.getElementById('fAge').value = 'all';
   document.getElementById('fHeight').value = 'all';
   document.getElementById('fAgent').value = 'all';
   document.getElementById('fSort').value = 'created-desc';
+  resetRangeInputs();
   pwInput.value = '';
   gateErr.textContent = '';
   showGuestForm(false);
@@ -2371,10 +2405,10 @@ document.getElementById('fAge').addEventListener('change', function(e){
   renderList();
 });
 document.getElementById('ageMin').addEventListener('input', function(e){
-  F.ageMin = Number(e.target.value) || 0; renderList();
+  F.birthMin = Number(e.target.value) || 1980; renderList();
 });
 document.getElementById('ageMax').addEventListener('input', function(e){
-  F.ageMax = Number(e.target.value) || 99; renderList();
+  F.birthMax = Number(e.target.value) || 2004; renderList();
 });
 document.getElementById('fHeight').addEventListener('change', function(e){
   F.height = e.target.value;
@@ -2398,6 +2432,7 @@ document.getElementById('resultLine').addEventListener('click', function(e){
     document.getElementById('fHeight').value = 'all';
     document.getElementById('fAgent').value = 'all';
     document.getElementById('fSort').value = 'created-desc';
+    resetRangeInputs();
     renderChips(); renderList();
   }
 });
@@ -2615,13 +2650,14 @@ document.getElementById('btnReset').addEventListener('click', function(){
   if(!window.confirm('데모 데이터를 처음 상태로 되돌릴까요? 등록·수정한 내용은 사라집니다.')) return;
   store.clear();
   state = seed();
-  F = {status:'all', q:'', gender:'all', age:'all', ageMin:27, ageMax:36, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'created-desc'};
+  F = {status:'all', q:'', gender:'all', age:'all', birthMin:1992, birthMax:1997, height:'all', heightMin:160, heightMax:180, agent:'all', mine:false, sort:'created-desc'};
   qEl.value = '';
   document.getElementById('fGender').value = 'all';
   document.getElementById('fAge').value = 'all';
   document.getElementById('fHeight').value = 'all';
   document.getElementById('fAgent').value = 'all';
   document.getElementById('fSort').value = 'created-desc';
+  resetRangeInputs();
   save(); renderAll();
   toast('데모 데이터를 초기화했어요.');
 });
