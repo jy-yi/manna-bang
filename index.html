@@ -1173,7 +1173,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
           <span class="hint" id="photoHint">사진은 필수예요. 긴 변 900px · JPEG로 자동 압축돼요.</span>
           <div class="photo-secure">
             <span class="ps-l">🔒 사진과 프로필 정보는 <b>인증된 멤버에게만</b> 공개되고 외부에 유통되지 않아요.</span>
-            <span class="ps-s">지금은 이 브라우저에만 저장되고, 매물을 지우면 사진도 함께 삭제됩니다.</span>
+            <span class="ps-s" id="photoSecureSub">사진은 비공개 보안 서버에 저장되고, 매물을 지우면 서버에서도 즉시 삭제됩니다.</span>
           </div>
         </div>
 
@@ -3722,6 +3722,7 @@ function openForm(id){
   setSeg('segDrink', formDrink);
   renderExtras();
   updateBirthHint();
+  updatePhotoSecureNote();
 
   var del = document.getElementById('formDanger');
   del.innerHTML = '';
@@ -3953,6 +3954,16 @@ try {
   DEEP_ITEM = qp.get('item');
 } catch(e){ DEEP_ITEM = null; }
 
+/* 등록 모달의 사진 보관 안내 문구를 모드에 맞춰 바꿉니다 (실전 / 샘플) */
+var PHOTO_NOTE = {
+  live: '사진은 비공개 보안 서버에 저장되고, 매물을 지우면 서버에서도 즉시 삭제됩니다.',
+  demo: '지금은 샘플 체험 중이라 이 브라우저에만 임시 저장되고, 매물을 지우면 함께 삭제됩니다.'
+};
+function updatePhotoSecureNote(){
+  var el = document.getElementById('photoSecureSub');
+  if(el) el.textContent = DEMO ? PHOTO_NOTE.demo : PHOTO_NOTE.live;
+}
+
 /* 화면 아래 문구를 모드에 맞춰 바꿉니다 (실전 / 샘플) */
 function updateModeChrome(){
   var note = document.getElementById('footNote');
@@ -3963,6 +3974,7 @@ function updateModeChrome(){
   if(reset) reset.hidden = !DEMO;
   var w = document.querySelector('.brand span:last-child');
   if(w) w.textContent = DEMO ? '만나방 · 샘플' : '만나방';
+  updatePhotoSecureNote();
 }
 
 function enterApp(deepId, mode, restored){
