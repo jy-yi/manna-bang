@@ -1395,7 +1395,7 @@ function emptyState(){ return {session:null, assets:[], matches:[], seq:{asset:3
 function cloudMsg(e){ return (CLOUD && CLOUD.friendly) ? CLOUD.friendly(e) : '오류가 났어요. 잠시 뒤 다시 시도해 주세요.'; }
 
 /* ---------------- 바라는 조건 (이상형·필수 조건) ---------------- */
-var WANT_PRESETS = ['담배 X','종교 X','음주 적당히','비슷한 나이','서울/수도권','키 175cm 이상','초혼','주말 데이트 가능','연락 자주','반려동물 OK'];
+var WANT_PRESETS = ['담배 X','종교 X','음주 적당히','비슷한 나이','서울/수도권','키 175cm 이상','주말 데이트 가능','연락 자주','반려동물 OK'];
 
 function cleanWants(list){
   var out = [], seen = {};
