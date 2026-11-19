@@ -496,12 +496,17 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 }
 @keyframes fade{from{opacity:0}to{opacity:1}}
 .modal{
-  background:var(--bg);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;
+  background:var(--bg);width:100%;max-width:560px;
+  /* 안드로이드 삼성인터넷·크롬은 주소창·하단 툴바가 펼쳐진 상태에서 vh(레이아웃 뷰포트)가
+     실제 보이는 높이보다 커서 92vh 시트의 상단이 화면 위로 잘렸다 → dvh 기준으로 한 번 더 제한. */
+  max-height:92vh;max-height:calc(100dvh - 16px);
+  overflow:auto;border-radius:24px 24px 0 0;
   box-shadow:0 -20px 60px rgba(52,38,32,.28);animation:sheet .28s cubic-bezier(.2,.9,.25,1) both;position:relative;
   -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
 }
 @keyframes sheet{from{transform:translateY(26px);opacity:.6}to{transform:none;opacity:1}}
-.modal-x{position:absolute;right:12px;top:12px;z-index:3;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.9);color:var(--ink);font-size:15px;box-shadow:0 4px 12px rgba(0,0,0,.14)}
+/* 모달 안을 스크롤해도 닫기(×)가 화면 위쪽에 계속 남도록 sticky (자리는 차지하지 않게 음수 마진) */
+.modal-x{position:sticky;top:12px;margin:0 12px -34px auto;z-index:3;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.9);color:var(--ink);font-size:15px;box-shadow:0 4px 12px rgba(0,0,0,.14)}
 .modal-x:hover{background:#fff}
 
 /* touch-action:pan-y — 손가락 세로 이동은 브라우저가 그대로 스크롤하고,
@@ -513,11 +518,16 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .slide img{display:block;width:100%;height:100%;object-fit:contain;background:#F4EBE4;
   touch-action:pan-y;-webkit-user-drag:none;user-select:none}
 .gallery.has-shot .slide{cursor:zoom-in}
-.g-arrow{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.82);color:var(--ink);font-size:15px;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+.g-arrow{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.82);color:var(--ink);font-size:15px;box-shadow:0 3px 10px rgba(0,0,0,.12);z-index:3}
 .g-arrow.l{left:10px}.g-arrow.r{right:10px}
-.g-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:5px}
+.g-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:5px;z-index:3}
 .g-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:.2s}
 .g-dots i.on{background:#fff;width:16px;border-radius:99px}
+/* 손님 모드 사진 워터마크 — 사진 위에만 은은하게 깔리고, 탭·스와이프·핀치를 가로막지 않는다 */
+.wm-layer{position:absolute;inset:0;z-index:2;pointer-events:none;user-select:none;-webkit-user-select:none;
+  overflow:hidden;background-repeat:repeat;
+  background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMTgwIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAsOTApIHJvdGF0ZSgtMjcpIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iJ0FwcGxlIFNEIEdvdGhpYyBOZW8nLCdNYWxndW4gR290aGljJyxzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iODAwIiBsZXR0ZXItc3BhY2luZz0iMC4zIj48dGV4dCB5PSIxIiBmaWxsPSJyZ2JhKDU2LDM0LDI2LDAuMTYpIj7rp4zrgpjrsKkgwrcg7Jm467aAIOqzteycoCDquIjsp4A8L3RleHQ+PHRleHQgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjYyKSI+66eM64KY67CpIMK3IOyZuOu2gCDqs7XsnKAg6riI7KeAPC90ZXh0PjwvZz48L3N2Zz4=")}
+.mode-guest .slide img,.mode-guest #lightboxImg{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none}
 /* 주선자 전용 사진 일괄 저장·일괄 공유 (갤러리·라이트박스)
    사진 영역 좌상단 고정 — 우상단 닫기(×) 버튼과 겹치지 않게 왼쪽에 두고, 두 버튼이 한 줄에 들어온다. */
 .g-tools{position:absolute;left:10px;right:auto;top:10px;display:flex;gap:6px;z-index:3;touch-action:pan-y}
@@ -532,7 +542,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
   background:#fff;border:1.5px solid var(--line);color:var(--ink);font-size:12px;font-weight:800;white-space:nowrap}
 .act-pill:active{transform:scale(.97)}
 .act-pill:disabled{opacity:.55}
-.lightbox .lb-tools{position:absolute;bottom:44px;left:0;right:0;display:flex;justify-content:center;gap:8px}
+.lightbox .lb-tools{position:absolute;bottom:44px;left:0;right:0;z-index:4;display:flex;justify-content:center;gap:8px}
 .lightbox .lb-btn{display:inline-flex;align-items:center;gap:5px;height:38px;padding:0 16px;border-radius:99px;
   background:rgba(255,255,255,.94);color:#2C2320;font-size:13px;font-weight:850;box-shadow:0 6px 18px rgba(0,0,0,.34)}
 .lightbox .lb-btn:active{transform:scale(.97)}
@@ -760,22 +770,27 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .photo-field.bad .photo-pick{border-color:#C25B48;border-style:solid;background:#FCF3EC;color:#B24B3C}
 .photo-field.bad .hint{color:#B24B3C;font-weight:750}
 
-/* 라이트박스 (사진 크게 보기) */
+/* 라이트박스 (사진 크게 보기)
+   touch-action:none 이면 두 손가락 핀치 확대까지 막힌다 → 좌우 스와이프는 앱이 직접 받고,
+   확대는 브라우저에 맡기도록 pinch-zoom 만 허용한다. */
 .lightbox{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;padding:18px;
   background:rgba(20,14,11,.97);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);animation:fade .16s both;
-  touch-action:none}
+  touch-action:pinch-zoom}
+/* 사진과 같은 크기의 무대 — 손님 모드 워터마크가 사진 영역에만 깔리게 한다 */
+.lb-stage{position:relative;display:inline-flex;max-width:100%;max-height:100%;line-height:0;border-radius:12px;overflow:hidden;
+  box-shadow:0 26px 64px rgba(0,0,0,.52)}
 .lightbox img{max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 26px 64px rgba(0,0,0,.52);animation:sheet .2s both;cursor:zoom-out;
-  touch-action:none;-webkit-user-drag:none;user-select:none}
-.lightbox .lb-x{position:absolute;right:14px;top:14px;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+  touch-action:pinch-zoom;-webkit-user-drag:none;user-select:none}
+.lightbox .lb-x{position:absolute;right:14px;top:14px;z-index:4;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
   background:rgba(255,255,255,.16);color:#fff;font-size:15px}
 .lightbox .lb-x:hover{background:rgba(255,255,255,.3)}
-.lightbox .lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;
+.lightbox .lb-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:40px;height:40px;border-radius:50%;
   display:grid;place-items:center;background:rgba(18,12,10,.42);color:#fff;font-size:20px;line-height:1;
   border:1px solid rgba(255,255,255,.22)}
 .lightbox .lb-nav:hover{background:rgba(18,12,10,.66)}
 .lightbox .lb-nav.l{left:12px}
 .lightbox .lb-nav.r{right:12px}
-.lightbox .lb-n{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:12px;font-weight:750;color:rgba(255,255,255,.72)}
+.lightbox .lb-n{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:12px;font-weight:750;color:rgba(255,255,255,.72);z-index:4}
 
 /* toast + footer */
 .toast-wrap{position:fixed;left:0;right:0;bottom:18px;z-index:90;display:flex;justify-content:center;pointer-events:none;padding:0 16px}
@@ -1410,7 +1425,10 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 
 <!-- ================= LIGHTBOX (사진 크게 보기) ================= -->
 <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="사진 크게 보기">
-  <img id="lightboxImg" alt="매물 사진 크게 보기">
+  <div class="lb-stage" id="lbStage">
+    <img id="lightboxImg" alt="매물 사진 크게 보기">
+    <div class="wm-layer" id="lightboxWm" aria-hidden="true" hidden></div>
+  </div>
   <button type="button" class="lb-x" id="lightboxClose" aria-label="닫기">✕</button>
   <button type="button" class="lb-nav l" data-lb="-1" aria-label="이전 사진">‹</button>
   <button type="button" class="lb-nav r" data-lb="1" aria-label="다음 사진">›</button>
@@ -3119,6 +3137,8 @@ function renderDetail(){
     '<div class="gallery' + (ph.length ? ' has-shot' : '') + '">' + slides +
       (slideN > 1 ? '<button class="g-arrow l" data-action="slide" data-dir="-1" aria-label="이전 사진">‹</button>' +
       '<button class="g-arrow r" data-action="slide" data-dir="1" aria-label="다음 사진">›</button>' : '') +
+      /* 손님 모드: 사진 위에만 워터마크 (포인터를 막지 않아 탭·스와이프 그대로) */
+      ((ph.length && guest) ? '<div class="wm-layer" id="detailWm" aria-hidden="true"></div>' : '') +
       /* 사진이 있으면 좌상단에 일괄 저장·일괄 공유 (1장일 때도 그대로 동작, 손님은 숨김) */
       ((ph.length && !guest)
         ? '<div class="g-tools">' +
@@ -3239,6 +3259,42 @@ window.addEventListener('popstate', function(){
   if(!document.getElementById('detailOverlay').hidden){ closeDetail(true); return; }
 });
 
+/* ---------------- 모바일 시트(모달) 높이 보정 ----------------
+   안드로이드 삼성인터넷·크롬은 주소창·하단 툴바가 펼쳐진 상태에서 'vh가 기준하는 높이'(레이아웃 뷰포트)가
+   실제 보이는 높이(visualViewport)보다 크다. 그래서 페이지 맨 위의 매물을 열면 92vh 시트가 화면보다 커져
+   상단의 사진·일괄 저장/공유·× 버튼이 주소창 위로 잘려 나갔다(아래쪽 매물은 스크롤하면서 주소창이 접혀
+   가려지지 않았다). 모달을 열 때마다 실제 보이는 높이를 기준으로 다시 잡아 화면 위로 넘치지 않게 한다. */
+var SHEET_OVERLAYS = ['detailOverlay', 'formOverlay', 'adminOverlay', 'newAssetOverlay'];
+
+function visibleHeight(){
+  var vv = window.visualViewport;
+  var h = (vv && vv.height) ? vv.height : (window.innerHeight || document.documentElement.clientHeight || 0);
+  return Math.round(h || 0);
+}
+function fitSheet(ovId){
+  var ov = document.getElementById(ovId);
+  if(!ov || ov.hidden) return;
+  var h = visibleHeight();
+  if(!h) return;
+  /* 시트는 보이는 높이의 92%까지만 — 위쪽에 여백을 남겨 상단 버튼이 화면 밖으로 나가지 않는다 */
+  ov.style.height = h + 'px';
+  var m = ov.querySelector('.modal');
+  if(m) m.style.maxHeight = Math.max(220, Math.round(h * 0.92)) + 'px';
+}
+var sheetFitTimer = 0;
+function refitSheets(){
+  clearTimeout(sheetFitTimer);
+  sheetFitTimer = setTimeout(function(){
+    for(var i = 0; i < SHEET_OVERLAYS.length; i++) fitSheet(SHEET_OVERLAYS[i]);
+  }, 120);
+}
+/* 주소창·키보드·회전으로 보이는 높이가 달라지면 열려 있는 시트도 다시 맞춘다 */
+window.addEventListener('resize', refitSheets);
+window.addEventListener('orientationchange', refitSheets);
+if(window.visualViewport && window.visualViewport.addEventListener){
+  window.visualViewport.addEventListener('resize', refitSheets);
+}
+
 function openDetail(id){
   if(lightOpen) closeLightbox(true);
   detailId = id; slideIdx = 0; proposalOpen = false; proposalPick = null; deleteArmed = false; shareMine = null;
@@ -3248,8 +3304,11 @@ function openDetail(id){
   returnFocus = document.activeElement;
   document.getElementById('detailOverlay').hidden = false;
   document.body.style.overflow = 'hidden';
+  fitSheet('detailOverlay');
   var m = document.querySelector('#detailOverlay .modal');
   if(m) m.scrollTop = 0;
+  /* 높이를 다시 잡거나 포커스가 옮겨 가도 항상 사진·상단 버튼이 보이는 최상단에서 열리게 */
+  if(m) requestAnimationFrame(function(){ m.scrollTop = 0; });
   histEnter('detail');
 }
 function closeDetail(noHist){
@@ -3851,6 +3910,8 @@ function openLightbox(a, i){
   var shBtn = document.getElementById('lbShare');
   if(shBtn){ shBtn.hidden = !canShareAny(); if(!shBtn.hidden) shBtn.textContent = bulkShareLabel(ph.length); }
   document.getElementById('lightbox').hidden = false;
+  var wm = document.getElementById('lightboxWm');
+  if(wm) wm.hidden = !isGuest();   /* 손님 모드에서만 워터마크 */
   if(!lightOpen){
     lightOpen = true;
     lightPushed = false;
@@ -3886,25 +3947,34 @@ function moveLightbox(dir){
    - 스와이프 직후 따라오는 click(사진 확대 · 라이트박스 닫힘)은 한 번 무시한다. */
 var SWIPE_MIN = 40;        /* 사진 전환에 필요한 최소 수평 이동(px) */
 var swipeLockUntil = 0;
+/* 두 손가락(핀치 확대) 중인지 — 라이트박스를 확대하는 동안에는 스와이프로 넘기지 않는다 */
+function pinchZoomed(){
+  var vv = window.visualViewport;
+  return !!(vv && vv.scale && vv.scale > 1.01);
+}
 function bindSwipe(el, onSwipe){
   if(!el) return;
-  var sx = 0, sy = 0, st = 0, tracking = false, horizontal = false;
+  var sx = 0, sy = 0, st = 0, tracking = false, horizontal = false, multi = false;
   el.addEventListener('touchstart', function(e){
-    if(e.touches.length !== 1){ tracking = false; return; }
+    /* 손가락이 두 개 이상이면 확대/축소 제스처 — 스와이프·닫기로 오인하지 않고 통째로 무시 */
+    if(e.touches.length !== 1){ tracking = false; multi = true; return; }
+    if(pinchZoomed()){ tracking = false; multi = false; return; }   /* 확대된 상태에서는 화면 이동 우선 */
     var t = e.touches[0];
     sx = t.clientX; sy = t.clientY; st = Date.now();
-    tracking = true; horizontal = false;
+    tracking = true; horizontal = false; multi = false;
   }, {passive:true});
   el.addEventListener('touchmove', function(e){
-    if(!tracking || e.touches.length !== 1) return;
+    if(e.touches.length !== 1){ multi = true; tracking = false; return; }
+    if(!tracking || multi) return;
     var t = e.touches[0], dx = t.clientX - sx, dy = t.clientY - sy;
     if(!horizontal && Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.2) horizontal = true;
     if(horizontal && e.cancelable) e.preventDefault();  /* 가로 제스처만 기본 동작 차단 */
   }, {passive:false});
-  el.addEventListener('touchcancel', function(){ tracking = false; horizontal = false; }, {passive:true});
+  el.addEventListener('touchcancel', function(){ tracking = false; horizontal = false; multi = false; }, {passive:true});
   el.addEventListener('touchend', function(e){
-    if(!tracking) return;
+    if(!tracking || multi) return;                       /* 핀치였으면 넘기지 않는다 */
     tracking = false;
+    if(e.touches && e.touches.length) return;            /* 아직 손가락이 남아 있으면(=확대 중) 무시 */
     var t = e.changedTouches && e.changedTouches[0];
     if(!t) return;
     var dx = t.clientX - sx, dy = t.clientY - sy, dt = Date.now() - st;
@@ -4159,11 +4229,18 @@ function openForm(id){
   wireFormFoot();
 
   document.getElementById('formOverlay').hidden = false;
+  fitSheet('formOverlay');
+  var formModal = document.querySelector('#formOverlay .modal');
+  if(formModal) formModal.scrollTop = 0;
   formInitialSnap = formSnap();   /* 열 때 상태 — 이걸 기준으로 작성 중인지 판단 */
   document.body.style.overflow = 'hidden';
   histEnter('form');
   var firstEl = document.getElementById('f-birth');
-  setTimeout(function(){ try { firstEl.focus(); } catch(e){} }, 60);
+  /* preventScroll — 포커스 때문에 폼이 스크롤되며 상단(제목·×)이 밀려나지 않게 */
+  setTimeout(function(){
+    try { firstEl.focus({preventScroll:true}); }
+    catch(e){ try { firstEl.focus(); } catch(e2){} }
+  }, 60);
 }
 
 function wireFormFoot(){
@@ -4322,13 +4399,14 @@ function openNewAssetPop(id){
   if(!ov) return;
   renderNewAssetPop();
   ov.hidden = false;
+  fitSheet('newAssetOverlay');
   document.body.style.overflow = 'hidden';
   /* 저장 직전에 뜬 토스트(사진 처리 등)가 팝업 문구를 가리지 않게 지운다 */
   var tw = document.getElementById('toastWrap');
   if(tw) tw.innerHTML = '';
   histEnter('newasset');   /* 등록 모달이 쌓아 둔 엔트리를 이 팝업이 이어받는다 */
   var b = document.getElementById('naShare');
-  if(b) setTimeout(function(){ try { b.focus(); } catch(e){} }, 60);
+  if(b) setTimeout(function(){ try { b.focus({preventScroll:true}); } catch(e){ try { b.focus(); } catch(e2){} } }, 60);
 }
 function closeNewAssetPop(noHist){
   var ov = document.getElementById('newAssetOverlay');
@@ -4917,6 +4995,12 @@ document.getElementById('photoGrid').addEventListener('click', function(e){
   });
   bindSwipe(lb, function(dir){ moveLightbox(dir); });
   window.addEventListener('resize', function(){ if(lightOpen) closeLightbox(); });
+  /* 손님 모드에서는 사진 우클릭·길게 누르기 저장 메뉴를 막는다 */
+  document.addEventListener('contextmenu', function(e){
+    if(!isGuest()) return;
+    var t = e.target;
+    if(t && t.closest && t.closest('#lightboxImg, #detailContent .gallery')) e.preventDefault();
+  }, false);
 })();
 
 document.getElementById('segGender').addEventListener('click', function(e){
@@ -5245,6 +5329,7 @@ function openAdmin(){
   adminEdit = { id: null, kind: '' };
   renderAdminList();
   document.getElementById('adminOverlay').hidden = false;
+  fitSheet('adminOverlay');
   document.body.style.overflow = 'hidden';
   histEnter('admin');
   setTimeout(function(){ try { document.getElementById('pinCur').focus(); } catch(e){} }, 60);
