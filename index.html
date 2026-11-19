@@ -3646,16 +3646,81 @@ function renderWantsChips(){
   }).join('');
 }
 
-function addWantsFromInput(){
-  var input = document.getElementById('f-wantInput');
-  if(!input) return;
-  var parts = String(input.value || '').split(',');
+/* 바라는 조건 직접 입력 — 한글 IME(모바일) 대응
+   조합 중인 글자는 input.value에 아직 안 들어와 있거나, 값을 비운 직후 compositionend에서 되살아난다.
+   그래서 콤마는 keydown에서 가로채지 않고(조합을 끊으면 직전 글자가 칸에 남는다)
+   값이 확정된 input 이벤트에서 자르고, 조합 중이면 compositionend 뒤로 미룬다. */
+var wantIME = { composing:false, pendingComma:false, pendingValue:'', pendingEnter:false, committed:'', at:0 };
+
+function wantInputEl(){ return document.getElementById('f-wantInput'); }
+
+/* 콤마로 나뉜 글자를 칩 목록에 넣고, 실제로 늘어난 개수를 돌려준다 */
+function commitWantText(text){
   var added = 0;
-  parts.forEach(function(p){
+  String(text == null ? '' : text).split(',').forEach(function(p){
     var s = p.replace(/\s+/g, ' ').trim();
     if(!s) return;
     if(formWants.indexOf(s) === -1){ formWants.push(s); added++; }
   });
+  if(added) renderWantsChips();
+  return added;
+}
+
+/* 입력칸의 콤마를 기준으로 자른다 — 앞부분은 칩으로, 마지막 조각만 칸에 남긴다 */
+function cutWantCommas(){
+  var input = wantInputEl();
+  if(!input) return 0;
+  var v = String(input.value || '');
+  if(v.indexOf(',') === -1) return 0;
+  if(wantIME.composing){ wantIME.pendingComma = true; wantIME.pendingValue = v; return 0; }
+  var segs = v.split(',');
+  var tail = segs[segs.length - 1];
+  var head = segs.slice(0, -1).join(',');
+  var added = commitWantText(head);
+  input.value = tail;
+  /* 조합 확정이 늦게 일어나 방금 옮긴 글자를 되살리는 경우를 대비해 기억해 둔다 */
+  wantIME.committed = (added && !tail.trim()) ? head.replace(/\s+/g, ' ').trim() : '';
+  wantIME.at = Date.now();
+  return added;
+}
+
+/* 조합이 끝난 뒤 한 번 정리: 미뤄 둔 콤마·엔터 처리와 되살아난 글자 제거 */
+function settleWantInput(){
+  var input = wantInputEl();
+  if(!input || wantIME.composing) return;
+  if(wantIME.pendingComma){
+    var pending = wantIME.pendingValue;
+    var now = String(input.value || '');
+    wantIME.pendingComma = false; wantIME.pendingValue = '';
+    if(now.indexOf(',') !== -1){
+      cutWantCommas();                       /* 콤마가 남아 있으면 그대로 자른다 */
+    } else if(pending.indexOf(',') !== -1){
+      /* 조합 확정과 함께 콤마가 사라진 경우: 지금 칸의 글자를 마지막 조각으로 보고 앞부분만 옮긴다 */
+      var head = pending.split(',').slice(0, -1).join(',').replace(/\s+/g, ' ').trim();
+      if(head){
+        commitWantText(head);
+        wantIME.committed = now.replace(/\s+/g, ' ').trim();
+        wantIME.at = Date.now();
+        input.value = '';
+      }
+    }
+  }
+  if(wantIME.pendingEnter){ wantIME.pendingEnter = false; addWantsFromInput(); }
+  var cur = String(input.value || '').replace(/\s+/g, ' ').trim();
+  if(wantIME.committed && cur === wantIME.committed && Date.now() - wantIME.at < 800){
+    input.value = '';                        /* 방금 옮긴 글자가 되살아난 것만 지운다 */
+  }
+  wantIME.committed = '';
+}
+
+function addWantsFromInput(force){
+  var input = wantInputEl();
+  if(!input) return 0;
+  if(wantIME.composing && force !== true){
+    wantIME.pendingEnter = true;             /* 조합 중에 비우면 직전 글자가 되살아난다 — 조합 끝난 뒤로 */
+    return 0;
+  }
+  var added = commitWantText(input.value);
   input.value = '';
   renderWantsChips();
   return added;
@@ -4282,7 +4347,9 @@ detailOverlay.addEventListener('click', function(e){
   if(e.target.closest('[data-close]')){ closeDetail(); return; }
   var btn = e.target.closest('[data-action]');
   if(!btn) return;
-  if(reviewAction(btn)) return;
+  /* reviewAction 은 async 라 항상 Promise(truthy)를 돌려준다 — 반환값으로 가르면 모든 버튼이 죽으므로
+     접두사(rev-)로 가른다. (실전판 전환 때 async 가 되며 수정·삭제·상태 버튼이 먹통이 됐다) */
+  if((btn.getAttribute('data-action') || '').indexOf('rev-') === 0){ reviewAction(btn); return; }
   var act = btn.getAttribute('data-action');
   var a = getAsset(detailId);
   if(!a) return;
@@ -4443,14 +4510,40 @@ document.getElementById('wantsChips').addEventListener('click', function(e){
   if(i === -1) formWants.push(w); else formWants.splice(i, 1);
   renderWantsChips();
 });
-document.getElementById('wantsAdd').addEventListener('click', addWantsFromInput);
-document.getElementById('f-wantInput').addEventListener('keydown', function(e){
-  if(e.key === 'Enter' || e.key === ',' || e.keyCode === 13 || e.keyCode === 188){
+document.getElementById('wantsAdd').addEventListener('click', function(){ addWantsFromInput(true); });
+
+/* 바라는 조건 입력칸 — 모바일 한글 IME에서 콤마를 눌러도 직전 글자가 남지 않게 */
+(function(){
+  var inp = document.getElementById('f-wantInput');
+  if(!inp) return;
+  inp.addEventListener('compositionstart', function(){ wantIME.composing = true; });
+  inp.addEventListener('compositionend', function(){
+    wantIME.composing = false;
+    setTimeout(settleWantInput, 0);        /* 조합 확정 → 그 다음에 콤마·엔터 처리 */
+  });
+  inp.addEventListener('input', function(){
+    var v = String(this.value || '');
+    if(wantIME.composing){
+      if(v.indexOf(',') !== -1){ wantIME.pendingComma = true; wantIME.pendingValue = v; }
+      return;                              /* 조합 중에는 값을 건드리지 않는다 */
+    }
+    cutWantCommas();                       /* 콤마는 여기서만 자른다(조합을 끊지 않음) */
+  });
+  inp.addEventListener('keydown', function(e){
+    if(!(e.key === 'Enter' || e.keyCode === 13)) return;
     e.preventDefault();
+    if(e.isComposing || e.keyCode === 229 || wantIME.composing){
+      wantIME.pendingEnter = true;         /* 조합이 끝난 뒤 커밋한다 */
+      setTimeout(settleWantInput, 0);
+      return;
+    }
     addWantsFromInput();
-  }
-});
-document.getElementById('f-wantInput').addEventListener('blur', addWantsFromInput);
+  });
+  inp.addEventListener('blur', function(){
+    if(wantIME.composing){ wantIME.pendingEnter = true; setTimeout(settleWantInput, 0); return; }
+    addWantsFromInput();
+  });
+})();
 document.getElementById('f-birth').addEventListener('input', updateBirthHint);
 
 document.getElementById('addExtra').addEventListener('click', function(){
@@ -4569,7 +4662,7 @@ document.getElementById('assetForm').addEventListener('submit', async function(e
   errEl.textContent = '';
 
   var tags = splitList(val('f-tags')).map(function(t){ return t.charAt(0) === '#' ? t : '#' + t; });
-  addWantsFromInput();   /* 입력 중이던 조건이 남아 있지 않게 */
+  addWantsFromInput(true);   /* 입력 중이던 조건이 남아 있지 않게 */
   var wants = cleanWants(formWants);
   var extras = formExtras
     .map(function(x){ return {label:(x.label||'').trim(), value:(x.value||'').trim()}; })
