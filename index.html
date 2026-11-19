@@ -577,6 +577,12 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .tl-item:first-child::before{background:var(--coral);box-shadow:0 0 0 3px rgba(188,99,84,.14)}
 .tl-item .dt{font-size:10.5px;color:var(--muted);font-weight:700}
 .tl-item .tx{font-size:12.5px;color:var(--ink-2);line-height:1.55;margin-top:2px}
+.tl-more{
+  width:100%;margin-top:2px;padding:9px 10px;border-radius:11px;border:1.5px dashed #E7D6C9;background:#fff;
+  font-size:12px;font-weight:780;color:#A95344;letter-spacing:-.01em;transition:.14s;
+}
+.tl-more:hover{background:#FCF3EC;border-color:#EBCFC2}
+.tl-more .cnt{color:var(--muted);font-weight:750}
 .memo{display:flex;gap:6px;margin-top:9px}
 .memo textarea{
   flex:1;min-height:42px;max-height:110px;resize:vertical;background:#fff;border:1.5px solid var(--line);border-radius:11px;
@@ -2414,6 +2420,9 @@ var proposalPick = null;
 var deleteArmed = false;
 var shareMine = null;
 var returnFocus = null;
+/* 진행 히스토리 접기/펼치기 — 매물을 열 때마다 접힌 상태(최신 3개)로 초기화한다 */
+var HIST_FOLD = 3;
+var histOpen = false;
 /* 마담 리뷰 작성 상태 */
 var revOpenKey = null;   /* '매물id@매칭id' */
 var revVis = 'public';
@@ -2899,10 +2908,17 @@ function renderDetail(){
     : '<span class="ox-big none">음주 미입력</span>';
   if(a.mbti) oxRow += '<span class="ox-big mb"><b>' + esc(a.mbti) + '</b></span>';
 
-  var tl = a.history.map(function(h){
+  /* 히스토리는 최신순(a.history[0]이 가장 최근) — 기본은 최신 3개만, 4건 이상이면 더보기 버튼 */
+  var histAll = a.history || [];
+  var histFolded = histAll.length > HIST_FOLD;
+  var histShown = (histFolded && !histOpen) ? histAll.slice(0, HIST_FOLD) : histAll;
+  var tl = histShown.map(function(h){
     return '<div class="tl-item"><div class="dt">' + fmtDate(h.at) + ' · ' + esc(h.by) + '</div>' +
       '<div class="tx">' + esc(h.text) + '</div></div>';
   }).join('');
+  var tlMore = !histFolded ? '' : (histOpen
+    ? '<button type="button" class="tl-more" data-action="tl-toggle" aria-expanded="true">접기 ▴</button>'
+    : '<button type="button" class="tl-more" data-action="tl-toggle" aria-expanded="false">더보기 <span class="cnt">(' + (histAll.length - HIST_FOLD) + '건 더)</span> ▾</button>');
 
   var statusBtns = Object.keys(STATUS).map(function(k){
     return '<button class="sbtn ' + (a.status === k ? 'on' : '') + '" data-action="status" data-status="' + k + '">' +
@@ -3032,6 +3048,7 @@ function renderDetail(){
       (guest ? '' :
       '<div class="block"><h4>진행 히스토리 <span style="font-weight:700;color:#85716A">' + a.history.length + '건</span></h4>' +
         '<div class="tl">' + (tl || '<div class="tl-item"><div class="tx">아직 기록이 없어요.</div></div>') + '</div>' +
+        tlMore +
         (owner ? '<div class="memo"><textarea id="memoInput" placeholder="상담·소개 내용을 메모로 남겨 주세요"></textarea>' +
         '<button data-action="memo">추가</button></div>' : '') +
       '</div>') +
@@ -3101,6 +3118,7 @@ window.addEventListener('popstate', function(){
 function openDetail(id){
   if(lightOpen) closeLightbox(true);
   detailId = id; slideIdx = 0; proposalOpen = false; proposalPick = null; deleteArmed = false; shareMine = null;
+  histOpen = false;   /* 매물을 새로 열면 진행 히스토리는 접힌 상태(최신 3개)로 */
   revOpenKey = null; revDraft = ''; revDelArmed = null;
   renderDetail();
   returnFocus = document.activeElement;
@@ -4640,6 +4658,11 @@ detailOverlay.addEventListener('click', function(e){
     deleteArmed = false;
     setAssetStatus(detailId, btn.getAttribute('data-status'));
     renderDetail();
+  } else if(act === 'tl-toggle'){
+    histOpen = !histOpen;
+    renderDetail();
+    var tb = detailOverlay.querySelector('.tl-more');
+    if(tb && !histOpen) setTimeout(function(){ try { tb.scrollIntoView({behavior:'smooth', block:'center'}); } catch(err){} }, 40);
   } else if(act === 'memo'){
     var ta = document.getElementById('memoInput');
     if(!ta) return;
