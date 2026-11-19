@@ -1,6 +1,0 @@
-project_id = "pzvlgehxokxpsinlshua"
-
-# 부트스트랩(최초 계정 생성)은 로그인 전에 호출되므로 게이트웨이 JWT 검증을 끕니다.
-# 함수 내부에서 Authorization 토큰을 직접 getUser() 로 검증하고, 방장 여부를 확인합니다.
-[functions.manna-admin]
-verify_jwt = false
