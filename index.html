@@ -858,6 +858,40 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
   .stat strong{font-size:19px}
   .opt-row .k{flex-basis:62px}
 }
+/* ---------------- 실전 모드 · 방장 관리 ---------------- */
+.gate-note{margin-top:10px;font-size:11px;font-weight:700;color:var(--mint-ink);text-align:center;line-height:1.5}
+.gate-note.bad{color:#B24B3C}
+.setup-box{margin-top:10px;padding:11px 12px;border:1.5px dashed var(--line-2);border-radius:13px;background:#fff}
+.setup-t{font-size:11px;color:var(--ink-2);font-weight:650;line-height:1.55;margin:0}
+.setup-box input{flex:1;min-width:0;background:var(--bg-2);border:1.5px solid var(--line);border-radius:11px;padding:10px 11px;font-size:12.5px;outline:none}
+.setup-box input:focus{border-color:var(--mint);background:#fff;box-shadow:0 0 0 3px rgba(212,121,106,.1)}
+.gate-lnk{display:block;width:100%;margin-top:10px;padding:6px;font-size:11.5px;font-weight:700;color:var(--muted);text-align:center;background:none;border:0;text-decoration:underline;text-underline-offset:2px}
+.gate-lnk:hover{color:var(--ink-2)}
+.who .who-ic{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12.5px;background:var(--bg-2);line-height:1;transition:.14s}
+.who .who-ic:hover{background:#F7E7DD;transform:translateY(-1px)}
+.modal.admin{max-width:480px}
+.admin-body{padding:12px 18px 18px;display:flex;flex-direction:column;gap:9px}
+.admin-body .field{grid-column:auto}
+.admin-body .form-sec{margin-top:10px}
+.admin-body .form-sec::after{content:'';flex:1;height:1px;background:var(--line)}
+.adm-list{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+.adm-row{display:flex;align-items:center;gap:6px;background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:7px 8px;font-size:12.5px}
+.adm-row.off{opacity:.62}
+.adm-row .adm-em{font-size:14px;line-height:1}
+.adm-row .adm-nm{font-weight:780;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.adm-row .adm-tag{font-size:9.5px;font-weight:800;color:var(--mint-ink);background:var(--mint-soft);border-radius:5px;padding:2px 5px;margin-left:4px}
+.adm-row .adm-tag.off{color:#8A6A5E;background:var(--bg-2)}
+.adm-row .adm-btn{margin-left:auto;flex:0 0 auto;font-size:10.5px;font-weight:780;color:var(--ink-2);background:var(--bg-2);border-radius:8px;padding:5px 8px}
+.adm-row .adm-btn + .adm-btn{margin-left:4px}
+.adm-row .adm-btn:hover{background:#F7E7DD;color:var(--ink)}
+.adm-row .adm-btn.on{background:#FAE6DC;color:#A95344}
+.adm-row .adm-btn.go{background:var(--mint-soft);color:var(--mint-ink)}
+.adm-row .adm-pin{flex:1;min-width:0;background:var(--bg-2);border:1.5px solid var(--line);border-radius:8px;padding:6px 8px;font-size:12px;outline:none}
+.adm-add{display:flex;flex-direction:column;gap:6px;padding-top:4px}
+.adm-add input{flex:1;min-width:0;background:#fff;border:1.5px solid var(--line);border-radius:11px;padding:9px 11px;font-size:12.5px;outline:none}
+.adm-add input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(212,121,106,.1)}
+.adm-note{font-size:10.5px;color:var(--muted);font-weight:650;line-height:1.6;margin:0}
+.note-line{grid-column:1 / -1;font-size:10.5px;color:var(--muted);font-weight:650;line-height:1.55}
 @media (prefers-reduced-motion:reduce){
   *{animation:none !important;transition:none !important}
 }
@@ -894,22 +928,36 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
       <div class="gate-err" id="gateErr" role="status"></div>
       <div class="gate-div">또는</div>
       <div class="guest-box">
-        <button type="button" class="btn-guest" id="guestBtn">👀 손님으로 둘러보기 <small>(읽기 전용)</small></button>
+        <button type="button" class="btn-guest" id="guestBtn">👀 손님 입장 <small>(입장코드 · 읽기 전용)</small></button>
         <div class="guest-form" id="guestForm" hidden>
           <div class="pw-label">
-            <label for="guestPw">손님 비밀번호</label>
+            <label for="guestPw">손님 입장코드</label>
             <span class="who-sel none">둘러보기 전용</span>
           </div>
           <div class="code-row">
-            <input id="guestPw" type="password" inputmode="numeric" maxlength="8" placeholder="비밀번호 입력" aria-label="손님 비밀번호" autocomplete="off">
+            <input id="guestPw" type="password" inputmode="numeric" maxlength="8" placeholder="입장코드 입력" aria-label="손님 입장코드" autocomplete="off">
             <button type="button" class="btn-enter" id="guestEnter">입장</button>
           </div>
           <div class="gate-err" id="guestErr" role="status"></div>
           <button type="button" class="guest-cancel" id="guestCancel">취소</button>
         </div>
       </div>
+      <div class="setup-box" id="setupBox" hidden>
+        <p class="setup-t">🛠 처음 한 번만 설정해요. 아래 비번으로 주선자 9명 계정과 손님 계정이 만들어지고, 이후에는 방장이 ⚙️ 방장 관리에서 초기화할 수 있어요.</p>
+        <div class="code-row" style="margin-top:7px">
+          <input id="setupPin" type="password" inputmode="numeric" maxlength="8" placeholder="주선자 초기 비번 (숫자 4~8)" autocomplete="off" aria-label="주선자 초기 비번">
+        </div>
+        <div class="code-row" style="margin-top:6px">
+          <input id="setupGuestPin" type="password" inputmode="numeric" maxlength="8" placeholder="손님 입장코드 (숫자 4~8)" autocomplete="off" aria-label="손님 입장코드">
+          <button type="button" class="btn-enter" id="setupGo">만들기</button>
+        </div>
+        <div class="gate-err" id="setupErr" role="status"></div>
+      </div>
+      <button type="button" class="gate-lnk" id="setupOpen" hidden>🛠 처음 계정 만들기 (방장)</button>
+      <button type="button" class="gate-lnk" id="sampleBtn">샘플 모드로 둘러보기</button>
+      <div class="gate-note" id="cloudNote">☁️ 실전 모드 · 보안 서버에 연결하는 중…</div>
       <div class="gate-foot">
-        <b>프로토타입</b> · 비밀번호는 각자만 알고 있습니다 · 입력한 정보는 이 브라우저에만 저장됩니다.
+        <b>만나방</b> · 비밀번호는 각자만 알고 있습니다 · 사진과 프로필은 인증된 멤버에게만 공개돼요.
       </div>
     </form>
   </div>
@@ -964,7 +1012,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
     <nav class="tabs" role="tablist">
       <button class="tab on" data-tab="list" role="tab" aria-selected="true">🏠 매물 리스트 <span class="cnt" id="tabCntList">30</span></button>
       <button class="tab" data-tab="board" role="tab" aria-selected="false">💌 매칭 현황판 <span class="nbadge" id="tabBadgeBoard" hidden>0</span> <span class="cnt" id="tabCntBoard">4</span></button>
-      <button class="tab" data-tab="agents" role="tab" aria-selected="false">🏆 주선자 9명</button>
+      <button class="tab" data-tab="agents" role="tab" aria-selected="false">🏆 주선자 <span id="tabAgentCnt">9</span>명</button>
     </nav>
 
     <!-- TAB 1 -->
@@ -1045,7 +1093,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
     <!-- TAB 3 -->
     <section class="panel" id="panel-agents" hidden>
       <div class="panel-head">
-        <h2>🏆 주선자 9명 <small>활동 점수 랭킹</small></h2>
+        <h2>🏆 주선자 <span id="agentPanelCnt">9</span>명 <small>활동 점수 랭킹</small></h2>
       </div>
       <div class="lb-formula" id="lbFormula">점수 기준 · 성사 <b>10점</b> · 진행 <b>3점</b> · 보유 <b>1점</b></div>
       <div class="lb" id="lb"></div>
@@ -1053,11 +1101,48 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
     </section>
 
     <div class="appfoot">
-      <span>만나방 프로토타입 · 데이터는 이 브라우저(localStorage)에만 저장됩니다.</span>
+      <span id="footNote">만나방 · 사진과 프로필은 인증된 멤버에게만 공개됩니다.</span>
       <span style="margin-left:auto"></span>
       <button class="lnk" id="btnReset">데모 데이터 초기화</button>
     </div>
   </main>
+</div>
+
+<!-- ================= ADMIN / PIN MODAL ================= -->
+<div class="overlay" id="adminOverlay" hidden>
+  <div class="modal admin" role="dialog" aria-modal="true" aria-labelledby="adminTitle">
+    <button class="modal-x" data-close aria-label="닫기">✕</button>
+    <div class="form-head"><h2 id="adminTitle">🔑 내 비밀번호 변경</h2><span class="req-note" id="adminBadge" hidden>방장</span></div>
+    <div class="admin-body">
+      <div class="field">
+        <label for="pinCur">지금 쓰는 비번</label>
+        <input id="pinCur" type="password" inputmode="numeric" maxlength="8" autocomplete="current-password" placeholder="숫자 4~8자리">
+      </div>
+      <div class="field">
+        <label for="pinNew">새 비번</label>
+        <input id="pinNew" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password" placeholder="숫자 4~8자리">
+      </div>
+      <div class="form-err" id="pinErr" role="status"></div>
+      <button type="button" class="btn mint" id="pinGo" style="justify-content:center;padding:12px">비번 바꾸기</button>
+
+      <div class="form-sec" id="ownerSec" hidden><span>👥 주선자 관리</span><small>주선자 추가 · 비활성 · 비번 초기화</small></div>
+      <div id="ownerBox" hidden>
+        <div class="adm-list" id="admList"></div>
+        <div class="form-err" id="admErr" role="status"></div>
+        <div class="adm-add">
+          <div class="code-row">
+            <input id="admName" placeholder="새 주선자 이름" autocomplete="off" aria-label="새 주선자 이름">
+            <input id="admEmoji" placeholder="🌿" maxlength="8" autocomplete="off" aria-label="이모지" style="flex:0 0 62px;text-align:center">
+          </div>
+          <div class="code-row">
+            <input id="admPin" placeholder="초기 비번 (숫자 4~8)" inputmode="numeric" maxlength="8" autocomplete="off" aria-label="새 주선자 초기 비번">
+            <button type="button" class="btn mint sm" id="admAdd" style="flex:0 0 auto">추가</button>
+          </div>
+        </div>
+        <p class="adm-note">새 주선자는 입장 화면에서 자기 이름을 고르고 이 초기 비번으로 들어와요. 비번은 따로 알려 주세요. (손님 입장코드는 아래 목록의 `👀 손님`에서 초기화)</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ================= DETAIL MODAL ================= -->
@@ -1262,6 +1347,8 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 
 <div class="toast-wrap" id="toastWrap"></div>
 
+<script src="vendor/supabase-js-2.119.1.min.js"></script>
+<script src="cloud.js"></script>
 <script>
 (function(){
 'use strict';
@@ -1293,6 +1380,19 @@ var STATUS = {
 };
 var STAGES = ['제안중','일정 조율','만남 완료','애프터','성사','패스'];
 var LIVE_STAGES = ['제안중','일정 조율','만남 완료','애프터'];
+
+/* ---------------- 실전 모드 / 샘플 모드 ----------------
+   CLOUD 는 cloud.js 가 제공하는 Supabase 연동 계층입니다.
+   DEMO = true 이면 예전 그대로 이 브라우저(localStorage)에만 저장하는 샘플 모드,
+   DEMO = false 이면 Supabase 실전 DB/Storage 를 씁니다. 기본은 실전 모드입니다. */
+var CLOUD = window.MannaCloud || null;
+var DEMO = true;
+var DEFAULT_AGENTS = AGENTS.map(function(a){ return {id:a.id, name:a.name, emoji:a.emoji, role:a.role, active:true, is_owner:a.id === 'ag1'}; });
+var formBusy = false;
+
+function isDemo(){ return DEMO; }
+function emptyState(){ return {session:null, assets:[], matches:[], seq:{asset:31, match:7, review:101}}; }
+function cloudMsg(e){ return (CLOUD && CLOUD.friendly) ? CLOUD.friendly(e) : '오류가 났어요. 잠시 뒤 다시 시도해 주세요.'; }
 
 /* ---------------- 바라는 조건 (이상형·필수 조건) ---------------- */
 var WANT_PRESETS = ['담배 X','종교 X','음주 적당히','비슷한 나이','서울/수도권','키 175cm 이상','초혼','주말 데이트 가능','연락 자주','반려동물 OK'];
@@ -1712,7 +1812,7 @@ function migrate(s){
 
 var state = load();
 
-function save(){ return store.set(JSON.stringify(state)); }
+function save(){ if(!DEMO) return true; return store.set(JSON.stringify(state)); }
 function getAsset(id){
   for(var i=0;i<state.assets.length;i++){ if(state.assets[i].id===id) return state.assets[i]; }
   return null;
@@ -1720,6 +1820,31 @@ function getAsset(id){
 function getMatch(id){
   for(var i=0;i<state.matches.length;i++){ if(state.matches[i].id===id) return state.matches[i]; }
   return null;
+}
+
+/* ---------------- 실전(Suapabase) 상태 반영 ---------------- */
+function setAgents(list){
+  if(!Array.isArray(list) || !list.length) return;
+  AGENTS.length = 0;
+  list.forEach(function(a){
+    AGENTS.push({id:a.id, name:a.name, emoji:a.emoji || '🌿', role:a.role || '주선자',
+      active:a.active !== false, is_owner:!!a.is_owner});
+  });
+  var n = AGENTS.filter(function(a){ return a.active !== false; }).length;
+  var c1 = document.getElementById('tabAgentCnt'); if(c1) c1.textContent = String(n);
+  var c2 = document.getElementById('agentPanelCnt'); if(c2) c2.textContent = String(n);
+  try { fillAgentSelects(); } catch(e){}
+  try { renderGateChips(); } catch(e){}
+}
+function applyState(st){
+  if(!st) return;
+  if(st.agents && st.agents.length) setAgents(st.agents);
+  state.assets = st.assets || [];
+  state.matches = st.matches || [];
+}
+function reloadState(){
+  if(!CLOUD || DEMO) return Promise.resolve();
+  return CLOUD.fetchState().then(function(st){ applyState(st); renderAll(); });
 }
 
 /* ---------------- filters ---------------- */
@@ -1841,18 +1966,22 @@ function renderHeader(){
       '<button type="button" class="who-btn" id="whoExit">나가기</button>';
   } else {
     var ag = agentById(state.session);
+    var owner = !!ag.is_owner;
     box.className = 'who';
     box.innerHTML = '<span class="who-lab">주선자</span>' +
       '<span class="who-name">· ' + esc(ag.name) + ' 님</span>' +
       '<button type="button" class="ava-dot" id="emojiBtn" title="내 이모지 바꾸기" aria-label="내 이모지 바꾸기" aria-haspopup="dialog">' + esc(ag.emoji) + '</button>' +
+      '<button type="button" class="who-ic" id="adminBtn" title="' + (owner ? '방장 관리' : '내 비번 변경') + '" aria-label="' + (owner ? '방장 관리' : '내 비번 변경') + '" aria-haspopup="dialog">' + (owner ? '⚙️' : '🔑') + '</button>' +
       '<button type="button" class="who-btn" id="whoExit">전환</button>';
   }
   document.getElementById('whoExit').addEventListener('click', exitToGate);
   var eb = document.getElementById('emojiBtn');
   if(eb) eb.addEventListener('click', function(e){ e.stopPropagation(); openEmojiPop(); });
+  var ab = document.getElementById('adminBtn');
+  if(ab) ab.addEventListener('click', function(e){ e.stopPropagation(); openAdmin(); });
   box.onclick = function(e){
     if(isGuest()) return;
-    if(e.target && e.target.closest && e.target.closest('#whoExit')) return;
+    if(e.target && e.target.closest && (e.target.closest('#whoExit') || e.target.closest('#adminBtn'))) return;
     openEmojiPop();
   };
 }
@@ -1912,15 +2041,28 @@ function applyAgentEmoji(em){
   em = firstGrapheme(em);
   if(!em) return;
   var ag = agentById(state.session);
+  if(!ag) return;
+  var prev = ag.emoji;
   ag.emoji = em;
-  var saved = saveEmojiPref(ag.id, em);
   renderAll();
   fillAgentSelects();
   renderGateChips();
   if(detailId) renderDetail();
   closeEmojiPop();
-  if(saved) toast(ag.name + ' 님 이모지를 ' + em + ' 로 바꿨어요');
-  else toast(em + ' 으로 바꿨어요 (이 브라우저에는 저장하지 못했어요)');
+  if(DEMO){
+    var saved = saveEmojiPref(ag.id, em);
+    if(saved) toast(ag.name + ' 님 이모지를 ' + em + ' 로 바꿨어요');
+    else toast(em + ' 으로 바꿨어요 (이 브라우저에는 저장하지 못했어요)');
+    return;
+  }
+  CLOUD.setEmoji(em).then(function(){
+    toast(ag.name + ' 님 이모지를 ' + em + ' 로 바꿨어요');
+  }).catch(function(e){
+    ag.emoji = prev;
+    renderAll(); fillAgentSelects();
+    if(detailId) renderDetail();
+    toast(cloudMsg(e));
+  });
 }
 
 function renderDash(){
@@ -2198,7 +2340,8 @@ function renderBoard(){
    활동 점수 = 성사 × 10 + 진행 × 3 + 보유 × 1.
    정렬: 점수 ↓ → 성사 ↓ → 진행 ↓ → 보유 ↓ */
 function renderLeaderboard(){
-  var rows = AGENTS.map(function(ag){
+  var list = AGENTS.filter(function(ag){ return ag.active !== false; });
+  var rows = list.map(function(ag){
     var own = state.assets.filter(function(a){ return a.agent === ag.id; });
     var avail = own.filter(function(a){ return a.status === 'available'; }).length;
     var done = own.filter(function(a){ return a.status === 'matched'; }).length;
@@ -2339,20 +2482,28 @@ function refreshReviewUI(){
   renderBoard();
 }
 
-function addReview(a, m, text, vis){
+async function addReview(a, m, text, vis){
   text = String(text || '').replace(/\s+/g, ' ').trim();
   if(!a || !m || !text) return false;
   var other = getAsset(m.aId === a.id ? m.bId : m.aId);
   if(!other || other.agent !== state.session) return false;
   if(reviewsOf(a).some(function(r){ return r.by === state.session && r.m === m.id; })) return false;
   if(!Array.isArray(a.reviews)) a.reviews = [];
-  a.reviews.unshift({id:'rv' + (state.seq.review++), by:state.session, m:m.id, at:today(),
-    vis: vis === 'private' ? 'private' : 'public', text:text});
+  var v = vis === 'private' ? 'private' : 'public';
+  if(DEMO){
+    a.reviews.unshift({id:'rv' + (state.seq.review++), by:state.session, m:m.id, at:today(), vis:v, text:text});
+    return true;
+  }
+  var row = await CLOUD.insertReview(a.id, m.id, v, text);
+  a.reviews.unshift({
+    id: row.id, by: row.by_agent || state.session, m: row.match_id || m.id,
+    at: String(row.created_at || today()).slice(0, 10), vis: v, text: row.body || text
+  });
   return true;
 }
 
 /* 리뷰 관련 클릭을 처리. 처리했으면 true */
-function reviewAction(btn){
+async function reviewAction(btn){
   var act = btn.getAttribute('data-action') || '';
   if(act.indexOf('rev-') !== 0) return false;
   if(isGuest()) return true;
@@ -2379,21 +2530,39 @@ function reviewAction(btn){
     var ta2 = formEl ? formEl.querySelector('.rev-input') : document.querySelector('.rev-input');
     var text = ta2 ? ta2.value : revDraft;
     if(!mm) return true;
-    if(!addReview(a, mm, text, revVis)){
+    btn.disabled = true;
+    var ok = false;
+    try {
+      ok = await addReview(a, mm, text, revVis);
+    } catch(e){
+      btn.disabled = false;
+      toast(cloudMsg(e));
+      return true;
+    }
+    btn.disabled = false;
+    if(!ok){
       toast('리뷰 내용을 입력해 주세요.');
       if(ta2) ta2.focus();
       return true;
     }
     revOpenKey = null; revDraft = ''; revDelArmed = null;
-    save(); refreshReviewUI();
+    if(DEMO) save();
+    refreshReviewUI();
     toast(revVis === 'public' ? '마담 공개 리뷰로 남겼어요 🌐' : '나만 보는 리뷰로 남겼어요 🔒');
   } else if(act === 'rev-vis'){
     var r = findReview(a, btn.getAttribute('data-rid'));
     if(!r || r.by !== state.session) return true;
-    r.vis = (r.vis === 'public') ? 'private' : 'public';
+    var nextVis = (r.vis === 'public') ? 'private' : 'public';
+    var prevVis = r.vis;
+    r.vis = nextVis;
     revDelArmed = null;
-    save(); refreshReviewUI();
-    toast(r.vis === 'public' ? '리뷰를 마담 공개로 바꿨어요 🌐' : '리뷰를 나만 보기로 바꿨어요 🔒');
+    refreshReviewUI();
+    toast(nextVis === 'public' ? '리뷰를 마담 공개로 바꿨어요 🌐' : '리뷰를 나만 보기로 바꿨어요 🔒');
+    if(DEMO){ save(); }
+    else {
+      try { await CLOUD.updateReview(r.id, { vis: nextVis }); }
+      catch(e){ r.vis = prevVis; refreshReviewUI(); toast(cloudMsg(e)); }
+    }
   } else if(act === 'rev-del'){
     revDelArmed = btn.getAttribute('data-rid');
     refreshReviewUI();
@@ -2403,9 +2572,15 @@ function reviewAction(btn){
     var rid = btn.getAttribute('data-rid');
     var rr = findReview(a, rid);
     if(!rr || rr.by !== state.session) return true;
+    btn.disabled = true;
+    if(!DEMO){
+      try { await CLOUD.deleteReview(rid); }
+      catch(e){ btn.disabled = false; toast(cloudMsg(e)); return true; }
+    }
     a.reviews = reviewsOf(a).filter(function(x){ return x.id !== rid; });
     revDelArmed = null;
-    save(); refreshReviewUI();
+    if(DEMO) save();
+    refreshReviewUI();
     toast('리뷰를 삭제했어요.');
   }
   return true;
@@ -2824,6 +2999,7 @@ window.addEventListener('popstate', function(){
   var pop = document.getElementById('emojiPop');
   if(pop && !pop.hidden){ closeEmojiPop(true); return; }
   if(!document.getElementById('newAssetOverlay').hidden){ closeNewAssetPop(true); return; }
+  if(!document.getElementById('adminOverlay').hidden){ closeAdmin(true); return; }
   if(!document.getElementById('formOverlay').hidden){ closeForm(true); return; }
   if(!document.getElementById('detailOverlay').hidden){ closeDetail(true); return; }
 });
@@ -2856,13 +3032,40 @@ function setAssetStatus(id, status, silent){
   if(!a || a.status === status) return;
   if(!canManage(a)) return;
   var prev = a.status;
-  a.status = status;
-  a.history.unshift({
+  var hist = {
     at: today(), by: agentName(state.session),
     text: '상태 변경: ' + STATUS[prev].emoji + ' ' + STATUS[prev].label + ' → ' + STATUS[status].emoji + ' ' + STATUS[status].label
+  };
+  a.status = status;
+  a.history.unshift(hist);
+  renderAll();
+  if(DEMO){
+    save();
+    if(!silent) toast(assetTitle(a) + ' 상태를 ' + STATUS[status].label + '로 바꿨어요.');
+    return;
+  }
+  CLOUD.setStatus(id, status, hist.text).then(function(){
+    if(!silent) toast(assetTitle(a) + ' 상태를 ' + STATUS[status].label + '로 바꿨어요.');
+  }).catch(function(e){
+    a.status = prev;
+    a.history = a.history.filter(function(h){ return h !== hist; });
+    renderAll();
+    if(detailId === id) renderDetail();
+    toast(cloudMsg(e));
   });
-  save(); renderAll();
-  if(!silent) toast(assetTitle(a) + ' 상태를 ' + STATUS[status].label + '로 바꿨어요.');
+}
+
+/* 매칭 단계에 따른 양쪽 매물 상태·히스토리 (화면용) */
+function applyStageLocal(m, stage){
+  var a = getAsset(m.aId), b = getAsset(m.bId);
+  if(!a || !b) return;
+  var prev = m.stage;
+  m.stage = stage;
+  if(stage === '성사'){ a.status = 'matched'; b.status = 'matched'; }
+  else if(stage === '패스'){ a.status = 'available'; b.status = 'available'; }
+  else { a.status = 'progress'; b.status = 'progress'; }
+  a.history.unshift({at: today(), by: agentName(state.session), text: '매칭 #' + m.id.replace('mt','') + ' 단계 변경: ' + prev + ' → ' + stage + ' (' + assetTitle(b) + ')'});
+  b.history.unshift({at: today(), by: agentName(state.session), text: '매칭 #' + m.id.replace('mt','') + ' 단계 변경: ' + prev + ' → ' + stage + ' (' + assetTitle(a) + ')'});
 }
 
 function setMatchStage(mid, stage){
@@ -2872,36 +3075,29 @@ function setMatchStage(mid, stage){
   var a = getAsset(m.aId), b = getAsset(m.bId);
   if(!a || !b) return;
   var prev = m.stage;
-  m.stage = stage;
-  if(stage === '성사'){ a.status = 'matched'; b.status = 'matched'; }
-  else if(stage === '패스'){ a.status = 'available'; b.status = 'available'; }
-  else { a.status = 'progress'; b.status = 'progress'; }
-  a.history.unshift({at: today(), by: agentName(state.session), text: '매칭 #' + mid.replace('mt','') + ' 단계 변경: ' + prev + ' → ' + stage + ' (' + assetTitle(b) + ')'});
-  b.history.unshift({at: today(), by: agentName(state.session), text: '매칭 #' + mid.replace('mt','') + ' 단계 변경: ' + prev + ' → ' + stage + ' (' + assetTitle(a) + ')'});
-  save(); renderAll();
+  if(DEMO){
+    applyStageLocal(m, stage);
+    save(); renderAll();
+    if(detailId === a.id || detailId === b.id) renderDetail();
+    toast('매칭 #' + mid.replace('mt','') + ' → ' + stage);
+    return;
+  }
+  applyStageLocal(m, stage);
+  renderAll();
   if(detailId === a.id || detailId === b.id) renderDetail();
   toast('매칭 #' + mid.replace('mt','') + ' → ' + stage);
+  CLOUD.setStage(mid, stage).then(function(){
+    return reloadState();
+  }).then(function(){
+    if(detailId) renderDetail();
+  }).catch(function(e){
+    m.stage = prev;
+    toast(cloudMsg(e));
+    reloadState();
+  });
 }
 
-function propose(aId, bId){
-  if(isGuest()) return;
-  var a = getAsset(aId), b = getAsset(bId);
-  if(!a || !b) return;
-  /* 매칭 번호는 기존 매칭의 최대 번호 다음으로 발급한다.
-     (저장된 예전 데이터의 seq.match가 밀려 있어도 mt6 같은 번호가 중복되지 않게) */
-  var nextNo = 1;
-  state.matches.forEach(function(mm){
-    var n = parseInt(String(mm.id).replace(/[^0-9]/g, ''), 10);
-    if(!isNaN(n) && n >= nextNo) nextNo = n + 1;
-  });
-  if(typeof state.seq.match !== 'number' || state.seq.match < nextNo) state.seq.match = nextNo;
-  var mid = 'mt' + (state.seq.match++);
-  /* from: 보낸 쪽(a) — 상세 모달에서 보고 있던 매물이 후보에게 제안한다 */
-  state.matches.push({id:mid, aId:aId, bId:bId, from:'a', stage:'제안중', at:today()});
-  a.status = 'progress'; b.status = 'progress';
-  a.history.unshift({at: today(), by: agentName(state.session), text: assetTitle(b) + '(' + agentName(b.agent) + ' 담당)에게 매칭 제안. 매칭 #' + mid.replace('mt','') + ' 생성.'});
-  b.history.unshift({at: today(), by: agentName(state.session), text: assetTitle(a) + '(' + agentName(a.agent) + ' 담당)의 매칭 제안 도착. 매칭 #' + mid.replace('mt','') + '.'});
-  save();
+function proposeUI(mid){
   proposalOpen = false; proposalPick = null;
   /* 방금 만든 매칭이 바로 보이도록 전체 필터 + 상단 배치 + 강조 */
   boardFilter = 'all';
@@ -2918,35 +3114,98 @@ function propose(aId, bId){
   setTimeout(function(){ highlightMid = null; }, 6000);
 }
 
+async function propose(aId, bId){
+  if(isGuest()) return;
+  var a = getAsset(aId), b = getAsset(bId);
+  if(!a || !b) return;
+
+  if(DEMO){
+    /* 매칭 번호는 기존 매칭의 최대 번호 다음으로 발급한다. */
+    var nextNo = 1;
+    state.matches.forEach(function(mm){
+      var n = parseInt(String(mm.id).replace(/[^0-9]/g, ''), 10);
+      if(!isNaN(n) && n >= nextNo) nextNo = n + 1;
+    });
+    if(typeof state.seq.match !== 'number' || state.seq.match < nextNo) state.seq.match = nextNo;
+    var smid = 'mt' + (state.seq.match++);
+    state.matches.push({id:smid, aId:aId, bId:bId, from:'a', stage:'제안중', at:today()});
+    a.status = 'progress'; b.status = 'progress';
+    a.history.unshift({at: today(), by: agentName(state.session), text: assetTitle(b) + '(' + agentName(b.agent) + ' 담당)에게 매칭 제안. 매칭 #' + smid.replace('mt','') + ' 생성.'});
+    b.history.unshift({at: today(), by: agentName(state.session), text: assetTitle(a) + '(' + agentName(a.agent) + ' 담당)의 매칭 제안 도착. 매칭 #' + smid.replace('mt','') + '.'});
+    save();
+    proposeUI(smid);
+    return;
+  }
+
+  var mid;
+  try {
+    mid = await CLOUD.propose(aId, bId);
+    await reloadState();
+  } catch(e){
+    toast(cloudMsg(e));
+    return;
+  }
+  proposeUI(mid);
+}
+
 function addMemo(id, text){
   var a = getAsset(id);
   if(!a || !canManage(a)) return false;
   text = (text || '').trim();
   if(!text) return false;
-  a.history.unshift({at: today(), by: agentName(state.session), text: text});
-  save(); renderAll(); renderDetail();
-  toast('히스토리에 메모를 추가했어요.');
+  var hist = {at: today(), by: agentName(state.session), text: text};
+  a.history.unshift(hist);
+  renderAll(); renderDetail();
+  if(DEMO){
+    save();
+    toast('히스토리에 메모를 추가했어요.');
+    return true;
+  }
+  CLOUD.addHistory(id, text).then(function(){
+    toast('히스토리에 메모를 추가했어요.');
+  }).catch(function(e){
+    a.history = a.history.filter(function(h){ return h !== hist; });
+    renderDetail();
+    toast(cloudMsg(e));
+  });
   return true;
 }
 
-function deleteAsset(id){
+async function deleteAsset(id){
   var a = getAsset(id);
   if(!a || !canManage(a)) return;
   var related = relatedMatches(id);
-  related.forEach(function(m){
-    var otherId = m.aId === id ? m.bId : m.aId;
-    var other = getAsset(otherId);
-    if(other){
-      if(other.status === 'progress' || other.status === 'matched') other.status = 'available';
-      other.history.unshift({at: today(), by: agentName(state.session), text: assetTitle(a) + '이(가) 삭제되어 매칭 #' + m.id.replace('mt','') + '이(가) 정리되었습니다.'});
-    }
-  });
-  state.matches = state.matches.filter(function(m){ return m.aId !== id && m.bId !== id; });
-  state.assets = state.assets.filter(function(x){ return x.id !== id; });
-  save();
+
+  if(DEMO){
+    related.forEach(function(m){
+      var otherId = m.aId === id ? m.bId : m.aId;
+      var other = getAsset(otherId);
+      if(other){
+        if(other.status === 'progress' || other.status === 'matched') other.status = 'available';
+        other.history.unshift({at: today(), by: agentName(state.session), text: assetTitle(a) + '이(가) 삭제되어 매칭 #' + m.id.replace('mt','') + '이(가) 정리되었습니다.'});
+      }
+    });
+    state.matches = state.matches.filter(function(m){ return m.aId !== id && m.bId !== id; });
+    state.assets = state.assets.filter(function(x){ return x.id !== id; });
+    save();
+    if(detailId === id) closeDetail();
+    if(editingId === id) closeForm();
+    renderAll();
+    toast(assetTitle(a) + '을 삭제했어요' + (related.length ? ' (매칭 ' + related.length + '건 정리)' : ''));
+    return;
+  }
+
+  var photos = (a.photoPaths || []).slice();
+  try {
+    await CLOUD.deleteAsset(id);
+  } catch(e){
+    toast(cloudMsg(e));
+    return;
+  }
+  if(photos.length) CLOUD.removePhotos(photos);
   if(detailId === id) closeDetail();
   if(editingId === id) closeForm();
-  renderAll();
+  await reloadState();
   toast(assetTitle(a) + '을 삭제했어요' + (related.length ? ' (매칭 ' + related.length + '건 정리)' : ''));
 }
 
@@ -2957,11 +3216,15 @@ var MAX_PHOTOS = 5;
 var PHOTO_MAX_EDGE = 900;
 var PHOTO_QUALITY = 0.78;
 var formPhotos = [];
+var formPhotoPaths = [];   /* formPhotos 와 같은 순서 · Storage 경로(새로 고른 사진은 null) */
 var photoBusy = false;
 
 function photosOf(a){
   if(!a || !Array.isArray(a.photos)) return [];
-  return a.photos.filter(function(p){ return typeof p === 'string' && p.indexOf('data:image/') === 0; });
+  return a.photos.filter(function(p){
+    return typeof p === 'string' &&
+      (p.indexOf('data:image/') === 0 || p.indexOf('http://') === 0 || p.indexOf('https://') === 0);
+  });
 }
 function thumbHTML(a){
   var ph = photosOf(a);
@@ -2993,6 +3256,14 @@ function photoNo(a){
   return no;
 }
 function photoFileName(a, idx){ return '만나방_매물' + photoNo(a) + '_' + (idx + 1) + '.jpg'; }
+function photoBlobOf(src){
+  if(typeof src !== 'string' || !src) return Promise.resolve(null);
+  if(src.indexOf('data:') === 0) return Promise.resolve(dataUrlToBlob(src));
+  return fetch(src, { cache: 'no-store' }).then(function(r){
+    if(!r.ok) return null;
+    return r.blob();
+  }).catch(function(){ return null; });
+}
 function canSharePhoto(){
   try { return !!(window.File && navigator.canShare && navigator.share); } catch(e){ return false; }
 }
@@ -3003,22 +3274,23 @@ function savePhoto(idx){
   var ph = photosOf(a);
   if(!ph.length) return;
   if(!(idx >= 0 && idx < ph.length)) idx = 0;
-  var blob = dataUrlToBlob(ph[idx]);
-  if(!blob){ toast('사진을 저장하지 못했어요 · 사진을 길게 눌러 저장해 주세요'); return; }
   var name = photoFileName(a, idx);
-  var url;
-  try { url = URL.createObjectURL(blob); } catch(e){ url = ph[idx]; }
-  var link = document.createElement('a');
-  link.href = url;
-  link.download = name;
-  link.rel = 'noopener';
-  document.body.appendChild(link);
-  try { link.click(); } catch(e){}
-  setTimeout(function(){
-    if(link.parentNode) link.parentNode.removeChild(link);
-    if(url && url.indexOf('blob:') === 0){ try { URL.revokeObjectURL(url); } catch(e){} }
-  }, 4000);
-  toast('사진을 저장했어요 📥 안 되면 사진을 길게 눌러 저장할 수도 있어요');
+  photoBlobOf(ph[idx]).then(function(blob){
+    if(!blob){ toast('사진을 저장하지 못했어요 · 사진을 길게 눌러 저장해 주세요'); return; }
+    var url;
+    try { url = URL.createObjectURL(blob); } catch(e){ url = ph[idx]; }
+    var link = document.createElement('a');
+    link.href = url;
+    link.download = name;
+    link.rel = 'noopener';
+    document.body.appendChild(link);
+    try { link.click(); } catch(e){}
+    setTimeout(function(){
+      if(link.parentNode) link.parentNode.removeChild(link);
+      if(url && url.indexOf('blob:') === 0){ try { URL.revokeObjectURL(url); } catch(e){} }
+    }, 4000);
+    toast('사진을 저장했어요 📥 안 되면 사진을 길게 눌러 저장할 수도 있어요');
+  });
 }
 function sharePhoto(idx){
   if(isGuest()) return;
@@ -3027,21 +3299,23 @@ function sharePhoto(idx){
   var ph = photosOf(a);
   if(!ph.length) return;
   if(!(idx >= 0 && idx < ph.length)) idx = 0;
-  var blob = dataUrlToBlob(ph[idx]);
-  if(!blob){ savePhoto(idx); return; }
-  var file;
-  try { file = new File([blob], photoFileName(a, idx), {type: blob.type || 'image/jpeg'}); }
-  catch(e){ savePhoto(idx); return; }
-  var data = {files: [file], title: '만나방 · ' + shareAssetNo(a), text: '이 사람 어때요? 🏠 만나방' };
-  if(!(navigator.canShare && navigator.canShare({files: [file]}))){ savePhoto(idx); return; }
-  navigator.share(data).catch(function(err){
-    if(err && err.name === 'AbortError') return;
-    toast('공유가 막혀 있어 사진으로 저장했어요 📥');
-    savePhoto(idx);
+  photoBlobOf(ph[idx]).then(function(blob){
+    if(!blob){ savePhoto(idx); return; }
+    var file;
+    try { file = new File([blob], photoFileName(a, idx), {type: blob.type || 'image/jpeg'}); }
+    catch(e){ savePhoto(idx); return; }
+    var data = {files: [file], title: '만나방 · ' + shareAssetNo(a), text: '이 사람 어때요? 🏠 만나방' };
+    if(!(navigator.canShare && navigator.canShare({files: [file]}))){ savePhoto(idx); return; }
+    navigator.share(data).catch(function(err){
+      if(err && err.name === 'AbortError') return;
+      toast('공유가 막혀 있어 사진으로 저장했어요 📥');
+      savePhoto(idx);
+    });
   });
 }
 function photoBytes(dataUrl){
   if(typeof dataUrl !== 'string') return 0;
+  if(dataUrl.indexOf('data:') !== 0) return 0;
   var i = dataUrl.indexOf(',');
   var b64 = i >= 0 ? dataUrl.slice(i + 1) : dataUrl;
   return Math.round(b64.length * 3 / 4);
@@ -3156,6 +3430,7 @@ function addPhotoFiles(files){
       if(formPhotos.length >= MAX_PHOTOS) return;
       return compressImage(f).then(function(d){
         formPhotos.push(d);
+        formPhotoPaths.push(null);
         okCount++;
         renderFormPhotos();
       }).catch(function(){ failCount++; });
@@ -3406,6 +3681,9 @@ function openForm(id){
   renderWantsChips();
 
   formPhotos = a ? photosOf(a).slice(0, MAX_PHOTOS) : [];
+  formPhotoPaths = a ? (a.photoPaths || []).slice(0, MAX_PHOTOS) : [];
+  while(formPhotoPaths.length < formPhotos.length) formPhotoPaths.push(null);
+  formPhotoPaths.length = formPhotos.length;
   photoBusy = false;
   var pfEl = document.querySelector('#formOverlay .photo-field');
   if(pfEl) pfEl.classList.remove('bad');
@@ -3618,12 +3896,13 @@ function pwOf(agentId){
 }
 var gateAgent = null;
 function renderGateChips(){
-  document.getElementById('gateChips').innerHTML = AGENTS.map(function(ag){
+  var list = AGENTS.filter(function(ag){ return ag.active !== false; });
+  document.getElementById('gateChips').innerHTML = list.map(function(ag){
     return '<button type="button" class="gchip' + (gateAgent === ag.id ? ' on' : '') + '" data-agent="' + ag.id + '">' +
       '<span class="em">' + ag.emoji + '</span>' + esc(ag.name) + '</button>';
   }).join('');
   var who = document.getElementById('pwWho');
-  if(gateAgent){
+  if(gateAgent && isAgentId(gateAgent)){
     who.className = 'who-sel';
     who.textContent = agentName(gateAgent) + ' 님으로 입장';
   } else {
@@ -3648,6 +3927,18 @@ try {
   DEEP_ITEM = qp.get('item');
 } catch(e){ DEEP_ITEM = null; }
 
+/* 화면 아래 문구를 모드에 맞춰 바꿉니다 (실전 / 샘플) */
+function updateModeChrome(){
+  var note = document.getElementById('footNote');
+  var reset = document.getElementById('btnReset');
+  if(note) note.textContent = DEMO
+    ? '샘플 모드 · 이 브라우저에만 저장되고 다른 사람에게는 보이지 않아요.'
+    : '만나방 · 사진과 프로필은 인증된 멤버에게만 공개됩니다.';
+  if(reset) reset.hidden = !DEMO;
+  var w = document.querySelector('.brand span:last-child');
+  if(w) w.textContent = DEMO ? '만나방 · 샘플' : '만나방';
+}
+
 function enterApp(deepId, mode, restored){
   MODE = (mode === 'guest') ? 'guest' : 'agent';
   document.getElementById('gate').hidden = true;
@@ -3655,6 +3946,7 @@ function enterApp(deepId, mode, restored){
   document.getElementById('app').classList.toggle('mode-guest', isGuest());
   switchTab('list');
   renderAll();
+  updateModeChrome();
   if(deepId && getAsset(deepId)){
     openDetail(deepId);
     toast(isGuest() ? '공유 링크로 열었어요 · 읽기 전용 📩' : '공유 링크로 매물을 열었어요 📩');
@@ -3667,7 +3959,19 @@ function enterApp(deepId, mode, restored){
   }
 }
 
-function tryLogin(){
+/* 실전 모드 입장: Supabase 에서 데이터를 받아 화면에 올린다 */
+async function cloudEnter(agentId, mode, restored){
+  DEMO = false;
+  MODE = (mode === 'guest') ? 'guest' : 'agent';
+  state = emptyState();
+  state.session = agentId;
+  var st = await CLOUD.fetchState();
+  applyState(st);
+  enterApp(DEEP_ITEM, mode, restored);
+}
+
+var signingIn = false;
+async function tryLogin(){
   var pw = String(pwInput.value || '').replace(/\s/g, '');
   if(!gateAgent){
     gateErr.textContent = '먼저 본인 이름을 선택해 주세요.';
@@ -3678,28 +3982,40 @@ function tryLogin(){
     pwInput.focus();
     return false;
   }
-  if(pw !== pwOf(gateAgent)){
-    gateErr.textContent = '비밀번호가 맞지 않아요.';
+  if(!CLOUD){
+    gateErr.textContent = '서버에 연결하지 못했어요. 아래 “샘플 모드로 둘러보기”를 눌러 주세요.';
+    return false;
+  }
+  if(signingIn) return false;
+  signingIn = true;
+  gateErr.textContent = '입장 중…';
+  pwInput.disabled = true;
+  try {
+    var who = await CLOUD.signIn(gateAgent, pw);
+    pwInput.value = '';
+    gateErr.textContent = '';
+    await cloudEnter(who.agentId, who.mode, false);
+    return true;
+  } catch(e){
+    gateErr.textContent = cloudMsg(e);
     pwInput.classList.remove('shake');
     void pwInput.offsetWidth;
     pwInput.classList.add('shake');
-    pwInput.select();
+    try { pwInput.select(); } catch(err){}
     return false;
+  } finally {
+    signingIn = false;
+    pwInput.disabled = false;
   }
-  gateErr.textContent = '';
-  pwInput.value = '';
-  state.session = gateAgent;
-  save();
-  saveAgentAuth(gateAgent);
-  enterApp(DEEP_ITEM, 'agent');
-  return true;
 }
 
 function exitToGate(){
+  if(CLOUD && !DEMO){ try { CLOUD.signOut(); } catch(e){} }
   clearAuth();
   MODE = 'agent';
   closeDetail(true);
   closeForm(true);
+  if(typeof closeAdmin === 'function') closeAdmin(true);
   histOwned = false; histSkipPop = 0;
   document.getElementById('app').hidden = true;
   document.getElementById('gate').hidden = false;
@@ -3719,6 +4035,7 @@ function exitToGate(){
   renderGateChips();
   document.body.style.overflow = '';
   try { history.replaceState(null, '', window.location.pathname); } catch(e){}
+  if(CLOUD){ DEMO = false; state = emptyState(); renderAll(); updateModeChrome(); }
 }
 var GUEST_PW = '0000';
 function showGuestForm(on){
@@ -3734,22 +4051,31 @@ document.getElementById('guestBtn').addEventListener('click', function(){
   showGuestForm(true);
 });
 document.getElementById('guestCancel').addEventListener('click', function(){ showGuestForm(false); });
-function submitGuest(){
+var guestSigning = false;
+async function submitGuest(){
   var el = document.getElementById('guestPw');
   var v = String(el.value || '').replace(/\s/g, '');
   var ge = document.getElementById('guestErr');
-  if(!v){ ge.textContent = '비밀번호를 입력해 주세요.'; el.focus(); return; }
-  if(v !== GUEST_PW){
-    ge.textContent = '비밀번호가 맞지 않아요.';
+  if(!v){ ge.textContent = '입장코드를 입력해 주세요.'; el.focus(); return; }
+  if(!CLOUD){ ge.textContent = '서버에 연결하지 못했어요. 샘플 모드로 둘러볼 수 있어요.'; return; }
+  if(guestSigning) return;
+  guestSigning = true;
+  el.disabled = true;
+  ge.textContent = '입장 중…';
+  try {
+    var who = await CLOUD.signIn('guest', v);
+    ge.textContent = '';
+    el.value = '';
+    showGuestForm(false);
+    await cloudEnter('guest', who.mode, false);
+  } catch(e){
+    ge.textContent = cloudMsg(e);
     el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
-    el.select();
-    return;
+    try { el.select(); } catch(err){}
+  } finally {
+    guestSigning = false;
+    el.disabled = false;
   }
-  ge.textContent = '';
-  el.value = '';
-  showGuestForm(false);
-  saveGuestAuth();
-  enterApp(DEEP_ITEM, 'guest');
 }
 document.getElementById('guestEnter').addEventListener('click', submitGuest);
 document.getElementById('guestPw').addEventListener('keydown', function(e){
@@ -3757,6 +4083,54 @@ document.getElementById('guestPw').addEventListener('keydown', function(e){
 });
 document.getElementById('guestPw').addEventListener('input', function(){
   var ge = document.getElementById('guestErr'); if(ge) ge.textContent = '';
+});
+
+/* 처음 계정 만들기 (방장 · 최초 1회) */
+document.getElementById('setupOpen').addEventListener('click', function(){
+  var box = document.getElementById('setupBox');
+  box.hidden = !box.hidden;
+  if(!box.hidden){ setTimeout(function(){ try { document.getElementById('setupPin').focus(); } catch(e){} }, 30); }
+});
+async function doSetup(){
+  var pin = String(document.getElementById('setupPin').value || '').replace(/\s/g, '');
+  var gp = String(document.getElementById('setupGuestPin').value || '').replace(/\s/g, '');
+  var err = document.getElementById('setupErr');
+  err.textContent = '';
+  if(!/^\d{4,8}$/.test(pin)){ err.textContent = '주선자 초기 비번은 숫자 4~8자리로 정해 주세요.'; return; }
+  if(!/^\d{4,8}$/.test(gp)){ err.textContent = '손님 입장코드는 숫자 4~8자리로 정해 주세요.'; return; }
+  if(!CLOUD){ err.textContent = '서버에 연결하지 못했어요.'; return; }
+  var btn = document.getElementById('setupGo');
+  btn.disabled = true; btn.textContent = '만드는 중…';
+  try {
+    var res = await CLOUD.admin('bootstrap', { pin: pin, guestPin: gp });
+    var list = await CLOUD.fetchAgents();
+    setAgents(list);
+    document.getElementById('setupBox').hidden = true;
+    document.getElementById('setupPin').value = '';
+    document.getElementById('setupGuestPin').value = '';
+    gateAgent = 'ag1';
+    renderGateChips();
+    pwInput.value = '';
+    gateErr.textContent = '✅ 계정 ' + (res.count || 10) + '개를 만들었어요. 종윤을 고른 뒤 초기 비번으로 입장해 주세요.';
+    setTimeout(function(){ try { pwInput.focus(); } catch(e){} }, 60);
+  } catch(e){
+    err.textContent = cloudMsg(e);
+  } finally {
+    btn.disabled = false; btn.textContent = '만들기';
+  }
+}
+document.getElementById('setupGo').addEventListener('click', doSetup);
+
+/* 샘플 모드 (이 브라우저에만 저장) */
+document.getElementById('sampleBtn').addEventListener('click', function(){
+  DEMO = true;
+  MODE = 'agent';
+  setAgents(DEFAULT_AGENTS);
+  state = load();
+  state.session = 'ag1';
+  save();
+  gateErr.textContent = '';
+  enterApp(DEEP_ITEM, 'agent', false);
 });
 
 gateForm.addEventListener('submit', function(e){
@@ -3957,6 +4331,7 @@ document.getElementById('photoGrid').addEventListener('click', function(e){
     var i = Number(del.getAttribute('data-photo-del'));
     if(!isNaN(i) && i >= 0 && i < formPhotos.length){
       formPhotos.splice(i, 1);
+      formPhotoPaths.splice(i, 1);
       renderFormPhotos();
     }
     return;
@@ -3968,6 +4343,8 @@ document.getElementById('photoGrid').addEventListener('click', function(e){
     if(!isNaN(j) && j > 0 && j < formPhotos.length){
       var one = formPhotos.splice(j, 1)[0];
       formPhotos.unshift(one);
+      var onePath = formPhotoPaths.splice(j, 1)[0];
+      formPhotoPaths.unshift(onePath);
       renderFormPhotos();
       toast('대표 사진을 바꿨어요 📷');
     }
@@ -4054,9 +4431,71 @@ document.getElementById('extras').addEventListener('click', function(e){
   renderExtras();
 });
 
-document.getElementById('assetForm').addEventListener('submit', function(e){
+/* 실전 모드 저장 — 사진 업로드 → 매물 기록/수정 → 지운 사진 정리 */
+async function cloudSaveAsset(data, errEl){
+  formBusy = true;
+  var foot = document.querySelector('#formOverlay .form-foot .btn.mint');
+  var label = foot ? foot.textContent : '저장하기';
+  if(foot){ foot.disabled = true; foot.textContent = editingId ? '저장 중…' : '등록 중…'; }
+  var base = {
+    gender: data.gender, birth: data.birth, height: data.height,
+    region: data.region, workArea: data.workArea, job: data.job, company: data.company,
+    mbti: data.mbti, smoke: data.smoke, drink: data.drink,
+    tags: data.tags, wants: data.wants, extras: data.extras,
+    memo: data.memo, comment: data.comment, status: data.status
+  };
+  try {
+    if(editingId){
+      var a = getAsset(editingId);
+      if(!a) throw new Error('매물을 찾을 수 없어요. 새로고침 후 다시 시도해 주세요.');
+      var orig = (a.photoPaths || []).slice();
+      var paths = [];
+      for(var i = 0; i < formPhotos.length; i++){
+        var src = formPhotos[i];
+        if(src.indexOf('data:image/') === 0) paths.push(await CLOUD.uploadPhoto(editingId, src, i));
+        else paths.push(formPhotoPaths[i] || '');
+      }
+      var clean = paths.filter(Boolean);
+      var hist = '매물 정보 수정 (' + agentName(state.session) + ')' +
+        (orig.length !== clean.length ? ' · 사진 ' + clean.length + '장' : '');
+      await CLOUD.saveAsset(editingId, Object.assign({}, base, { photos: clean }), hist);
+      var removed = orig.filter(function(p){ return clean.indexOf(p) === -1; });
+      if(removed.length) CLOUD.removePhotos(removed);
+      await reloadState();
+      closeForm(true);
+      toast('매물 정보를 수정했어요.');
+      openDetail(editingId);
+    } else {
+      var newId = await CLOUD.saveAsset(null, Object.assign({}, base, { photos: [] }),
+        '새 매물로 등록했습니다.' + (formPhotos.length ? ' (사진 ' + formPhotos.length + '장)' : ''));
+      var newPaths = [];
+      try {
+        for(var j = 0; j < formPhotos.length; j++){
+          newPaths.push(await CLOUD.uploadPhoto(newId, formPhotos[j], j));
+        }
+      } catch(upErr){
+        CLOUD.deleteAsset(newId).catch(function(){});   /* 사진 실패 → 매물 롤백 */
+        throw upErr;
+      }
+      if(newPaths.length) await CLOUD.saveAsset(newId, { photos: newPaths }, '');
+      await reloadState();
+      closeForm(true);        /* 등록 모달을 닫고, 그 히스토리 엔트리는 완료 팝업이 이어받는다 */
+      openNewAssetPop(newId); /* 신규 등록일 때만 — 수정 저장 경로에서는 띄우지 않는다 */
+    }
+  } catch(err){
+    var msg = cloudMsg(err);
+    if(errEl) errEl.textContent = msg;
+    toast(msg);
+  } finally {
+    formBusy = false;
+    if(foot){ foot.disabled = false; foot.textContent = label || '저장하기'; }
+  }
+}
+
+document.getElementById('assetForm').addEventListener('submit', async function(e){
   e.preventDefault();
   if(isGuest()) return;
+  if(formBusy) return;
   var errEl = document.getElementById('formErr');
   var val = function(id){ return document.getElementById(id).value.trim(); };
   var region = val('f-region'), work = val('f-work'), job = val('f-job');
@@ -4118,6 +4557,7 @@ document.getElementById('assetForm').addEventListener('submit', function(e){
   if(editingId){
     var a = getAsset(editingId);
     if(!a) return;
+    if(!DEMO){ await cloudSaveAsset(data, errEl); return; }
     var backup = JSON.stringify(a);
     var hadPhotos = photosOf(a).length;
     for(var k in data){ if(Object.prototype.hasOwnProperty.call(data,k)) a[k] = data[k]; }
@@ -4133,6 +4573,7 @@ document.getElementById('assetForm').addEventListener('submit', function(e){
     toast('매물 정보를 수정했어요.');
     openDetail(editingId);
   } else {
+    if(!DEMO){ await cloudSaveAsset(data, errEl); return; }
     var id = 'p' + (state.seq.asset++);
     state.assets.push({
       id: id, gender: data.gender, birth: data.birth, height: data.height,
@@ -4184,6 +4625,7 @@ document.addEventListener('keydown', function(e){
     var pop = document.getElementById('emojiPop');
     if(pop && !pop.hidden){ closeEmojiPop(); return; }
     if(!document.getElementById('newAssetOverlay').hidden){ closeNewAssetPop(); return; }
+    if(!document.getElementById('adminOverlay').hidden){ closeAdmin(); return; }
     if(!document.getElementById('formOverlay').hidden){ closeForm(); return; }
     if(!detailOverlay.hidden){ closeDetail(); return; }
   }
@@ -4197,21 +4639,243 @@ document.addEventListener('keydown', function(e){
   }
 });
 
+/* ---------------- 방장 관리 · 내 비번 ---------------- */
+var adminEdit = { id: null, kind: '' };
+
+function openAdmin(){
+  if(isGuest()) return;
+  var me = agentById(state.session);
+  if(!me) return;
+  var owner = !!me.is_owner;
+  document.getElementById('adminTitle').textContent = owner ? '⚙️ 방장 관리' : '🔑 내 비밀번호 변경';
+  document.getElementById('adminBadge').hidden = !owner;
+  document.getElementById('ownerSec').hidden = !owner;
+  document.getElementById('ownerBox').hidden = !owner;
+  document.getElementById('pinErr').textContent = '';
+  document.getElementById('admErr').textContent = '';
+  document.getElementById('pinCur').value = '';
+  document.getElementById('pinNew').value = '';
+  document.getElementById('admName').value = '';
+  document.getElementById('admEmoji').value = '';
+  document.getElementById('admPin').value = '';
+  adminEdit = { id: null, kind: '' };
+  renderAdminList();
+  document.getElementById('adminOverlay').hidden = false;
+  document.body.style.overflow = 'hidden';
+  histEnter('admin');
+  setTimeout(function(){ try { document.getElementById('pinCur').focus(); } catch(e){} }, 60);
+}
+function closeAdmin(noHist){
+  var ov = document.getElementById('adminOverlay');
+  if(!ov || ov.hidden) return;
+  ov.hidden = true;
+  document.body.style.overflow = '';
+  if(noHist !== true) histLeave();
+}
+function renderAdminList(){
+  var box = document.getElementById('admList');
+  if(!box) return;
+  var rows = AGENTS.map(function(ag){
+    var off = ag.active === false;
+    if(adminEdit.id === ag.id && adminEdit.kind === 'pin'){
+      return '<div class="adm-row">' +
+        '<span class="adm-em">' + esc(ag.emoji) + '</span>' +
+        '<span class="adm-nm">' + esc(ag.name) + '</span>' +
+        '<input class="adm-pin" id="admPinInline" inputmode="numeric" maxlength="8" placeholder="새 비번 4~8자리" data-id="' + ag.id + '">' +
+        '<button type="button" class="adm-btn go" data-adm="pin-ok" data-id="' + ag.id + '">확인</button>' +
+        '<button type="button" class="adm-btn" data-adm="cancel">취소</button>' +
+      '</div>';
+    }
+    if(adminEdit.id === ag.id && adminEdit.kind === 'toggle'){
+      return '<div class="adm-row">' +
+        '<span class="adm-em">' + esc(ag.emoji) + '</span>' +
+        '<span class="adm-nm">' + esc(ag.name) + '</span>' +
+        '<button type="button" class="adm-btn on" data-adm="toggle-ok" data-id="' + ag.id + '">' + (off ? '다시 사용' : '비활성') + '</button>' +
+        '<button type="button" class="adm-btn" data-adm="cancel">취소</button>' +
+      '</div>';
+    }
+    return '<div class="adm-row' + (off ? ' off' : '') + '">' +
+      '<span class="adm-em">' + esc(ag.emoji) + '</span>' +
+      '<span class="adm-nm">' + esc(ag.name) +
+        (ag.is_owner ? '<span class="adm-tag">방장</span>' : '') +
+        (off ? '<span class="adm-tag off">비활성</span>' : '') + '</span>' +
+      '<button type="button" class="adm-btn" data-adm="pin" data-id="' + ag.id + '">비번</button>' +
+      (ag.is_owner ? '' : '<button type="button" class="adm-btn' + (off ? ' on' : '') + '" data-adm="toggle" data-id="' + ag.id + '">' + (off ? '살리기' : '비활성') + '</button>') +
+    '</div>';
+  });
+  if(adminEdit.id === 'guest' && adminEdit.kind === 'pin'){
+    rows.push('<div class="adm-row">' +
+      '<span class="adm-em">👀</span><span class="adm-nm">손님 입장코드</span>' +
+      '<input class="adm-pin" id="admPinInline" inputmode="numeric" maxlength="8" placeholder="새 입장코드 4~8자리" data-id="guest">' +
+      '<button type="button" class="adm-btn go" data-adm="pin-ok" data-id="guest">확인</button>' +
+      '<button type="button" class="adm-btn" data-adm="cancel">취소</button></div>');
+  } else {
+    rows.push('<div class="adm-row">' +
+      '<span class="adm-em">👀</span><span class="adm-nm">손님 입장코드</span>' +
+      '<button type="button" class="adm-btn" data-adm="pin" data-id="guest">비번</button></div>');
+  }
+  box.innerHTML = rows.join('');
+}
+
+(function(){
+  var ov = document.getElementById('adminOverlay');
+  if(!ov) return;
+  ov.addEventListener('click', function(e){
+    if(e.target === ov || (e.target.closest && e.target.closest('[data-close]'))) closeAdmin();
+  });
+})();
+
+document.getElementById('admList').addEventListener('click', async function(e){
+  var b = e.target.closest('[data-adm]');
+  if(!b) return;
+  var act = b.getAttribute('data-adm');
+  var id = b.getAttribute('data-id') || '';
+  var err = document.getElementById('admErr');
+  if(err) err.textContent = '';
+
+  if(act === 'pin' || act === 'toggle'){
+    adminEdit = { id: id, kind: act };
+    renderAdminList();
+    if(act === 'pin') setTimeout(function(){ try { var el = document.getElementById('admPinInline'); if(el) el.focus(); } catch(x){} }, 30);
+    return;
+  }
+  if(act === 'cancel'){
+    adminEdit = { id: null, kind: '' };
+    renderAdminList();
+    return;
+  }
+  if(!CLOUD){ if(err) err.textContent = '서버에 연결하지 못했어요.'; return; }
+
+  if(act === 'pin-ok'){
+    var input = document.getElementById('admPinInline');
+    var pin = String(input ? input.value : '').replace(/\s/g, '');
+    if(!/^\d{4,8}$/.test(pin)){ if(err) err.textContent = '비번은 숫자 4~8자리로 정해 주세요.'; return; }
+    b.disabled = true;
+    try {
+      await CLOUD.admin('reset_pin', { agentId: id, pin: pin });
+      adminEdit = { id: null, kind: '' };
+      toast((id === 'guest' ? '손님 입장코드' : agentName(id) + ' 님 비번') + '을 ' + pin + ' 으로 초기화했어요');
+    } catch(resetErr){
+      if(err) err.textContent = cloudMsg(resetErr);
+    }
+    b.disabled = false;
+    renderAdminList();
+    return;
+  }
+
+  if(act === 'toggle-ok'){
+    var ag0 = agentById(id);
+    var next = ag0.active === false;
+    b.disabled = true;
+    try {
+      await CLOUD.admin('toggle_agent', { agentId: id, active: next });
+      adminEdit = { id: null, kind: '' };
+      await reloadState();
+      renderAdminList();
+      toast(agentName(id) + (next ? ' 님을 다시 사용할 수 있게 했어요' : ' 님을 비활성화했어요'));
+    } catch(togErr){
+      if(err) err.textContent = cloudMsg(togErr);
+      renderAdminList();
+    }
+    b.disabled = false;
+    return;
+  }
+});
+
+document.getElementById('pinGo').addEventListener('click', async function(){
+  var cur = String(document.getElementById('pinCur').value || '').replace(/\s/g, '');
+  var nw = String(document.getElementById('pinNew').value || '').replace(/\s/g, '');
+  var err = document.getElementById('pinErr');
+  err.textContent = '';
+  if(!cur){ err.textContent = '지금 쓰는 비번을 입력해 주세요.'; return; }
+  if(!/^\d{4,8}$/.test(nw)){ err.textContent = '새 비번은 숫자 4~8자리로 정해 주세요.'; return; }
+  if(cur === nw){ err.textContent = '지금 비번과 다른 비번으로 정해 주세요.'; return; }
+  if(!CLOUD){ err.textContent = '서버에 연결하지 못했어요.'; return; }
+  var btn = this;
+  btn.disabled = true; btn.textContent = '바꾸는 중…';
+  try {
+    await CLOUD.admin('change_my_pin', { currentPin: cur, pin: nw });
+    document.getElementById('pinCur').value = '';
+    document.getElementById('pinNew').value = '';
+    toast('비번을 바꿨어요 🔑 다음 입장부터 새 비번을 쓰세요');
+    closeAdmin();
+  } catch(e){
+    err.textContent = cloudMsg(e);
+  } finally {
+    btn.disabled = false; btn.textContent = '비번 바꾸기';
+  }
+});
+
+document.getElementById('admAdd').addEventListener('click', async function(){
+  var name = document.getElementById('admName').value.trim();
+  var emoji = document.getElementById('admEmoji').value.trim();
+  var pin = String(document.getElementById('admPin').value || '').replace(/\s/g, '');
+  var err = document.getElementById('admErr');
+  err.textContent = '';
+  if(!name){ err.textContent = '이름을 입력해 주세요.'; return; }
+  if(!/^\d{4,8}$/.test(pin)){ err.textContent = '초기 비번은 숫자 4~8자리로 정해 주세요.'; return; }
+  if(!CLOUD){ err.textContent = '서버에 연결하지 못했어요.'; return; }
+  var btn = this;
+  btn.disabled = true;
+  try {
+    var res = await CLOUD.admin('create_agent', { name: name, emoji: emoji || '🌿', pin: pin });
+    document.getElementById('admName').value = '';
+    document.getElementById('admEmoji').value = '';
+    document.getElementById('admPin').value = '';
+    await reloadState();
+    renderAdminList();
+    toast((res.name || name) + ' 주선자를 추가했어요 · 초기 비번 ' + (res.pin || pin));
+  } catch(e){
+    err.textContent = cloudMsg(e);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
 /* boot */
 renderAll();
 window.__mannabang = {get state(){ return state; }, get mode(){ return MODE; }, setMode:function(m){ MODE = m; },
+  get demo(){ return DEMO; },
   render:renderAll, filtered:filteredAssets, shareMessage:shareMessage, guestMessage:guestMessage, shareLink:shareLink,
-  newAssetNotice:newAssetNotice, openNewAssetPop:openNewAssetPop, closeNewAssetPop:closeNewAssetPop};
-/* 저장된 로그인 상태가 유효하면 게이트를 건너뛰고 그 모드로 바로 복원한다.
-   ?item= 공유 링크로 들어와도 이미 주선자로 로그인돼 있으면 주선자 권한을 유지한다. */
-var savedAuth = loadAuth();
-if(savedAuth){
-  if(savedAuth.mode === 'agent' && state.session !== savedAuth.session){ state.session = savedAuth.session; save(); }
-  enterApp(DEEP_ITEM, savedAuth.mode, true);
-} else {
-  if(authExpired) gateErr.textContent = '보안을 위해 1시간이 지나 자동으로 로그아웃됐어요. 다시 로그인해 주세요.';
-  if(DEEP_ITEM && getAsset(DEEP_ITEM)) enterApp(DEEP_ITEM, 'guest');
+  newAssetNotice:newAssetNotice, openNewAssetPop:openNewAssetPop, closeNewAssetPop:closeNewAssetPop,
+  openAdmin:openAdmin, closeAdmin:closeAdmin};
+
+/* 인터넷이 없거나 CDN 로딩이 실패하면 샘플 모드만 열어 둔다 */
+async function bootGate(){
+  var note = document.getElementById('cloudNote');
+  var setup = document.getElementById('setupOpen');
+  document.getElementById('sampleBtn').hidden = false;
+  if(!CLOUD){
+    if(note){ note.textContent = '⚠️ 서버에 연결하지 못했어요 · 샘플 모드로 둘러볼 수 있어요'; note.className = 'gate-note bad'; }
+    if(setup) setup.hidden = true;
+    return;
+  }
+  if(setup) setup.hidden = false;
+  try {
+    var list = await CLOUD.fetchAgents();
+    if(list && list.length) setAgents(list);
+    if(note){ note.textContent = '☁️ 실전 모드 · 보안 서버 연결됨'; note.className = 'gate-note'; }
+  } catch(e){
+    if(note){ note.textContent = '⚠️ 이름 목록을 불러오지 못했어요 · 잠시 뒤 새로고침해 주세요'; note.className = 'gate-note bad'; }
+  }
+  renderGateChips();
+
+  var sess = null;
+  try { sess = await CLOUD.restore(); } catch(e){ sess = null; }
+  if(sess && sess.mode){
+    try {
+      await cloudEnter(sess.agentId, sess.mode, true);
+      return;
+    } catch(e){
+      toast(cloudMsg(e));
+      try { await CLOUD.signOut(); } catch(err){}
+    }
+  } else if(sess && sess.expired){
+    gateErr.textContent = '보안을 위해 1시간이 지나 자동으로 로그아웃됐어요. 다시 입장해 주세요.';
+  }
 }
+
+bootGate();
 })();
 </script>
 </body>
