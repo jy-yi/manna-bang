@@ -127,7 +127,7 @@
 | 행 | 블록 | 앵커 주석 |
 | --- | --- | --- |
 | 1269–1296 | 상수·AGENTS·STATUS·STAGES | `constants` |
-| 1297–1320 | 바라는 조건 유틸(`WANT_PRESETS`, `cleanWants`, `wishLineHTML`) | `바라는 조건` |
+| 1297–1320 | 바라는 조건 유틸(`WANT_PRESETS`, `cleanWants`, `wishLineHTML`) + 키 조건 헬퍼(`wantHeightOf`·`setWantHeight`·`renderWantHeight`·`wireWantHeight`) | `바라는 조건` |
 | 1321–1386 | 마담 리뷰 정의(`REV_VIS`, `SEED_REVIEWS`, `visibleReviews`, `reviewableMatches`) | `마담 리뷰` |
 | 1387–1413 | 이모지 환경설정(`EMOJI_KEY`, `loadEmojiPrefs`, `saveEmojiPref`) | `내 이모지` |
 | 1414–1460 | **샘플 데이터**(`RAW` 매물 30건, `SEED_MATCHES` 6건) | `sample data` |
@@ -370,8 +370,8 @@
 ### 7.4 매물 상세·매칭 제안
 
 - `openDetail(id)`(2831): `detailId` 설정, 슬라이드/제안/삭제 상태 초기화, `body.style.overflow='hidden'`, `histEnter('detail')`.
-- 갤러리: 사진이 있으면 슬라이드 이미지 + `📥 사진 저장`(＋`📤 공유`), 없으면 `avatarSVG` 3종.
-- 제목 아래 액션 줄 `.dacts`(2026-11-20 추가): `📋 정보 복사`(모두) / `📥 사진 일괄 저장 (N장)`(주선자·사진 1장 이상) / `📤 사진 공유 (N장)`(주선자·2장 이상·여러 장 공유 지원 브라우저). 375px에서 한 줄, 좁으면 두 줄로 접힌다.
+- 갤러리: 사진이 있으면 슬라이드 이미지 + 좌상단 `📥 일괄 저장 (N장)`(＋`📤 일괄 공유 (N장)`, 여러 장 공유 지원 브라우저), 없으면 `avatarSVG` 3종.
+- 제목 아래 액션 줄 `.dacts`: **`📋 정보 복사` 하나만** 남는다(2026-11-20 정리). 사진 저장·공유는 갤러리 좌상단 한 곳으로 모아 위아래 중복을 없앴다.
 - **제안 패널**: 푸터 `💌 매칭 제안` → `proposalOpen=true`. 후보는 `candidatesFor(a)`(2414) = **나와 다른 성별**, `available` 우선 → 나이순. `matched`는 선택 불가(`disabled`).
 - 후보를 고르면 푸터가 **제안 전용 바**로 바뀐다: `닫기 / 💬 카톡 문구 / 제안 보내기 💌`. 후보 미선택 시 뒤 두 개 `disabled`.
 - `💬 카톡 문구`는 `shareMine`에 후보를 넣고 공유 박스로 스크롤 — 제안 문구를 먼저 보여 주고 보내게 하는 흐름.
@@ -421,8 +421,8 @@ score = 성사(matched) * 10 + 진행(progress) * 3 + 보유(총 매물) * 1
 - 저장: `savePhoto(idx)`(2999) — Data URL → Blob → `<a download="만나방_매물07_1.jpg">` (4초 뒤 정리). 실패 시 "길게 눌러 저장" 안내.
 - 공유: `sharePhoto(idx)`(3023) — `File` + `navigator.canShare({files})` 통과 시 `navigator.share`, 아니면 저장으로 대체.
 - 파일명: `photoFileName(a, idx, mime)` — `만나방_매물07_1.jpg` 형식이고 확장자는 Blob MIME을 따른다(`photoExtOf`): jpg/png/webp/gif/heic/bmp.
-- **사진 일괄 저장**: `saveAllPhotos()` — 상세 모달 제목 아래 `📥 사진 일괄 저장 (N장)` 버튼(`data-action="save-all-photos"`). 사진이 0장이면 버튼 자체를 그리지 않는다. `photoBlobCache`(prewarm) → 없으면 `photoBlobOf` fetch → `triggerDownload`(a.download)를 **320ms 간격 순차**로 트리거하고, 버튼 라벨을 `저장 중 2/5…`로 바꾸며 `disabled` 처리, 끝나면 성공/실패 건수 토스트. `bulkBusy`로 중복 실행 차단.
-- **사진 여러 장 공유**: `shareAllPhotos()` + `canShareMany()`(두 장짜리 더미 File로 `navigator.canShare({files})` 실지원 확인). 지원 브라우저에서만 `📤 사진 공유 (N장)` 버튼이 보이고, 이미 받아 둔 Blob으로 File[]을 만들어 `navigator.share({files})`. `AbortError`(사용자가 공유창을 닫음)는 토스트 없이 조용히 끝내고, 그 외 실패는 일괄 저장으로 대체한다.
+- **사진 일괄 저장**: `saveAllPhotos()` — 상세 갤러리 **좌상단** `📥 일괄 저장 (N장)` 버튼(`data-action="save-all-photos"`, 라이트박스 하단에도 같은 버튼). 사진이 0장이면 버튼 자체를 그리지 않는다. 진행 라벨은 `bulkSaveBtns()`로 화면의 모든 일괄 저장 버튼에 동시에 반영된다. `photoBlobCache`(prewarm) → 없으면 `photoBlobOf` fetch → `triggerDownload`(a.download)를 **320ms 간격 순차**로 트리거하고, 버튼 라벨을 `저장 중 2/5…`로 바꾸며 `disabled` 처리, 끝나면 성공/실패 건수 토스트. `bulkBusy`로 중복 실행 차단.
+- **사진 공유**: `shareAllPhotos()` + `canShareAny()` = `canShareMany()`(두 장짜리 더미 File로 `navigator.canShare({files})` 실지원 확인) `|| canSharePhoto()`. 1장짜리 매물도 같은 `📤 일괄 공유 (1장)` 버튼으로 공유되고, 이미 받아 둔 Blob으로 File[]을 만들어 `navigator.share({files})`. `AbortError`(사용자가 공유창을 닫음)는 토스트 없이 조용히 끝내고, 그 외 실패는 일괄 저장으로 대체한다.
 - ⚠️ Supabase 서명 URL은 CORS(`access-control-allow-origin: *`)가 열려 있어 `fetch → Blob` 다운로드가 그대로 동작한다(2026-11-20 실측). 서명 유효시간(2시간)이 지난 URL은 fetch가 400이 되므로 실패 토스트 + "길게 눌러 저장" 안내로 떨어진다.
 - 라이트박스: `openLightbox`(3178) `mb:'lightbox'` 엔트리를 따로 push, `closeLightbox`(3201)에서 `histSkipPop`으로 정리.
 - ⚠️ 사진은 **localStorage에 base64로** 들어간다. 5장 × 900px면 대략 1~3MB. 큰 사진을 여러 장 올리면 quota(약 5MB)에 걸린다 → 저장 실패 시 롤백 + 안내 로직이 이미 있지만, 장수를 늘리려면 반드시 저장 위치를 바꿔야 한다(IndexedDB 또는 Supabase Storage).

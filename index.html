@@ -518,15 +518,15 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .g-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:5px}
 .g-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:.2s}
 .g-dots i.on{background:#fff;width:16px;border-radius:99px}
-/* 주선자 전용 사진 저장·공유 (갤러리·라이트박스)
-   좌상단 고정 — 우상단 닫기(×) 버튼과 절대 겹치지 않게 왼쪽에 둔다. */
+/* 주선자 전용 사진 일괄 저장·일괄 공유 (갤러리·라이트박스)
+   사진 영역 좌상단 고정 — 우상단 닫기(×) 버튼과 겹치지 않게 왼쪽에 두고, 두 버튼이 한 줄에 들어온다. */
 .g-tools{position:absolute;left:10px;right:auto;top:10px;display:flex;gap:6px;z-index:3;touch-action:pan-y}
 @media (max-width:359px){.g-tools{gap:5px}.shot-btn{font-size:10.5px;height:28px;padding:0 8px}}
 .shot-btn{display:inline-flex;align-items:center;gap:4px;height:30px;padding:0 10px;border-radius:99px;
   background:rgba(255,255,255,.93);color:var(--ink);font-size:11.5px;font-weight:800;white-space:nowrap;
   box-shadow:0 3px 12px rgba(40,20,10,.22);backdrop-filter:blur(4px)}
 .shot-btn:active{transform:scale(.96)}
-/* 상세 제목 아래 액션 줄 — 📋 정보 복사 / 📥 사진 일괄 저장 (375px에서 한 줄 또는 두 줄로 접힘) */
+/* 상세 제목 아래 액션 줄 — 📋 정보 복사 (사진 저장·공유는 갤러리 좌상단으로 이동) */
 .dacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
 .act-pill{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 12px;border-radius:99px;
   background:#fff;border:1.5px solid var(--line);color:var(--ink);font-size:12px;font-weight:800;white-space:nowrap}
@@ -694,6 +694,19 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
   border:1.5px dashed var(--line-2);background:#fff;font-size:12.5px;font-weight:750;color:var(--ink-2);
 }
 .add-extra:hover{border-color:var(--mint);color:var(--mint-ink);background:var(--mint-soft)}
+/* 바라는 조건 — 키 조건 전용 컨트롤 */
+.wkey{display:flex;flex-direction:column;gap:7px;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:9px 10px}
+.wkey-row{display:flex;align-items:center;gap:8px}
+.wkey-row .wkey-k{flex:0 0 auto;font-size:11.5px;font-weight:800;color:var(--ink-2);white-space:nowrap}
+.wkey-row select{flex:1;min-width:0;width:auto;background:#fff;border:1.5px solid var(--line);border-radius:10px;
+  padding:9px 10px;font-size:12.5px;font-weight:750;color:var(--ink);outline:none;transition:.14s}
+.wkey-row select:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(212,121,106,.1)}
+.wkey-custom{display:flex;align-items:center;gap:6px}
+.wkey-custom[hidden]{display:none}
+.wkey-custom input{flex:1;min-width:0;width:auto;background:#fff;border:1.5px solid var(--line);border-radius:10px;
+  padding:10px 11px;font-size:13px;outline:none;transition:.14s}
+.wkey-custom input:focus{border-color:var(--mint);box-shadow:0 0 0 3px rgba(212,121,106,.1)}
+.wkey-custom span{flex:0 0 auto;font-size:12px;font-weight:800;color:var(--ink-2)}
 .wchips{display:flex;flex-wrap:wrap;gap:6px}
 .wchip{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;padding:7px 11px;border-radius:99px;
   background:var(--bg-2);border:1.5px solid var(--line);color:var(--ink-2);transition:.14s;white-space:nowrap;letter-spacing:-.01em}
@@ -1292,12 +1305,46 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 
         <div class="field wide">
           <label>💘 바라는 조건 <span class="lbl-sub">이상형 · 필수 조건</span></label>
+          <div class="wkey">
+            <div class="wkey-row">
+              <label class="wkey-k" for="f-wantHeightSel">📏 바라는 키</label>
+              <select id="f-wantHeightSel" aria-label="바라는 키 조건 선택">
+                <option value="">키 조건 없음 (선택 안 함)</option>
+                <option value="160">160cm 이상</option>
+                <option value="161">161cm 이상</option>
+                <option value="162">162cm 이상</option>
+                <option value="163">163cm 이상</option>
+                <option value="164">164cm 이상</option>
+                <option value="165">165cm 이상</option>
+                <option value="166">166cm 이상</option>
+                <option value="167">167cm 이상</option>
+                <option value="168">168cm 이상</option>
+                <option value="169">169cm 이상</option>
+                <option value="170">170cm 이상</option>
+                <option value="171">171cm 이상</option>
+                <option value="172">172cm 이상</option>
+                <option value="173">173cm 이상</option>
+                <option value="174">174cm 이상</option>
+                <option value="175">175cm 이상</option>
+                <option value="176">176cm 이상</option>
+                <option value="177">177cm 이상</option>
+                <option value="178">178cm 이상</option>
+                <option value="179">179cm 이상</option>
+                <option value="180">180cm 이상</option>
+                <option value="custom">직접 입력</option>
+              </select>
+            </div>
+            <div class="wkey-custom" id="wantHeightCustom" hidden>
+              <input id="f-wantHeightNum" type="number" min="130" max="220" step="1" inputmode="numeric" placeholder="예: 183" aria-label="바라는 키 직접 입력">
+              <span>cm 이상</span>
+            </div>
+          </div>
           <div class="wchips" id="wantsChips" role="group" aria-label="자주 쓰는 바라는 조건"></div>
           <div class="wadd">
             <input id="f-wantInput" type="text" placeholder="직접 입력 후 Enter (예: 자녀 없음, 같은 동네)" aria-label="바라는 조건 직접 입력" autocomplete="off">
             <button type="button" id="wantsAdd">추가</button>
           </div>
-          <span class="hint">칩을 눌러 고르고, 목록에 없으면 직접 입력해 추가하세요. 쉼표(,)로 여러 개를 한 번에 넣을 수 있어요.</span>
+          <span class="hint">칩을 눌러 고르고, 목록에 없으면 직접 입력해 추가하세요. 쉼표(,)로 여러 개를 한 번에 넣을 수 있어요. 키는 <b>160~180cm</b>에서 고르거나 직접 입력(130~220cm)할 수 있어요.</span>
         </div>
 
         <div class="field wide">
@@ -1369,8 +1416,8 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
   <button type="button" class="lb-nav r" data-lb="1" aria-label="다음 사진">›</button>
   <div class="lb-n" id="lightboxNo"></div>
   <div class="lb-tools" id="lbTools" hidden>
-    <button type="button" class="lb-btn" id="lbSave">📥 사진 저장</button>
-    <button type="button" class="lb-btn" id="lbShare" hidden>📤 공유</button>
+    <button type="button" class="lb-btn" data-action="save-all-photos">📥 일괄 저장</button>
+    <button type="button" class="lb-btn" data-action="share-all-photos" id="lbShare" hidden>📤 일괄 공유</button>
   </div>
 </div>
 
@@ -1433,7 +1480,8 @@ function cloudTransient(e){
 function bootSplash(on){ var el = document.getElementById('bootSplash'); if(el) el.hidden = !on; }
 
 /* ---------------- 바라는 조건 (이상형·필수 조건) ---------------- */
-var WANT_PRESETS = ['담배 X','종교 X','음주 적당히','비슷한 나이','서울/수도권','키 175cm 이상','주말 데이트 가능','연락 자주','반려동물 OK'];
+/* '키 175cm 이상'은 아래 키 전용 컨트롤(160~180cm 선택·직접 입력)로 대체했다. */
+var WANT_PRESETS = ['결혼 생각 있는 분','담배 X','종교 X','음주 적당히','비슷한 나이','서울/수도권','주말 데이트 가능','연락 자주','반려동물 OK'];
 
 function cleanWants(list){
   var out = [], seen = {};
@@ -1448,6 +1496,87 @@ function cleanWants(list){
   return out;
 }
 function wantsOf(a){ return cleanWants((a && a.wants) || []); }
+
+/* ---------------- 바라는 키 조건 ----------------
+   formWants 항목 '키 163cm 이상' / '키 163 이상' 에서 숫자만 뽑는다(없으면 null).
+   드롭다운·직접 입력·칩이 모두 이 값 하나를 바라보게 해서 서로 어긋나지 않게 한다. */
+function wantHeightOf(w){
+  var m = String(w == null ? '' : w).replace(/\s+/g, '').match(/^키(\d{2,3})(?:cm)?(?:이상)?$/i);
+  return m ? Number(m[1]) : null;
+}
+function wantHeightIndex(list){
+  list = list || [];
+  for(var i = 0; i < list.length; i++){ if(wantHeightOf(list[i]) != null) return i; }
+  return -1;
+}
+function appliedWantHeight(){
+  var i = wantHeightIndex(formWants);
+  return i === -1 ? null : wantHeightOf(formWants[i]);
+}
+
+/* 키 조건을 formWants에 반영 — 항목은 항상 1개만 유지, null이면 지운다 */
+function setWantHeight(cm){
+  var txt = (cm == null || cm === '') ? '' : ('키 ' + cm + 'cm 이상');
+  var kept = false;
+  for(var i = formWants.length - 1; i >= 0; i--){
+    if(wantHeightOf(formWants[i]) == null) continue;
+    if(!kept && txt){ formWants[i] = txt; kept = true; }
+    else formWants.splice(i, 1);
+  }
+  if(txt && !kept) formWants.push(txt);
+  renderWantsChips();
+}
+
+/* 지금 formWants 상태를 드롭다운·직접 입력칸에 다시 맞춘다.
+   wantHeightCustom: 사용자가 '직접 입력'을 열어 둔 상태(값을 아직 안 넣어도 칸을 닫지 않는다) */
+var wantHeightCustom = false;
+function renderWantHeight(){
+  var sel = document.getElementById('f-wantHeightSel');
+  var num = document.getElementById('f-wantHeightNum');
+  var wrap = document.getElementById('wantHeightCustom');
+  if(!sel || !num || !wrap) return;
+  var cm = appliedWantHeight();
+  if(wantHeightCustom){
+    sel.value = 'custom';                     /* 사용자가 '직접 입력'을 골랐으면 그대로 둔다 */
+  } else if(cm != null && cm >= 160 && cm <= 180){
+    sel.value = String(cm);
+  } else if(cm != null){
+    sel.value = 'custom'; wantHeightCustom = true;   /* 160~180 밖의 저장값은 직접 입력으로 */
+  } else {
+    sel.value = '';
+  }
+  wrap.hidden = (sel.value !== 'custom');
+  if(sel.value === 'custom'){
+    if(cm != null && String(num.value) !== String(cm)) num.value = String(cm);
+  } else {
+    num.value = '';
+  }
+}
+
+/* 드롭다운·직접 입력 조작 */
+function wireWantHeight(){
+  var sel = document.getElementById('f-wantHeightSel');
+  var num = document.getElementById('f-wantHeightNum');
+  if(!sel || !num) return;
+  sel.addEventListener('change', function(){
+    if(this.value === 'custom'){
+      wantHeightCustom = true;
+      renderWantHeight();
+      var n = Number(String(num.value || '').trim());
+      if(String(num.value || '').trim() && isFinite(n) && n >= 130 && n <= 220) setWantHeight(Math.round(n));
+      else setTimeout(function(){ try { num.focus(); } catch(e){} }, 30);
+      return;
+    }
+    wantHeightCustom = false;
+    setWantHeight(this.value ? Number(this.value) : null);
+  });
+  num.addEventListener('input', function(){
+    var v = String(this.value == null ? '' : this.value).trim();
+    if(!v){ setWantHeight(null); return; }
+    var n = Number(v);
+    if(isFinite(n) && n >= 130 && n <= 220 && Math.round(n) === n) setWantHeight(n);
+  });
+}
 function wishLineHTML(a){
   var w = wantsOf(a);
   var head = w.slice(0, 2).join(' · ');
@@ -2990,10 +3119,11 @@ function renderDetail(){
     '<div class="gallery' + (ph.length ? ' has-shot' : '') + '">' + slides +
       (slideN > 1 ? '<button class="g-arrow l" data-action="slide" data-dir="-1" aria-label="이전 사진">‹</button>' +
       '<button class="g-arrow r" data-action="slide" data-dir="1" aria-label="다음 사진">›</button>' : '') +
+      /* 사진이 있으면 좌상단에 일괄 저장·일괄 공유 (1장일 때도 그대로 동작, 손님은 숨김) */
       ((ph.length && !guest)
         ? '<div class="g-tools">' +
-            '<button type="button" class="shot-btn" data-action="save-photo" data-i="' + slideIdx + '">📥 사진 저장</button>' +
-            (canSharePhoto() ? '<button type="button" class="shot-btn" data-action="share-photo" data-i="' + slideIdx + '">📤 공유</button>' : '') +
+            '<button type="button" class="shot-btn" data-action="save-all-photos" data-n="' + ph.length + '">📥 일괄 저장 (' + ph.length + '장)</button>' +
+            (canShareAny() ? '<button type="button" class="shot-btn" data-action="share-all-photos" data-n="' + ph.length + '">📤 일괄 공유 (' + ph.length + '장)</button>' : '') +
           '</div>'
         : '') +
       '<div class="g-dots">' + dots + '</div>' +
@@ -3004,15 +3134,9 @@ function renderDetail(){
         '<span class="badge ' + st.cls + '" style="margin-left:auto;margin-top:6px">' + st.emoji + ' ' + st.label + '</span></div>' +
       '<div class="dsub">' + (a.gender === 'M' ? '남성' : '여성') + ' <span class="sep">|</span> ' + ageLabel(a) + ' <span class="sep">|</span> ' + a.height + 'cm <span class="sep">|</span> ' + esc(a.region) + '</div>' +
 
-      /* 사진 0장이면 일괄 저장·공유 버튼은 통째로 숨는다(정보 복사는 항상) */
+      /* 사진 저장·공유는 갤러리 좌상단 한 곳으로 모았다 — 여기에는 정보 복사만 둔다 */
       '<div class="dacts">' +
         '<button type="button" class="act-pill" data-action="copy-profile">📋 정보 복사</button>' +
-        ((!guest && ph.length)
-          ? '<button type="button" class="act-pill" data-action="save-all-photos">📥 사진 일괄 저장 (' + ph.length + '장)</button>' +
-            ((ph.length > 1 && canShareMany())
-              ? '<button type="button" class="act-pill" data-action="share-all-photos">📤 사진 공유 (' + ph.length + '장)</button>'
-              : '')
-          : '') +
       '</div>' +
 
       '<div class="spec-grid">' +
@@ -3466,7 +3590,6 @@ function shareBlob(a, idx, blob){
    아이폰·일부 브라우저처럼 다중 내려받기가 막히는 곳을 위해 여러 장 공유 버튼을 따로 둔다. */
 var bulkBusy = false;
 
-function bulkSaveBtn(){ return document.querySelector('#detailContent [data-action="save-all-photos"]'); }
 function triggerDownload(blob, name){
   var url = null;
   try { url = URL.createObjectURL(blob); } catch(e){ return false; }
@@ -3491,6 +3614,14 @@ function canShareMany(){
     return !!navigator.canShare({files: [f1, f2]});
   } catch(e){ return false; }
 }
+/* 사진 1장만 공유되는 브라우저도 '일괄 공유' 버튼을 보여 준다 */
+function canShareAny(){ return canShareMany() || canSharePhoto(); }
+function bulkSaveBtns(){
+  return Array.prototype.slice.call(document.querySelectorAll('[data-action="save-all-photos"]'));
+}
+function bulkSaveLabel(total){ return '📥 일괄 저장' + (total ? ' (' + total + '장)' : ''); }
+function bulkShareLabel(total){ return '📤 일괄 공유' + (total ? ' (' + total + '장)' : ''); }
+
 function saveAllPhotos(){
   if(isGuest() || bulkBusy) return;
   var a = getAsset(detailId);
@@ -3499,18 +3630,20 @@ function saveAllPhotos(){
   if(!ph.length) return;
   var total = ph.length, done = 0, failed = 0;
   bulkBusy = true;
-  var btn = bulkSaveBtn();
-  if(btn) btn.disabled = true;
+  var btns = bulkSaveBtns();          /* 갤러리 좌상단 + 라이트박스 버튼이 함께 진행 상황을 보여 준다 */
+  btns.forEach(function(b){ b.disabled = true; });
+  function label(txt){ btns.forEach(function(b){ b.textContent = txt; }); }
   function finish(){
     bulkBusy = false;
-    if(btn){ btn.disabled = false; btn.textContent = '📥 사진 일괄 저장 (' + total + '장)'; }
+    btns.forEach(function(b){ b.disabled = false; });
+    label(bulkSaveLabel(total));
     if(done && !failed) toast(total + '장을 저장했어요 📥');
     else if(done) toast(done + '장 저장 · ' + failed + '장은 저장하지 못했어요. 그 사진은 길게 눌러 저장해 주세요');
     else toast('사진을 저장하지 못했어요 · 사진을 길게 눌러 저장해 주세요');
   }
   function step(i){
     if(i >= total){ finish(); return; }
-    if(btn) btn.textContent = '저장 중 ' + (i + 1) + '/' + total + '…';
+    label('저장 중 ' + (i + 1) + '/' + total + '…');
     var cached = photoBlobCache[ph[i]];
     var p = (cached && !cached.__bad) ? Promise.resolve(cached) : photoBlobOf(ph[i]);
     p.then(function(blob){
@@ -3713,8 +3846,10 @@ function openLightbox(a, i){
   Array.prototype.forEach.call(navs, function(b){ b.hidden = ph.length < 2; });
   var tools = document.getElementById('lbTools');
   if(tools) tools.hidden = isGuest();
+  var svBtn = tools ? tools.querySelector('[data-action="save-all-photos"]') : null;
+  if(svBtn) svBtn.textContent = bulkSaveLabel(ph.length);   /* 라이트박스에서도 장수까지 같은 라벨 */
   var shBtn = document.getElementById('lbShare');
-  if(shBtn) shBtn.hidden = !canSharePhoto();
+  if(shBtn){ shBtn.hidden = !canShareAny(); if(!shBtn.hidden) shBtn.textContent = bulkShareLabel(ph.length); }
   document.getElementById('lightbox').hidden = false;
   if(!lightOpen){
     lightOpen = true;
@@ -3867,6 +4002,7 @@ function renderWantsChips(){
     return '<button type="button" class="wchip' + (on ? ' on' : '') + '" data-want="' + esc(w) +
       '" aria-pressed="' + (on ? 'true' : 'false') + '">' + esc(w) + '</button>';
   }).join('');
+  renderWantHeight();
 }
 
 /* 바라는 조건 직접 입력 — 한글 IME(모바일) 대응
@@ -3990,7 +4126,9 @@ function openForm(id){
   formSmoke = a ? (a.smoke || '') : '';
   formDrink = a ? (a.drink || '') : '';
   formExtras = a ? (a.extras || []).map(function(e){ return {label:e.label, value:e.value}; }) : [];
-  formWants = a ? wantsOf(a) : [];
+  /* 새 매물은 '결혼 생각 있는 분'을 기본으로 골라 두고, 기존 매물은 저장된 조건을 그대로 쓴다 */
+  formWants = a ? wantsOf(a) : ['결혼 생각 있는 분'];
+  wantHeightCustom = false;
   document.getElementById('f-wantInput').value = '';
   renderWantsChips();
 
@@ -4073,6 +4211,8 @@ function formSnap(){
   if(form){
     Array.prototype.forEach.call(form.querySelectorAll('input,select,textarea'), function(el){
       if(el.type === 'file') return;             /* 파일 선택칸은 값이 남지 않는다 */
+      /* 키 조건 칸은 '적용된 조건'으로만 판단한다 — 직접 입력 칸을 열어만 둔 것은 변경이 아니다 */
+      if(el.id === 'f-wantHeightSel' || el.id === 'f-wantHeightNum') return;
       parts.push((el.id || el.name || '?') + '=' + String(el.value == null ? '' : el.value).replace(/\s+/g, ' ').trim());
     });
   }
@@ -4082,6 +4222,8 @@ function formSnap(){
   parts.push('smoke=' + formSmoke);
   parts.push('drink=' + formDrink);
   parts.push('wants=' + (formWants || []).join('|'));
+  var hNow = appliedWantHeight();
+  parts.push('wantHeight=' + (hNow == null ? '' : hNow));
   parts.push('extras=' + (formExtras || []).map(function(x){ return (x.label || '') + ':' + (x.value || ''); }).join('|'));
   return parts.join('\n');
 }
@@ -4763,8 +4905,12 @@ document.getElementById('photoGrid').addEventListener('click', function(e){
   lb.addEventListener('click', function(e){
     if(clickAfterSwipe()) return;   /* 스와이프 끝에 따라오는 click 무시(배경 탭으로 닫히지 않게) */
     if(e.target.closest('#lightboxClose')){ closeLightbox(); return; }
-    if(e.target.closest('#lbSave')){ savePhoto(lightIdx); return; }
-    if(e.target.closest('#lbShare')){ sharePhoto(lightIdx); return; }
+    var lbAct = e.target.closest('[data-action]');
+    if(lbAct){
+      var lbAn = lbAct.getAttribute('data-action');
+      if(lbAn === 'save-all-photos'){ saveAllPhotos(); return; }
+      if(lbAn === 'share-all-photos'){ shareAllPhotos(); return; }
+    }
     var nav = e.target.closest('[data-lb]');
     if(nav){ moveLightbox(Number(nav.getAttribute('data-lb'))); return; }
     closeLightbox();
@@ -4804,9 +4950,16 @@ document.getElementById('wantsChips').addEventListener('click', function(e){
   if(!w) return;
   var i = formWants.indexOf(w);
   if(i === -1) formWants.push(w); else formWants.splice(i, 1);
+  if(wantHeightOf(w) != null){
+    /* 키 칩을 켜거나 끄면 드롭다운도 그 상태로 맞춘다 (직접 입력 모드에서 빠져나온다) */
+    wantHeightCustom = false;
+    var hnum = document.getElementById('f-wantHeightNum');
+    if(hnum && formWants.indexOf(w) === -1) hnum.value = '';
+  }
   renderWantsChips();
 });
 document.getElementById('wantsAdd').addEventListener('click', function(){ addWantsFromInput(true); });
+wireWantHeight();   /* 키 조건 드롭다운 · 직접 입력 */
 
 /* 바라는 조건 입력칸 — 모바일 한글 IME에서 콤마를 눌러도 직전 글자가 남지 않게 */
 (function(){
