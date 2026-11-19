@@ -61,6 +61,14 @@
 
 > 스키마를 바꿀 때는 **키 이름의 `.v3`를 올리고 `migrate()`(1701)에 이전 데이터 보정을 추가**하세요. 기존 사용자(주선자들)의 브라우저에 데이터가 남아 있습니다.
 
+### 최근 변경 (2026-11-20, `35fee36`)
+
+- **모바일 주소창에 상세 모달 상단이 잘리던 문제**: 페이지 맨 위(1·2번 매물)에서만 발생. 안드로이드 삼성인터넷·크롬은 주소창·툴바가 펼쳐진 상태에서 `vh`(레이아웃 뷰포트)가 실제 보이는 높이보다 커서 `92vh` 시트가 화면 위로 넘쳤다. `.modal` 에 `max-height:calc(100dvh - 16px)` 를 추가하고, 모달을 열 때마다 `fitSheet()`(`SHEET_OVERLAYS` = 상세·등록·방장·신규알림)가 `visualViewport.height` 의 92%로 overlay 높이·모달 `max-height` 를 px 로 다시 잡는다(`resize`·`orientationchange`·`visualViewport.resize` 에서 재보정). 열 때 `scrollTop = 0`(+`requestAnimationFrame`).
+- **× 닫기 버튼**: `.modal-x` 를 `position:absolute` → `position:sticky` 로 바꿔 모달을 스크롤해도 화면 위쪽에 남는다(음수 마진으로 자리는 차지하지 않음).
+- **라이트박스 확대**: `.lightbox`/`.lightbox img` 의 `touch-action:none` 이 두 손가락 핀치까지 막고 있었다 → `touch-action:pinch-zoom` 으로 완화. `bindSwipe()` 는 손가락이 2개 이상이거나 `visualViewport.scale > 1` 이면 스와이프로 처리하지 않는다.
+- **손님 모드 사진 워터마크**: `.wm-layer`(SVG data URI 타일, `pointer-events:none`)를 상세 갤러리(`guest` 일 때만 렌더, `#detailWm`)와 라이트박스(`#lightboxWm`, `.lb-stage` 안)에 얹는다. 주선자 모드에는 렌더되지 않으며 탭·스와이프·핀치를 막지 않는다.
+- 검증: `verify-modaltop.py` — 모달 상단 4개 뷰포트 + 라이트박스 핀치(대조군 포함)·스와이프 + 워터마크 73항목. `python3 verify-modaltop.py local|deploy` (Playwright, `LD_LIBRARY_PATH=/workspace/.libs/root/usr/lib/x86_64-linux-gnu`).
+
 ---
 
 ## 3. 파일 지도
