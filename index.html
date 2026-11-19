@@ -2800,6 +2800,7 @@ function renderDetail(){
 
   var ph = photosOf(a);
   var slideN = ph.length ? ph.length : 3;
+  prewarmPhotos(a);   /* 사진 공유(iOS)가 누른 순간에 바로 뜨도록 미리 받아 둔다 */
   if(slideIdx < 0 || slideIdx >= slideN) slideIdx = 0;
   var slides, dots = '';
   if(ph.length){
@@ -3264,6 +3265,26 @@ function photoBlobOf(src){
     return r.blob();
   }).catch(function(){ return null; });
 }
+/* 아이폰은 navigator.share 를 "손가락으로 누른 그 순간"에만 허용한다.
+   서명 URL 사진은 fetch 가 비동기라 그 순간을 놓치므로, 상세를 열 때 미리 받아 둔다. */
+var photoBlobCache = {};
+function prewarmPhotos(a){
+  var ph = photosOf(a);
+  ph.forEach(function(src){
+    if(!src || photoBlobCache[src]) return;
+    if(src.indexOf('data:') === 0){
+      var b = dataUrlToBlob(src);
+      if(b) photoBlobCache[src] = b;
+      return;
+    }
+    if(src.indexOf('http') !== 0) return;
+    fetch(src, { cache: 'force-cache' }).then(function(r){
+      return r.ok ? r.blob() : null;
+    }).then(function(blob){
+      if(blob) photoBlobCache[src] = blob;
+    }).catch(function(){});
+  });
+}
 function canSharePhoto(){
   try { return !!(window.File && navigator.canShare && navigator.share); } catch(e){ return false; }
 }
@@ -3299,18 +3320,23 @@ function sharePhoto(idx){
   var ph = photosOf(a);
   if(!ph.length) return;
   if(!(idx >= 0 && idx < ph.length)) idx = 0;
+  var cached = photoBlobCache[ph[idx]];
+  if(cached && !cached.__bad){ shareBlob(a, idx, cached); return; }
   photoBlobOf(ph[idx]).then(function(blob){
     if(!blob){ savePhoto(idx); return; }
-    var file;
-    try { file = new File([blob], photoFileName(a, idx), {type: blob.type || 'image/jpeg'}); }
-    catch(e){ savePhoto(idx); return; }
-    var data = {files: [file], title: '만나방 · ' + shareAssetNo(a), text: '이 사람 어때요? 🏠 만나방' };
-    if(!(navigator.canShare && navigator.canShare({files: [file]}))){ savePhoto(idx); return; }
-    navigator.share(data).catch(function(err){
-      if(err && err.name === 'AbortError') return;
-      toast('공유가 막혀 있어 사진으로 저장했어요 📥');
-      savePhoto(idx);
-    });
+    shareBlob(a, idx, blob);
+  });
+}
+function shareBlob(a, idx, blob){
+  var file;
+  try { file = new File([blob], photoFileName(a, idx), {type: blob.type || 'image/jpeg'}); }
+  catch(e){ savePhoto(idx); return; }
+  var data = {files: [file], title: '만나방 · ' + shareAssetNo(a), text: '이 사람 어때요? 🏠 만나방' };
+  if(!(navigator.canShare && navigator.canShare({files: [file]}))){ savePhoto(idx); return; }
+  navigator.share(data).catch(function(err){
+    if(err && err.name === 'AbortError') return;
+    toast('공유가 막혀 있어 사진으로 저장했어요 📥');
+    savePhoto(idx);
   });
 }
 function photoBytes(dataUrl){
