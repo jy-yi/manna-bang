@@ -3001,7 +3001,19 @@ window.addEventListener('popstate', function(){
   if(pop && !pop.hidden){ closeEmojiPop(true); return; }
   if(!document.getElementById('newAssetOverlay').hidden){ closeNewAssetPop(true); return; }
   if(!document.getElementById('adminOverlay').hidden){ closeAdmin(true); return; }
-  if(!document.getElementById('formOverlay').hidden){ closeForm(true); return; }
+  if(!document.getElementById('formOverlay').hidden){
+    /* 뒤로가기로 닫을 때도 작성 중이면 확인 — 취소하면 방금 사라진 엔트리를 되돌려 모달을 유지한다 */
+    if(isFormDirty()){
+      var leave = false;
+      try { leave = window.confirm(FORM_CLOSE_ASK); } catch(e){ leave = false; }
+      if(!leave){
+        histOwned = true;
+        try { history.pushState(histState('form'), ''); } catch(e){}
+        return;
+      }
+    }
+    closeForm(true); return;
+  }
   if(!document.getElementById('detailOverlay').hidden){ closeDetail(true); return; }
 });
 
@@ -3798,6 +3810,7 @@ function openForm(id){
   wireFormFoot();
 
   document.getElementById('formOverlay').hidden = false;
+  formInitialSnap = formSnap();   /* 열 때 상태 — 이걸 기준으로 작성 중인지 판단 */
   document.body.style.overflow = 'hidden';
   histEnter('form');
   var firstEl = document.getElementById('f-birth');
@@ -3834,7 +3847,54 @@ function closeForm(noHist){
   if(ov.hidden) return;
   ov.hidden = true;
   document.body.style.overflow = '';
+  formInitialSnap = '';
   if(noHist !== true) histLeave();
+}
+
+/* ---------------- 작성 중 닫기 방지 (배경·×·취소·Esc·뒤로가기) --------------
+   열 때의 상태를 스냅숏으로 기억해 두고, 달라졌으면(사진·글자 한 개라도) 닫기 전에 확인한다.
+   저장이 끝나 closeForm(true)로 닫는 경로는 확인 없이 그대로 닫힌다. */
+var formInitialSnap = '';
+
+function formSnap(){
+  var parts = [];
+  var form = document.getElementById('assetForm');
+  if(form){
+    Array.prototype.forEach.call(form.querySelectorAll('input,select,textarea'), function(el){
+      if(el.type === 'file') return;             /* 파일 선택칸은 값이 남지 않는다 */
+      parts.push((el.id || el.name || '?') + '=' + String(el.value == null ? '' : el.value).replace(/\s+/g, ' ').trim());
+    });
+  }
+  parts.push('photos=' + (formPhotos || []).join('|'));
+  parts.push('paths=' + (formPhotoPaths || []).join('|'));
+  parts.push('gender=' + formGender);
+  parts.push('smoke=' + formSmoke);
+  parts.push('drink=' + formDrink);
+  parts.push('wants=' + (formWants || []).join('|'));
+  parts.push('extras=' + (formExtras || []).map(function(x){ return (x.label || '') + ':' + (x.value || ''); }).join('|'));
+  return parts.join('\n');
+}
+
+function isFormDirty(){
+  var ov = document.getElementById('formOverlay');
+  if(!ov || ov.hidden) return false;
+  if(!formInitialSnap) return false;
+  return formSnap() !== formInitialSnap;
+}
+
+var FORM_CLOSE_ASK = '작성 중인 내용이 있어요. 저장하지 않고 닫을까요?';
+
+/* 사용자가 닫으려 할 때 — 바뀐 게 있으면 확인을 받는다. 닫았으면 true */
+function requestCloseForm(){
+  var ov = document.getElementById('formOverlay');
+  if(ov.hidden) return true;
+  if(isFormDirty()){
+    var ok = false;
+    try { ok = window.confirm(FORM_CLOSE_ASK); } catch(e){ ok = false; }
+    if(!ok) return false;
+  }
+  closeForm();
+  return true;
 }
 
 /* ---------------- 신규 매물 등록 완료 · 단톡방 알림 팝업 ----------------
@@ -4420,7 +4480,7 @@ detailOverlay.addEventListener('click', function(e){
 /* form modal */
 var formOverlay = document.getElementById('formOverlay');
 formOverlay.addEventListener('click', function(e){
-  if(e.target === formOverlay || e.target.closest('[data-close]')) closeForm();
+  if(e.target === formOverlay || e.target.closest('[data-close]')) requestCloseForm();
 });
 
 /* 사진 등록 wiring */
@@ -4761,7 +4821,7 @@ document.addEventListener('keydown', function(e){
     if(pop && !pop.hidden){ closeEmojiPop(); return; }
     if(!document.getElementById('newAssetOverlay').hidden){ closeNewAssetPop(); return; }
     if(!document.getElementById('adminOverlay').hidden){ closeAdmin(); return; }
-    if(!document.getElementById('formOverlay').hidden){ closeForm(); return; }
+    if(!document.getElementById('formOverlay').hidden){ requestCloseForm(); return; }
     if(!detailOverlay.hidden){ closeDetail(); return; }
   }
   if((e.key === 'Enter' || e.key === ' ') && document.activeElement && document.activeElement.classList.contains('person')){
