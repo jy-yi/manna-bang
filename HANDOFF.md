@@ -371,6 +371,7 @@
 
 - `openDetail(id)`(2831): `detailId` 설정, 슬라이드/제안/삭제 상태 초기화, `body.style.overflow='hidden'`, `histEnter('detail')`.
 - 갤러리: 사진이 있으면 슬라이드 이미지 + `📥 사진 저장`(＋`📤 공유`), 없으면 `avatarSVG` 3종.
+- 제목 아래 액션 줄 `.dacts`(2026-11-20 추가): `📋 정보 복사`(모두) / `📥 사진 일괄 저장 (N장)`(주선자·사진 1장 이상) / `📤 사진 공유 (N장)`(주선자·2장 이상·여러 장 공유 지원 브라우저). 375px에서 한 줄, 좁으면 두 줄로 접힌다.
 - **제안 패널**: 푸터 `💌 매칭 제안` → `proposalOpen=true`. 후보는 `candidatesFor(a)`(2414) = **나와 다른 성별**, `available` 우선 → 나이순. `matched`는 선택 불가(`disabled`).
 - 후보를 고르면 푸터가 **제안 전용 바**로 바뀐다: `닫기 / 💬 카톡 문구 / 제안 보내기 💌`. 후보 미선택 시 뒤 두 개 `disabled`.
 - `💬 카톡 문구`는 `shareMine`에 후보를 넣고 공유 박스로 스크롤 — 제안 문구를 먼저 보여 주고 보내게 하는 흐름.
@@ -419,17 +420,25 @@ score = 성사(matched) * 10 + 진행(progress) * 3 + 보유(총 매물) * 1
 - 카드 썸네일: `thumbHTML`(2966) — 첫 장 + `📷 n` 배지.
 - 저장: `savePhoto(idx)`(2999) — Data URL → Blob → `<a download="만나방_매물07_1.jpg">` (4초 뒤 정리). 실패 시 "길게 눌러 저장" 안내.
 - 공유: `sharePhoto(idx)`(3023) — `File` + `navigator.canShare({files})` 통과 시 `navigator.share`, 아니면 저장으로 대체.
+- 파일명: `photoFileName(a, idx, mime)` — `만나방_매물07_1.jpg` 형식이고 확장자는 Blob MIME을 따른다(`photoExtOf`): jpg/png/webp/gif/heic/bmp.
+- **사진 일괄 저장**: `saveAllPhotos()` — 상세 모달 제목 아래 `📥 사진 일괄 저장 (N장)` 버튼(`data-action="save-all-photos"`). 사진이 0장이면 버튼 자체를 그리지 않는다. `photoBlobCache`(prewarm) → 없으면 `photoBlobOf` fetch → `triggerDownload`(a.download)를 **320ms 간격 순차**로 트리거하고, 버튼 라벨을 `저장 중 2/5…`로 바꾸며 `disabled` 처리, 끝나면 성공/실패 건수 토스트. `bulkBusy`로 중복 실행 차단.
+- **사진 여러 장 공유**: `shareAllPhotos()` + `canShareMany()`(두 장짜리 더미 File로 `navigator.canShare({files})` 실지원 확인). 지원 브라우저에서만 `📤 사진 공유 (N장)` 버튼이 보이고, 이미 받아 둔 Blob으로 File[]을 만들어 `navigator.share({files})`. `AbortError`(사용자가 공유창을 닫음)는 토스트 없이 조용히 끝내고, 그 외 실패는 일괄 저장으로 대체한다.
+- ⚠️ Supabase 서명 URL은 CORS(`access-control-allow-origin: *`)가 열려 있어 `fetch → Blob` 다운로드가 그대로 동작한다(2026-11-20 실측). 서명 유효시간(2시간)이 지난 URL은 fetch가 400이 되므로 실패 토스트 + "길게 눌러 저장" 안내로 떨어진다.
 - 라이트박스: `openLightbox`(3178) `mb:'lightbox'` 엔트리를 따로 push, `closeLightbox`(3201)에서 `histSkipPop`으로 정리.
 - ⚠️ 사진은 **localStorage에 base64로** 들어간다. 5장 × 900px면 대략 1~3MB. 큰 사진을 여러 장 올리면 quota(약 5MB)에 걸린다 → 저장 실패 시 롤백 + 안내 로직이 이미 있지만, 장수를 늘리려면 반드시 저장 위치를 바꿔야 한다(IndexedDB 또는 Supabase Storage).
 
 ### 7.9 공유 문구 포맷 (카톡·문자)
 
 - `shareLink(id)`(2429) = 현재 경로 + `?item=p12` (해시·쿼리 제거).
-- `shareSpecLines(a)`(2446) → `📌 07번 매물 (여성)` / `· 93년생 (34세) · 162cm` / `· 거주: … / 근무: …` / `· 직업: … · …`
+- `shareSpecLines(a, opt)` → `📌 07번 매물 (여성)` + `shareSpecCore` + `shareSpecExtra`
+  - `shareSpecCore(a)`: `· 93년생 (34세) · 162cm · ISTJ` / `· 거주: … / 근무: …` / `· 직업: … · …`
+  - `shareSpecExtra(a)`: 작성된 항목만 — `· 흡연 X · 음주 O` / `· 매력 태그: …` / `· 바라는 조건: …` / `· 학력: …`(추가 정보 각 줄) / `· 비고: …` / `· 주선자 코멘트: …`. 빈 값은 줄 자체를 만들지 않는다.
+  - `opt.full`(정보 복사)이면 `· 담당 주선자: 🌿 종윤`까지 붙인다.
+- `assetProfileText(a)`(📋 정보 복사) = `shareSpecLines(a, {full:true})` + 빈 줄 + `👉 상세 보기` + 링크. 버튼은 상세 제목 아래 `.dacts`의 `data-action="copy-profile"`이며 손님 모드에서도 쓸 수 있다.
 - `shareTpl(head, a, tail)`(2469): `제목 → 빈 줄 → 스펙 줄들 → 빈 줄 → 맺음말 → 👉 상세 보기 → 링크`
 - `shareMessage(target, mine)`(2478): 주선자→주선자 제안. `mine`이 있으면 `우리 쪽 07번 매물(…)과 잘 어울릴 것 같아 여쭤봐요 😊`
 - `guestMessage(target)`(2486): 손님→주선자 문의 문구.
-- `newAssetNotice(a)`(2495): `🆕 새로운 매물이 등록됐어요!` + 주선자 표기 + 스펙 + `👉 만나방에서 바로 보기` + 링크.
+- `newAssetNotice(a)`(2495): `🆕 새로운 매물이 등록됐어요!` + 주선자 표기 + `shareSpecCore`/`shareSpecExtra` 스펙 줄 + `👉 만나방에서 바로 보기` + 링크.
 - 전송: `doShare()`(2596) `navigator.share({text})` — **title 금지**. 미지원·실패 시 클립보드로 대체(`doCopy` 2589, `copyText` 2570은 `document.execCommand` 폴백 포함).
 - `shareAssetNo(a)`(2440) = `'07번 매물'`. **`#07`로 쓰지 말 것**(카톡 해시태그로 링크화).
 

@@ -526,6 +526,12 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
   background:rgba(255,255,255,.93);color:var(--ink);font-size:11.5px;font-weight:800;white-space:nowrap;
   box-shadow:0 3px 12px rgba(40,20,10,.22);backdrop-filter:blur(4px)}
 .shot-btn:active{transform:scale(.96)}
+/* 상세 제목 아래 액션 줄 — 📋 정보 복사 / 📥 사진 일괄 저장 (375px에서 한 줄 또는 두 줄로 접힘) */
+.dacts{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+.act-pill{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 12px;border-radius:99px;
+  background:#fff;border:1.5px solid var(--line);color:var(--ink);font-size:12px;font-weight:800;white-space:nowrap}
+.act-pill:active{transform:scale(.97)}
+.act-pill:disabled{opacity:.55}
 .lightbox .lb-tools{position:absolute;bottom:44px;left:0;right:0;display:flex;justify-content:center;gap:8px}
 .lightbox .lb-btn{display:inline-flex;align-items:center;gap:5px;height:38px;padding:0 16px;border-radius:99px;
   background:rgba(255,255,255,.94);color:#2C2320;font-size:13px;font-weight:850;box-shadow:0 6px 18px rgba(0,0,0,.34)}
@@ -1588,7 +1594,7 @@ var SEED_MATCHES = [
 function isGuest(){ return MODE === 'guest'; }
 function canManage(a){ return !isGuest() && !!a && a.agent === state.session; }
 function actAllowed(act, a){
-  if(isGuest()) return act === 'slide' || act === 'share' || act === 'copy' || act === 'zoom';
+  if(isGuest()) return act === 'slide' || act === 'share' || act === 'copy' || act === 'zoom' || act === 'copy-profile';
   if((act === 'status' || act === 'memo' || act === 'edit' || act === 'delete' ||
       act === 'delete-cancel' || act === 'delete-confirm') && a.agent !== state.session) return false;
   return true;
@@ -2644,11 +2650,12 @@ function shareAssetNo(a){
 function shareGender(a){
   return a.gender === 'M' ? '남성' : '여성';
 }
-function shareSpecLines(a){
-  var out = ['📌 ' + shareAssetNo(a) + ' (' + shareGender(a) + ')'];
-  var meta = [];
+/* 기본 스펙 — 나이·키·MBTI / 거주·근무 / 직업·직장 */
+function shareSpecCore(a){
+  var out = [], meta = [];
   if(a.birth) meta.push(String(a.birth) + '년생 (' + ageOf(a) + '세)');
   if(a.height) meta.push(a.height + 'cm');
+  if(a.mbti) meta.push(oneLine(a.mbti));
   if(meta.length) out.push('· ' + meta.join(' · '));
   var home = oneLine(a.region), work = oneLine(a.workArea), addr = '';
   if(home) addr = '거주: ' + home;
@@ -2657,6 +2664,52 @@ function shareSpecLines(a){
   var job = oneLine(a.job), comp = oneLine(a.company);
   if(job || comp) out.push('· 직업: ' + [job, comp].filter(Boolean).join(' · '));
   return out;
+}
+/* 작성된 특징·조건 — 흡연·음주 / 매력 태그 / 바라는 조건 / 추가 정보 / 비고 / 주선자 코멘트.
+   입력된 항목만 줄을 만들고, 비어 있는 항목은 통째로 생략한다(미입력 '미입력' 표기 금지). */
+function shareSpecExtra(a){
+  var out = [], ox = [];
+  if(a.smoke) ox.push('흡연 ' + a.smoke);
+  if(a.drink) ox.push('음주 ' + a.drink);
+  if(ox.length) out.push('· ' + ox.join(' · '));
+  /* 카톡은 '#'을 해시태그로 잡아 링크처럼 보이게 하므로 태그의 '#'은 문구에서만 뗀다(화면 표기는 그대로) */
+  var tags = (a.tags || []).map(function(t){ return oneLine(t).replace(/^#+/, ''); }).filter(Boolean);
+  if(tags.length) out.push('· 매력 태그: ' + tags.join(' · '));
+  var wants = wantsOf(a);
+  if(wants.length) out.push('· 바라는 조건: ' + wants.join(' · '));
+  (a.extras || []).forEach(function(e){
+    var k = oneLine(e && e.label), v = oneLine(e && e.value);
+    if(k && v) out.push('· ' + k + ': ' + v);
+  });
+  var memo = oneLine(a.memo);
+  if(memo) out.push('· 비고: ' + memo);
+  var cm = oneLine(a.comment);
+  if(cm) out.push('· 주선자 코멘트: ' + cm);
+  return out;
+}
+/* opt.full = 매물 정보 통째로 복사(📋 정보 복사) — 담당 주선자까지 붙인다 */
+function shareSpecLines(a, opt){
+  opt = opt || {};
+  var out = ['📌 ' + shareAssetNo(a) + ' (' + shareGender(a) + ')']
+    .concat(shareSpecCore(a), shareSpecExtra(a));
+  if(opt.full) out.push('· 담당 주선자: ' + agentById(a.agent).emoji + ' ' + agentName(a.agent));
+  return out;
+}
+/* 📋 정보 복사 — 작성된 항목 전부 + 상세 링크를 한 번에 복사할 텍스트로 만든다 */
+function assetProfileText(a){
+  if(!a) return '';
+  var lines = shareSpecLines(a, {full:true});
+  lines.push('');
+  lines.push('👉 상세 보기');
+  lines.push(shareLink(a.id));
+  return lines.join('\n');
+}
+function doCopyProfile(){
+  var a = getAsset(detailId);
+  if(!a) return;
+  copyText(assetProfileText(a)).then(function(ok){
+    toast(ok ? '매물 정보를 복사했어요 📋 어디든 붙여넣기 하세요' : '복사에 실패했어요. 정보를 길게 눌러 직접 복사해 주세요');
+  });
 }
 function shareDigest(a){
   var parts = [];
@@ -2697,16 +2750,7 @@ function newAssetNotice(a){
   var ag = agentById(a.agent);
   var lines = ['🆕 새로운 매물이 등록됐어요!', ''];
   lines.push('📌 ' + shareAssetNo(a) + ' (' + shareGender(a) + ') · ' + ag.emoji + ' ' + agentName(a.agent) + ' 주선자');
-  var meta = [];
-  if(a.birth) meta.push(String(a.birth) + '년생 (' + ageOf(a) + '세)');
-  if(a.height) meta.push(a.height + 'cm');
-  if(meta.length) lines.push('· ' + meta.join(' · '));
-  var home = oneLine(a.region), work = oneLine(a.workArea), addr = '';
-  if(home) addr = '거주: ' + home;
-  if(work) addr += (addr ? ' / ' : '') + '근무: ' + work;
-  if(addr) lines.push('· ' + addr);
-  var job = oneLine(a.job), comp = oneLine(a.company);
-  if(job || comp) lines.push('· 직업: ' + [job, comp].filter(Boolean).join(' · '));
+  lines = lines.concat(shareSpecCore(a), shareSpecExtra(a));
   lines.push('');
   lines.push('👉 만나방에서 바로 보기');
   lines.push(shareLink(a.id));
@@ -2943,6 +2987,17 @@ function renderDetail(){
         '<span class="h2sum">' + esc(a.job) + (a.company ? ' · ' + esc(a.company) : '') + '</span></h2>' +
         '<span class="badge ' + st.cls + '" style="margin-left:auto;margin-top:6px">' + st.emoji + ' ' + st.label + '</span></div>' +
       '<div class="dsub">' + (a.gender === 'M' ? '남성' : '여성') + ' <span class="sep">|</span> ' + ageLabel(a) + ' <span class="sep">|</span> ' + a.height + 'cm <span class="sep">|</span> ' + esc(a.region) + '</div>' +
+
+      /* 사진 0장이면 일괄 저장·공유 버튼은 통째로 숨는다(정보 복사는 항상) */
+      '<div class="dacts">' +
+        '<button type="button" class="act-pill" data-action="copy-profile">📋 정보 복사</button>' +
+        ((!guest && ph.length)
+          ? '<button type="button" class="act-pill" data-action="save-all-photos">📥 사진 일괄 저장 (' + ph.length + '장)</button>' +
+            ((ph.length > 1 && canShareMany())
+              ? '<button type="button" class="act-pill" data-action="share-all-photos">📤 사진 공유 (' + ph.length + '장)</button>'
+              : '')
+          : '') +
+      '</div>' +
 
       '<div class="spec-grid">' +
         '<div class="spec"><dt>나이</dt><dd>' + birthLabel(a) + ' / ' + ageOf(a) + '세</dd></div>' +
@@ -3294,7 +3349,16 @@ function photoNo(a){
   if(no.length < 2) no = '0' + no;
   return no;
 }
-function photoFileName(a, idx){ return '만나방_매물' + photoNo(a) + '_' + (idx + 1) + '.jpg'; }
+function photoExtOf(mime){
+  var m = String(mime || '').toLowerCase();
+  if(m.indexOf('png') >= 0) return 'png';
+  if(m.indexOf('webp') >= 0) return 'webp';
+  if(m.indexOf('gif') >= 0) return 'gif';
+  if(m.indexOf('heic') >= 0) return 'heic';
+  if(m.indexOf('bmp') >= 0) return 'bmp';
+  return 'jpg';
+}
+function photoFileName(a, idx, mime){ return '만나방_매물' + photoNo(a) + '_' + (idx + 1) + '.' + photoExtOf(mime); }
 function photoBlobOf(src){
   if(typeof src !== 'string' || !src) return Promise.resolve(null);
   if(src.indexOf('data:') === 0) return Promise.resolve(dataUrlToBlob(src));
@@ -3333,9 +3397,9 @@ function savePhoto(idx){
   var ph = photosOf(a);
   if(!ph.length) return;
   if(!(idx >= 0 && idx < ph.length)) idx = 0;
-  var name = photoFileName(a, idx);
   photoBlobOf(ph[idx]).then(function(blob){
     if(!blob){ toast('사진을 저장하지 못했어요 · 사진을 길게 눌러 저장해 주세요'); return; }
+    var name = photoFileName(a, idx, blob.type);
     var url;
     try { url = URL.createObjectURL(blob); } catch(e){ url = ph[idx]; }
     var link = document.createElement('a');
@@ -3367,7 +3431,7 @@ function sharePhoto(idx){
 }
 function shareBlob(a, idx, blob){
   var file;
-  try { file = new File([blob], photoFileName(a, idx), {type: blob.type || 'image/jpeg'}); }
+  try { file = new File([blob], photoFileName(a, idx, blob.type), {type: blob.type || 'image/jpeg'}); }
   catch(e){ savePhoto(idx); return; }
   var data = {files: [file], title: '만나방 · ' + shareAssetNo(a), text: '이 사람 어때요? 🏠 만나방' };
   if(!(navigator.canShare && navigator.canShare({files: [file]}))){ savePhoto(idx); return; }
@@ -3375,6 +3439,109 @@ function shareBlob(a, idx, blob){
     if(err && err.name === 'AbortError') return;
     toast('공유가 막혀 있어 사진으로 저장했어요 📥');
     savePhoto(idx);
+  });
+}
+/* ---------------- 사진 일괄 저장·공유 (주선자 전용) ----------------
+   안드로이드 크롬·삼성인터넷은 a.download 를 여러 번 눌러도 브라우저가 막지 않고,
+   Supabase 비공개 버킷의 서명 URL 도 CORS(access-control-allow-origin: *)가 열려 있어
+   fetch → Blob → a.download 가 그대로 된다. 그래서 기본은 '0.3초 간격 순차 내려받기'.
+   아이폰·일부 브라우저처럼 다중 내려받기가 막히는 곳을 위해 여러 장 공유 버튼을 따로 둔다. */
+var bulkBusy = false;
+
+function bulkSaveBtn(){ return document.querySelector('#detailContent [data-action="save-all-photos"]'); }
+function triggerDownload(blob, name){
+  var url = null;
+  try { url = URL.createObjectURL(blob); } catch(e){ return false; }
+  var link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  link.rel = 'noopener';
+  document.body.appendChild(link);
+  try { link.click(); } catch(e){}
+  setTimeout(function(){
+    if(link.parentNode) link.parentNode.removeChild(link);
+    try { URL.revokeObjectURL(url); } catch(e){}
+  }, 4000);
+  return true;
+}
+/* 여러 장 파일 공유가 되는 브라우저인지 — 두 장짜리 더미 파일로 실제 지원 여부를 묻는다 */
+function canShareMany(){
+  try {
+    if(!(window.File && navigator.canShare && navigator.share)) return false;
+    var f1 = new File([new Uint8Array([1])], 'a.jpg', {type:'image/jpeg'});
+    var f2 = new File([new Uint8Array([2])], 'b.jpg', {type:'image/jpeg'});
+    return !!navigator.canShare({files: [f1, f2]});
+  } catch(e){ return false; }
+}
+function saveAllPhotos(){
+  if(isGuest() || bulkBusy) return;
+  var a = getAsset(detailId);
+  if(!a) return;
+  var ph = photosOf(a);
+  if(!ph.length) return;
+  var total = ph.length, done = 0, failed = 0;
+  bulkBusy = true;
+  var btn = bulkSaveBtn();
+  if(btn) btn.disabled = true;
+  function finish(){
+    bulkBusy = false;
+    if(btn){ btn.disabled = false; btn.textContent = '📥 사진 일괄 저장 (' + total + '장)'; }
+    if(done && !failed) toast(total + '장을 저장했어요 📥');
+    else if(done) toast(done + '장 저장 · ' + failed + '장은 저장하지 못했어요. 그 사진은 길게 눌러 저장해 주세요');
+    else toast('사진을 저장하지 못했어요 · 사진을 길게 눌러 저장해 주세요');
+  }
+  function step(i){
+    if(i >= total){ finish(); return; }
+    if(btn) btn.textContent = '저장 중 ' + (i + 1) + '/' + total + '…';
+    var cached = photoBlobCache[ph[i]];
+    var p = (cached && !cached.__bad) ? Promise.resolve(cached) : photoBlobOf(ph[i]);
+    p.then(function(blob){
+      if(blob && triggerDownload(blob, photoFileName(a, i, blob.type))) done++;
+      else failed++;
+    }).catch(function(){ failed++; }).then(function(){
+      setTimeout(function(){ step(i + 1); }, i + 1 < total ? 320 : 60);
+    });
+  }
+  step(0);
+}
+/* 이미 받아 둔(prewarmPhotos) 사진만으로 File 목록을 만든다 — 손가락을 떼기 전에
+   navigator.share 를 불러야 하는 아이폰을 위해, 모자란 장이 있으면 null 을 돌려준다. */
+function filesFromCache(a, ph){
+  var out = [], ok = true;
+  ph.forEach(function(src, i){
+    var b = photoBlobCache[src];
+    if(!b || b.__bad){ ok = false; return; }
+    try { out.push(new File([b], photoFileName(a, i, b.type), {type: b.type || 'image/jpeg'})); }
+    catch(e){ ok = false; }
+  });
+  return ok ? out : null;
+}
+function shareAllPhotos(){
+  if(isGuest() || bulkBusy) return;
+  var a = getAsset(detailId);
+  if(!a) return;
+  var ph = photosOf(a);
+  if(!ph.length) return;
+  function send(files){
+    if(!files || !files.length){ saveAllPhotos(); return; }
+    var can = false;
+    try { can = !!(navigator.canShare && navigator.share && navigator.canShare({files: files})); } catch(e){}
+    if(!can){ toast('이 브라우저는 여러 장 공유가 안 돼 사진으로 저장할게요 📥'); saveAllPhotos(); return; }
+    navigator.share({files: files}).catch(function(err){
+      if(err && err.name === 'AbortError') return;   /* 사용자가 공유 창을 그냥 닫은 경우 — 조용히 끝낸다 */
+      toast('공유가 막혀 있어 사진으로 저장했어요 📥');
+      saveAllPhotos();
+    });
+  }
+  var ready = filesFromCache(a, ph);
+  if(ready){ send(ready); return; }
+  Promise.all(ph.map(function(src){ return photoBlobOf(src); })).then(function(blobs){
+    var out = [];
+    blobs.forEach(function(b, i){
+      if(!b) return;
+      try { out.push(new File([b], photoFileName(a, i, b.type), {type: b.type || 'image/jpeg'})); } catch(e){}
+    });
+    send(out);
   });
 }
 function photoBytes(dataUrl){
@@ -4463,6 +4630,12 @@ detailOverlay.addEventListener('click', function(e){
     savePhoto(Number(btn.getAttribute('data-i')) || 0);
   } else if(act === 'share-photo'){
     sharePhoto(Number(btn.getAttribute('data-i')) || 0);
+  } else if(act === 'save-all-photos'){
+    saveAllPhotos();
+  } else if(act === 'share-all-photos'){
+    shareAllPhotos();
+  } else if(act === 'copy-profile'){
+    doCopyProfile();
   } else if(act === 'status'){
     deleteArmed = false;
     setAssetStatus(detailId, btn.getAttribute('data-status'));
@@ -5072,6 +5245,7 @@ renderAll();
 window.__mannabang = {get state(){ return state; }, get mode(){ return MODE; }, setMode:function(m){ MODE = m; },
   get demo(){ return DEMO; },
   render:renderAll, filtered:filteredAssets, shareMessage:shareMessage, guestMessage:guestMessage, shareLink:shareLink,
+  shareSpecLines:shareSpecLines, assetProfileText:assetProfileText, saveAllPhotos:saveAllPhotos, shareAllPhotos:shareAllPhotos, canShareMany:canShareMany,
   newAssetNotice:newAssetNotice, openNewAssetPop:openNewAssetPop, closeNewAssetPop:closeNewAssetPop,
   openAdmin:openAdmin, closeAdmin:closeAdmin};
 
