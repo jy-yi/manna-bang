@@ -593,7 +593,12 @@ asset_history(id bigint identity, asset_id→assets cascade, at date, by_name, b
 - UI는 그대로 **이름 선택 + 개인 비번**(손님은 `손님 입장` + 입장코드)이고, 내부는 `{id}@manna.local` / `guest@manna.local` + `signInWithPassword`. 비번 규칙은 **숫자 6~8자리**(Supabase Auth 최소 길이 6). 단, 기존 4~5자리 비번도 로그인은 그대로 되고 새로 정할 때만 6자리 이상을 요구한다.
 - 비번 생성 입력은 세 곳 모두 `^\d{6,8}$`로 검증한다: 게이트의 `doSetup()`(초기 계정), 방장 관리의 주선자 추가·비번 초기화(`data-adm` / `admPinInline`), 내 비번 변경(`pinGo`). Edge Function `manna-admin`의 `PIN_RE`도 같다.
 - **주선자 1시간**(localStorage `mannabang.auth.v2` + `expiresAt`), **손님 탭 닫기 전까지**(sessionStorage `mannabang.guest.v2`). supabase-js 자체 저장은 끄고(`persistSession:false`) 우리가 만료·토큰만 관리합니다.
-- 액세스 토큰이 만료되면 `refreshSession()`으로 갱신하고, 주선자는 1시간이 지나면 `signOut()` 후 게이트로 돌아갑니다.
+- ⚠️ **토큰 회전(refresh)의 주인은 `cloud.js` 하나뿐입니다.** supabase-js 는 세션이 90초 이하로 남으면 `getSession()` 안에서 스스로 `refresh_token` 을 회전시킵니다. 그러면 우리가 localStorage 에 들고 있는 refresh 사본이 죽은 토큰이 되고, **다음 새로고침에서 `refreshSession(죽은 토큰)` 이 실패해 로그인이 통째로 날아갑니다**(2026-11-19 실제 발생). 그래서:
+  - 회전은 `cloud.js` 의 `refreshTokens()`(직접 fetch) 로만 하고, **만료 150초 전**(`AUTH_MARGIN`, 라이브러리 90초보다 이르게) 미리 갱신합니다.
+  - 받은 새 토큰은 **즉시 레코드에 저장**하고, supabase-js 에는 방금 받은 신선한 토큰만 넣습니다(`importSession`). `refreshSession()` 은 쓰지 않습니다.
+  - 동시 회전 금지(`refreshInFlight`) — 두 번 회전하면 먼저 받은 토큰이 죽습니다.
+- `restore()` 결과는 4가지로 구분합니다: `{mode}` 복원 성공 / `{expired:true}` 1시간 지남 / `{dead:true}` 서버가 토큰을 거부(폐기) / `{retry:true}` **네트워크·5xx 일시 오류 → 기록 보존, 몇 번 자동 재시도**. 일시 오류에서 절대 `signOut()` 하지 않습니다.
+- 부팅은 **세션 복원이 먼저**, 그다음 이름 목록입니다. 저장된 세션이 있으면 `#bootSplash` 가 게이트를 가린 채 복원하고 바로 앱으로 들어갑니다(게이트 깜빡임 없음). `CLOUD.restoreCandidate()` 가 네트워크 없이 그 판단만 합니다.
 
 ### 9.6 방장 관리 (⚙️ / 🔑)
 
@@ -629,6 +634,9 @@ asset_history(id bigint identity, asset_id→assets cascade, at date, by_name, b
 - [ ] 손님 모드: 현황판 탭 없음, 등록·수정·삭제·메모·리뷰·사진 저장/공유 버튼 없음
 - [ ] 손님 모드에서 새로고침 → 유지(sessionStorage), 탭 닫고 다시 열기 → 게이트
 - [ ] 주선자 로그인 → 새로고침 유지 → 1시간 뒤 만료 안내
+- [ ] **새로고침 유지(만료 경로)**: 로그인 후 `localStorage['mannabang.auth.v2'].access` 를 이미 만료된 JWT 로 바꾸고 새로고침 → 게이트로 안 튕기고 앱 유지(`refresh_token` 요청 1회)
+- [ ] **일시 오류 방어**: 새로고침 직후 서버가 5xx/오프라인이어도 `mannabang.auth.v2` 가 지워지지 않고, 서버가 돌아오면 새로고침으로 다시 들어감
+- [ ] 부팅 중 게이트가 깜빡이지 않음(`#bootSplash` 가 가림)
 - [ ] `?item=p12` 링크로 열기: 로그인 상태면 주선자 권한, 비로그인이면 손님 모드로 상세
 - [ ] 매칭 제안 → 현황판 이동 + 강조 + 카드 상단 배치
 - [ ] `수락 · 일정 조율`, `패스`, `성사` 각각 눌러 두 매물 상태가 규칙대로 바뀌는지
@@ -669,3 +677,4 @@ asset_history(id bigint identity, asset_id→assets cascade, at date, by_name, b
 8. **`window.__mannabang`**(4202)은 디버그용이다. 콘솔에서 `__mannabang.state.assets.length`처럼 확인할 수 있지만, 배포본에 남아도 무해하다(읽기 + 렌더 트리거).
 9. **`AGENTS`에서 주선자를 지우면** `agentById()`(1470)가 `AGENTS[0]`을 반환해 이름이 조용히 바뀐다. 삭제 대신 `active` 플래그.
 10. **공개 저장소다.** 실명·연락처·사진·키·비밀번호를 코드·문서·커밋 메시지 어디에도 남기지 않는다. 테스트용 스크립트를 저장소에 두지 않는다(작업 파일은 저장소 밖에서 관리).
+11. **supabase-js 에 토큰 회전을 맡기지 말 것.** `refreshSession()`·`getSession()` 내부 회전은 우리 레코드의 refresh 사본을 죽인다(§9.5). 회전은 `cloud.js` 의 `refreshTokens()` 로만 한다.

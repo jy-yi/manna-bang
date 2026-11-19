@@ -53,6 +53,14 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 ::-webkit-scrollbar-thumb{background:#E8D6C9;border-radius:99px}
 [hidden]{display:none !important}
 
+/* ============ BOOT SPLASH ============ */
+.boot-splash{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.boot-card{display:grid;justify-items:center;text-align:center}
+.boot-badge{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;font-size:30px;
+  background:linear-gradient(140deg,#E09383,#BC6354);box-shadow:0 12px 26px rgba(212,121,106,.32);margin-bottom:12px}
+.boot-t{font-size:15.5px;font-weight:800;color:var(--ink);letter-spacing:-.02em}
+.boot-s{margin-top:6px;font-size:12.5px;font-weight:650;color:var(--muted);line-height:1.5}
+
 /* ============ GATE ============ */
 .gate{
   position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
@@ -899,6 +907,15 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 </head>
 <body>
 
+<!-- ============ BOOT SPLASH (저장된 로그인 확인 중 · 게이트 깜빡임 방지) ============ -->
+<div class="boot-splash" id="bootSplash">
+  <div class="boot-card">
+    <div class="boot-badge">🏠</div>
+    <p class="boot-t">만나방 불러오는 중…</p>
+    <p class="boot-s">저장된 로그인을 확인하고 있어요</p>
+  </div>
+</div>
+
 <!-- ================= GATE ================= -->
 <section class="gate" id="gate">
   <div class="gate-inner">
@@ -1393,6 +1410,15 @@ var formBusy = false;
 function isDemo(){ return DEMO; }
 function emptyState(){ return {session:null, assets:[], matches:[], seq:{asset:31, match:7, review:101}}; }
 function cloudMsg(e){ return (CLOUD && CLOUD.friendly) ? CLOUD.friendly(e) : '오류가 났어요. 잠시 뒤 다시 시도해 주세요.'; }
+/* 일시적인 연결·서버 오류인지 (이 경우 로그인을 지우지 않는다) */
+function cloudTransient(e){
+  if(CLOUD && CLOUD.isTransient){ try { if(CLOUD.isTransient(e)) return true; } catch(err){} }
+  var st = Number((e && (e.status || e.code)) || 0);
+  if(st >= 500 || st === 429) return true;
+  var m = String((e && (e.message || e)) || '');
+  return /연결하지 못했|Failed to fetch|NetworkError|Load failed|timed? ?out|서버에 연결/i.test(m);
+}
+function bootSplash(on){ var el = document.getElementById('bootSplash'); if(el) el.hidden = !on; }
 
 /* ---------------- 바라는 조건 (이상형·필수 조건) ---------------- */
 var WANT_PRESETS = ['담배 X','종교 X','음주 적당히','비슷한 나이','서울/수도권','키 175cm 이상','주말 데이트 가능','연락 자주','반려동물 OK'];
@@ -4122,13 +4148,25 @@ function enterApp(deepId, mode, restored){
   }
 }
 
-/* 실전 모드 입장: Supabase 에서 데이터를 받아 화면에 올린다 */
+/* 실전 모드 입장: Supabase 에서 데이터를 받아 화면에 올린다.
+   일시적인 연결 실패는 한 번 더 시도하고, 그래도 안 되면 그대로 알려 준다
+   (여기서 로그인을 지우지 않는다 — 로그인 정리는 bootGate/CLOUD.restore 담당). */
 async function cloudEnter(agentId, mode, restored){
   DEMO = false;
   MODE = (mode === 'guest') ? 'guest' : 'agent';
   state = emptyState();
   state.session = agentId;
-  var st = await CLOUD.fetchState();
+  var st = null, last = null;
+  for(var tries = 0; tries < 2 && !st; tries++){
+    try {
+      st = await CLOUD.fetchState();
+    } catch(e){
+      last = e;
+      if(!cloudTransient(e)) break;
+      await new Promise(function(res){ setTimeout(res, 500 * (tries + 1)); });
+    }
+  }
+  if(!st) throw last || new Error('데이터를 불러오지 못했어요. 잠시 뒤 다시 시도해 주세요.');
   applyState(st);
   enterApp(DEEP_ITEM, mode, restored);
 }
@@ -4158,6 +4196,7 @@ async function tryLogin(){
     pwInput.value = '';
     gateErr.textContent = '';
     await cloudEnter(who.agentId, who.mode, false);
+    if(who.persisted === false) toast('⚠️ 이 브라우저가 저장을 막고 있어 새로고침하면 다시 입장해야 해요 (시크릿 모드 끄기)');
     return true;
   } catch(e){
     gateErr.textContent = cloudMsg(e);
@@ -4234,6 +4273,7 @@ async function submitGuest(){
     el.value = '';
     showGuestForm(false);
     await cloudEnter('guest', who.mode, false);
+    if(who.persisted === false) toast('⚠️ 이 브라우저가 저장을 막고 있어 새로고침하면 다시 입장해야 해요 (시크릿 모드 끄기)');
   } catch(e){
     ge.textContent = cloudMsg(e);
     el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake');
@@ -5035,8 +5075,10 @@ window.__mannabang = {get state(){ return state; }, get mode(){ return MODE; }, 
   newAssetNotice:newAssetNotice, openNewAssetPop:openNewAssetPop, closeNewAssetPop:closeNewAssetPop,
   openAdmin:openAdmin, closeAdmin:closeAdmin};
 
-/* 인터넷이 없거나 CDN 로딩이 실패하면 샘플 모드만 열어 둔다 */
-async function bootGate(){
+/* 인터넷이 없거나 CDN 로딩이 실패하면 샘플 모드만 열어 둔다.
+   부팅 순서: ① 저장된 세션 복원(있으면 게이트를 거치지 않고 바로 앱) → ② 없을 때만 게이트 준비 */
+async function bootGate(tryNo){
+  tryNo = tryNo || 0;
   var note = document.getElementById('cloudNote');
   var setup = document.getElementById('setupOpen');
   document.getElementById('sampleBtn').hidden = false;
@@ -5045,33 +5087,68 @@ async function bootGate(){
   var wantSetup = false;
   try { wantSetup = new URLSearchParams(window.location.search).get('setup') === '1'; } catch(e){ wantSetup = false; }
   if(setup) setup.hidden = true;
+
+  /* ① 저장된 로그인이 있으면 게이트가 잠깐 보였다 사라지는 깜빡임 없이 바로 복원한다
+        (스플래시는 HTML 에서부터 떠 있으므로 게이트가 화면에 그려질 틈이 없다) */
+  var cand = null;
+  try { cand = CLOUD.restoreCandidate ? CLOUD.restoreCandidate() : null; } catch(e){ cand = null; }
+  bootSplash(!!cand);
+
   if(!CLOUD){
+    bootSplash(false);
     if(note){ note.textContent = '⚠️ 서버에 연결하지 못했어요 · 샘플 모드로 둘러볼 수 있어요'; note.className = 'gate-note bad'; }
     return;
   }
   if(setup) setup.hidden = !wantSetup;
+
+  var sess = null;
+  try { sess = await CLOUD.restore(); } catch(e){ sess = null; }
+
+  if(sess && sess.mode){
+    try {
+      await cloudEnter(sess.agentId, sess.mode, true);
+      bootSplash(false);
+      return;
+    } catch(e){
+      /* 데이터만 못 받은 경우: 로그인은 절대 지우지 않고 몇 번 더 시도한다 */
+      if(cloudTransient(e)){
+        if(tryNo < 3){
+          if(note){ note.textContent = '☁️ 연결이 느려 다시 시도하는 중…'; note.className = 'gate-note'; }
+          setTimeout(function(){ bootGate(tryNo + 1); }, 1200);
+          return;
+        }
+        bootSplash(false);
+        gateErr.textContent = '서버에 연결하지 못했어요. 잠시 뒤 새로고침해 주세요. (로그인은 그대로 남아 있어요)';
+      } else {
+        /* 진짜 오류(권한·데이터)일 때만 로그인을 정리한다 */
+        toast(cloudMsg(e));
+        try { await CLOUD.signOut(); } catch(err){}
+      }
+    }
+  } else if(sess && sess.retry){
+    /* 네트워크·서버 일시 오류 → 로그인 기록은 그대로 두고 몇 번 더 시도 */
+    if(tryNo < 3){
+      bootSplash(true);
+      if(note){ note.textContent = '☁️ 서버에 연결하는 중…'; note.className = 'gate-note'; }
+      setTimeout(function(){ bootGate(tryNo + 1); }, 1500);
+      return;
+    }
+    gateErr.textContent = '서버에 연결하지 못했어요. 잠시 뒤 새로고침해 주세요. (로그인은 그대로 남아 있어요)';
+  } else if(sess && sess.dead){
+    gateErr.textContent = '로그인이 풀렸어요. 다시 입장해 주세요.';
+  } else if(sess && sess.expired){
+    gateErr.textContent = '보안을 위해 1시간이 지나 자동으로 로그아웃됐어요. 다시 입장해 주세요.';
+  }
+
+  bootSplash(false);
   try {
     var list = await CLOUD.fetchAgents();
     if(list && list.length) setAgents(list);
-    if(note){ note.textContent = '☁️ 실전 모드 · 보안 서버 연결됨'; note.className = 'gate-note'; }
+    if(note && !gateErr.textContent){ note.textContent = '☁️ 실전 모드 · 보안 서버 연결됨'; note.className = 'gate-note'; }
   } catch(e){
     if(note){ note.textContent = '⚠️ 이름 목록을 불러오지 못했어요 · 잠시 뒤 새로고침해 주세요'; note.className = 'gate-note bad'; }
   }
   renderGateChips();
-
-  var sess = null;
-  try { sess = await CLOUD.restore(); } catch(e){ sess = null; }
-  if(sess && sess.mode){
-    try {
-      await cloudEnter(sess.agentId, sess.mode, true);
-      return;
-    } catch(e){
-      toast(cloudMsg(e));
-      try { await CLOUD.signOut(); } catch(err){}
-    }
-  } else if(sess && sess.expired){
-    gateErr.textContent = '보안을 위해 1시간이 지나 자동으로 로그아웃됐어요. 다시 입장해 주세요.';
-  }
 }
 
 bootGate();

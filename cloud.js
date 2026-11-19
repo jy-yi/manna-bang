@@ -7,6 +7,9 @@
        - 주선자: localStorage · 1시간 (지나면 자동 로그아웃)
        - 손님  : sessionStorage · 탭을 닫을 때까지
      토큰은 Supabase Auth 가 발급하고, 우리는 만료 시각만 직접 관리합니다.
+   · 토큰 회전(refresh)의 주인은 이 파일 하나뿐입니다.
+     supabase-js 에게 회전을 맡기면, 라이브러리가 몰래 회전시킨 토큰과 우리가
+     들고 있는 사본이 어긋나 다음 새로고침에서 로그인이 통째로 날아갑니다(§세션 복원).
    · 사진은 비공개 버킷(manna-photos)에 올리고, 표시할 때만 서명 URL(2시간)을 받습니다.
    ============================================================================ */
 (function () {
@@ -25,6 +28,11 @@
   var AUTH_KEY = 'mannabang.auth.v2';
   var GUEST_KEY = 'mannabang.guest.v2';
   var GUEST_EMAIL = 'guest@manna.local';
+  /* supabase-js 는 세션 만료 90초 전부터 스스로 토큰을 회전시킨다(내부 상수 3×30초).
+     우리가 그보다 먼저(150초 전) 갱신해서 라이브러리가 손댈 일을 없앤다. */
+  var AUTH_MARGIN = 150;
+  var refreshInFlight = null;   /* 동시 회전 방지(두 번 회전하면 하나는 죽은 토큰이 된다) */
+  var libToken = null;          /* 지금 supabase-js 메모리에 들어가 있는 액세스 토큰 */
 
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
@@ -58,50 +66,142 @@
   }
   function dropKey(store, key) { try { store.removeItem(key); } catch (e) {} }
 
-  function saveAgentSession(id, session, expiresAt) {
-    writeJson(window.localStorage, AUTH_KEY, {
-      mode: 'agent', id: id, expiresAt: expiresAt,
-      access: session.access_token, refresh: session.refresh_token
-    });
+  /* 세션 레코드 = { mode, id?, expiresAt?, access, refresh }
+     주선자는 localStorage, 손님은 sessionStorage. 토큰의 유일한 사본이다. */
+  function recSpot(rec) { return (rec && rec.mode === 'guest') ? window.sessionStorage : window.localStorage; }
+  function recKey(rec) { return (rec && rec.mode === 'guest') ? GUEST_KEY : AUTH_KEY; }
+  function persist(rec) {
+    var out = { mode: rec.mode, access: rec.access, refresh: rec.refresh };
+    if (rec.mode !== 'guest') { out.id = rec.id; out.expiresAt = rec.expiresAt; }
+    return writeJson(recSpot(rec), recKey(rec), out);
   }
-  function saveGuestSession(session) {
-    writeJson(window.sessionStorage, GUEST_KEY, {
-      mode: 'guest', access: session.access_token, refresh: session.refresh_token
-    });
+  function activeRecord() {
+    var a = readJson(window.localStorage, AUTH_KEY);
+    if (a && a.mode === 'agent' && a.access && a.refresh) return a;
+    var g = readJson(window.sessionStorage, GUEST_KEY);
+    if (g && g.mode === 'guest' && g.access && g.refresh) return g;
+    return null;
   }
-  function touch(rec, session) {
-    if (!rec) return;
-    if (rec.mode === 'guest') saveGuestSession(session);
-    else saveAgentSession(rec.id, session, rec.expiresAt);
+
+  /* ---------------------------------------------------------- 오류 구분 */
+  /* kind: no_token | no_refresh | refresh | set_session | lost
+     fatal=true  → 서버가 토큰을 거부했다(진짜 만료·폐기) → 세션을 버린다
+     fatal=false → 네트워크·5xx·429 등 일시 오류 → 세션을 남기고 다시 시도한다 */
+  function sessErr(kind) {
+    var e = new Error(kind);
+    e.kind = kind; e.fatal = false; e.network = false; e.status = 0;
+    return e;
+  }
+  function isTransientErr(e) {
+    if (!e) return false;
+    if (e.network) return true;
+    if (e.fatal === false && e.kind) return true;
+    var st = Number(e.status || 0);
+    if (st >= 500 || st === 429 || st === 408) return true;
+    var m = String(e.message || e || '');
+    return /Failed to fetch|NetworkError|network request failed|Load failed|timed? ?out|연결하지 못했|서버에 연결/i.test(m);
   }
 
   /* ------------------------------------------------------- 세션 복원/갱신 */
-  async function hydrate(rec) {
-    if (!rec || !rec.access || !rec.refresh) return null;
-    var sess = null;
-    if (jwtExp(rec.access) > nowS() + 60) {
-      var res = await sb.auth.setSession({ access_token: rec.access, refresh_token: rec.refresh });
-      if (!res.error && res.data && res.data.session) sess = res.data.session;
-    }
-    if (!sess) {
-      var rr = await sb.auth.refreshSession({ refresh_token: rec.refresh });
-      if (!rr.error && rr.data && rr.data.session) sess = rr.data.session;
-    }
-    if (!sess) return null;
-    touch(rec, sess);
-    return sess;
+  /* Supabase Auth 의 refresh_token 은 1회용(회전)이다. 새 토큰은 반드시
+     받은 즉시 레코드에 저장하고, supabase-js 에는 방금 받은 신선한 토큰만 넣는다. */
+  function refreshTokens(refreshToken) {
+    if (!refreshToken) { var ne = sessErr('no_refresh'); ne.fatal = true; return Promise.reject(ne); }
+    return fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refreshToken })
+    }).then(function (res) {
+      return res.text().then(function (raw) {
+        var body = null;
+        try { body = raw ? JSON.parse(raw) : null; } catch (e) {}
+        if (res.ok && body && body.access_token) return body;
+        var e = sessErr('refresh');
+        e.status = res.status;
+        var code = String((body && (body.error_code || body.error || body.msg || body.message)) || '');
+        e.detail = code || ('HTTP ' + res.status);
+        e.fatal = (res.status === 400 || res.status === 401 || res.status === 403) &&
+                  !/rate|too many/i.test(code);
+        throw e;
+      });
+    }, function () {
+      var e = sessErr('network'); e.network = true; e.fatal = false; throw e;
+    });
   }
 
+  function rotate(rec) {
+    if (refreshInFlight) return refreshInFlight;
+    refreshInFlight = refreshTokens(rec.refresh).then(function (body) {
+      rec.access = body.access_token;
+      if (body.refresh_token) rec.refresh = body.refresh_token;
+      persist(rec);
+      libToken = null;              /* 라이브러리 사본은 이제 낡았다 → 다시 넣는다 */
+      refreshInFlight = null;
+      return rec;
+    }, function (e) {
+      refreshInFlight = null;
+      throw e;
+    });
+    return refreshInFlight;
+  }
+
+  async function importSession(rec) {
+    var res = null, err = null;
+    try {
+      res = await sb.auth.setSession({ access_token: rec.access, refresh_token: rec.refresh });
+      if (res && res.error) err = res.error;
+    } catch (e) { err = e || sessErr('set_session'); }
+    if (!err && res && res.data && res.data.session) {
+      var s = res.data.session;
+      libToken = s.access_token || null;
+      if (s.access_token) rec.access = s.access_token;
+      if (s.refresh_token) rec.refresh = s.refresh_token;
+      persist(rec);
+      return s;
+    }
+    var e2 = sessErr('set_session');
+    e2.status = Number((err && (err.status || err.code)) || 0) || 0;
+    e2.detail = String((err && (err.message || err.error_description)) || err || '');
+    e2.network = (typeof TypeError !== 'undefined' && err instanceof TypeError) ||
+      /Failed to fetch|NetworkError|network request failed|Load failed|timed? ?out/i.test(e2.detail);
+    e2.fatal = !e2.network && (e2.status === 400 || e2.status === 401 || e2.status === 403);
+    throw e2;
+  }
+
+  /* 저장된 레코드로 세션을 되살린다. 실패는 던지지 않고 종류를 돌려준다. */
+  async function hydrate(rec) {
+    if (!rec || !rec.access || !rec.refresh) {
+      var nt = sessErr('no_token'); nt.fatal = true; throw nt;
+    }
+    /* ① 만료·만료임박이면 라이브러리에 맡기지 않고 여기서 먼저 회전한다 */
+    if (jwtExp(rec.access) <= nowS() + AUTH_MARGIN) await rotate(rec);
+    /* ② 신선한 토큰을 supabase-js 에 넣는다(여기서 /auth/v1/user 확인 1회) */
+    try {
+      return await importSession(rec);
+    } catch (err) {
+      if (!err.fatal) throw err;            /* 일시 오류 → 레코드는 살려 둔다 */
+      await rotate(rec);                    /* 서버가 토큰을 거부 → 한 번만 새로 받아 재시도 */
+      return await importSession(rec);
+    }
+  }
+
+  async function getSessionSafe() {
+    try {
+      var r = await sb.auth.getSession();
+      return (r && r.data) ? (r.data.session || null) : null;
+    } catch (e) { return null; }
+  }
+
+  /* 요청 직전 보증: 라이브러리 안의 세션이 항상 150초 이상 살아 있게 만든다.
+     (라이브러리가 스스로 회전하는 순간 우리 레코드의 refresh 사본이 죽는다) */
   async function ensureFresh() {
-    var cur = await sb.auth.getSession();
-    var sess = cur && cur.data ? cur.data.session : null;
-    if (!sess) throw new Error('로그인이 풀렸어요. 다시 입장해 주세요.');
-    if (jwtExp(sess.access_token) > nowS() + 60) return sess;
-    var rr = await sb.auth.refreshSession();
-    if (rr.error || !rr.data || !rr.data.session) throw new Error('로그인이 풀렸어요. 다시 입장해 주세요.');
-    var rec = readJson(window.localStorage, AUTH_KEY) || readJson(window.sessionStorage, GUEST_KEY);
-    touch(rec, rr.data.session);
-    return rr.data.session;
+    var rec = activeRecord();
+    if (!rec) { var le = sessErr('lost'); le.fatal = true; throw le; }
+    if (jwtExp(rec.access) <= nowS() + AUTH_MARGIN) await rotate(rec);
+    if (!libToken || libToken !== rec.access) return await importSession(rec);
+    var sess = await getSessionSafe();
+    if (sess && sess.access_token === rec.access) return sess;
+    return await importSession(rec);
   }
 
   /* -------------------------------------------------------------- 오류 문구 */
@@ -117,6 +217,18 @@
     if (/duplicate key|unique/i.test(m)) return '이미 있는 항목이에요.';
     if (/Failed to fetch|NetworkError|network/i.test(m)) return '서버에 연결하지 못했어요. 잠시 뒤 다시 시도해 주세요.';
     return m || '알 수 없는 오류가 났어요.';
+  }
+
+  /* 서버 응답 실패를 상태코드까지 달아서 던진다 — 화면이 "일시 오류인지"를
+     구분해 로그인을 함부로 지우지 않을 수 있게. */
+  function fail(res) {
+    var err = res && res.error;
+    var e = new Error(friendly(err));
+    e.status = Number((err && (err.status || err.code)) || 0) || 0;
+    if (!e.status && /^\d{3}$/.test(String((err && err.code) || ''))) e.status = Number(err.code);
+    e.network = /Failed to fetch|NetworkError|network request failed|Load failed/i.test(
+      String((err && (err.message || err.details)) || ''));
+    return e;
   }
 
   function dataUrlToBlob(dataUrl) {
@@ -141,34 +253,75 @@
     if (res.error) throw new Error(friendly(res.error));
     var s = res.data && res.data.session;
     if (!s) throw new Error('로그인 정보를 받지 못했어요. 다시 시도해 주세요.');
-    if (isGuest) saveGuestSession(s);
-    else saveAgentSession(agentId, s, Date.now() + AGENT_TTL);
-    return { mode: isGuest ? 'guest' : 'agent', agentId: isGuest ? 'guest' : agentId };
+    libToken = s.access_token || null;
+    var saved = true;
+    if (isGuest) {
+      dropKey(window.localStorage, AUTH_KEY);       /* 같은 브라우저의 주선자 기록은 정리 */
+      saved = persist({ mode: 'guest', access: s.access_token, refresh: s.refresh_token });
+    } else {
+      dropKey(window.sessionStorage, GUEST_KEY);
+      saved = persist({ mode: 'agent', id: agentId, expiresAt: Date.now() + AGENT_TTL,
+                access: s.access_token, refresh: s.refresh_token });
+    }
+    /* saved=false → 브라우저가 저장을 막았다(시크릿 모드·용량 초과). 화면에 알린다. */
+    return { mode: isGuest ? 'guest' : 'agent', agentId: isGuest ? 'guest' : agentId, persisted: !!saved };
   }
 
+  /* 저장된 세션을 복원한다. 결과 종류
+       {mode:'agent'|'guest'}  복원 성공
+       {expired:true}          1시간이 지나 자동 로그아웃됨
+       {dead:true}             토큰이 서버에서 거부됨(폐기) → 다시 입장 필요
+       {retry:true}            네트워크·서버 일시 오류 → 기록은 남겨 두고 다시 시도
+       null                    저장된 세션 없음 */
   async function restore() {
     var rec = readJson(window.localStorage, AUTH_KEY);
     if (rec && rec.mode === 'agent') {
-      if (typeof rec.expiresAt === 'number' && Date.now() <= rec.expiresAt) {
-        var sess = await hydrate(rec);
-        if (sess) return { mode: 'agent', agentId: rec.id };
+      var live = (typeof rec.expiresAt === 'number' && Date.now() <= rec.expiresAt);
+      if (live && rec.access && rec.refresh) {
+        try {
+          var sess = await hydrate(rec);
+          if (sess && sess.access_token) return { mode: 'agent', agentId: rec.id };
+        } catch (e) {
+          if (isTransientErr(e)) return { mode: null, retry: true };   /* 로그인 유지 */
+        }
       }
-      dropKey(window.localStorage, AUTH_KEY);   /* 1시간 지남 → 자동 로그아웃 */
+      dropKey(window.localStorage, AUTH_KEY);
+      libToken = null;
       try { await sb.auth.signOut(); } catch (e) {}
-      return { mode: null, expired: true };
+      return live ? { mode: null, dead: true } : { mode: null, expired: true };
     }
+
     var g = readJson(window.sessionStorage, GUEST_KEY);
     if (g && g.mode === 'guest') {
-      var gs = await hydrate(g);
-      if (gs) return { mode: 'guest', agentId: 'guest' };
+      try {
+        var gs = await hydrate(g);
+        if (gs && gs.access_token) return { mode: 'guest', agentId: 'guest' };
+      } catch (e) {
+        if (isTransientErr(e)) return { mode: null, retry: true };
+      }
       dropKey(window.sessionStorage, GUEST_KEY);
+      libToken = null;
+      try { await sb.auth.signOut(); } catch (e) {}
+      return { mode: null, dead: true };
     }
+    return null;
+  }
+
+  /* 부팅 화면이 게이트를 잠깐 띄웠다가 앱으로 넘어가는 깜빡임을 막기 위해
+     "복원할 세션이 있는지"만 값싸게 먼저 확인한다(네트워크 없음). */
+  function restoreCandidate() {
+    var a = readJson(window.localStorage, AUTH_KEY);
+    if (a && a.mode === 'agent' && a.access && a.refresh &&
+        typeof a.expiresAt === 'number' && Date.now() <= a.expiresAt) return 'agent';
+    var g = readJson(window.sessionStorage, GUEST_KEY);
+    if (g && g.mode === 'guest' && g.access && g.refresh) return 'guest';
     return null;
   }
 
   async function signOut() {
     dropKey(window.localStorage, AUTH_KEY);
     dropKey(window.sessionStorage, GUEST_KEY);
+    libToken = null;
     try { await sb.auth.signOut(); } catch (e) {}
   }
 
@@ -207,7 +360,7 @@
   async function fetchState() {
     await ensureFresh();
     var res = await sb.rpc('manna_state');
-    if (res.error) throw new Error(friendly(res.error));
+    if (res.error) throw fail(res);
     var raw = res.data || {};
     var assets = (raw.assets || []).map(function (a) {
       var paths = Array.isArray(a.photos) ? a.photos.slice() : [];
@@ -289,7 +442,7 @@
   async function rpc(name, args) {
     await ensureFresh();
     var res = await sb.rpc(name, args || {});
-    if (res.error) throw new Error(friendly(res.error));
+    if (res.error) throw fail(res);
     return res.data;
   }
 
@@ -380,6 +533,8 @@
     bucket: BUCKET,
     signIn: signIn,
     restore: restore,
+    restoreCandidate: restoreCandidate,
+    isTransient: isTransientErr,
     signOut: signOut,
     currentMode: currentMode,
     fetchAgents: fetchAgents,
