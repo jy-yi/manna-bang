@@ -27,7 +27,7 @@ function json(body: unknown, status = 200) {
   });
 }
 
-const PIN_RE = /^\d{4,8}$/;
+const PIN_RE = /^\d{6,8}$/;
 const GUEST_EMAIL = 'guest@manna.local';
 
 function pinOf(v: unknown): string {
@@ -129,10 +129,10 @@ Deno.serve(async (req) => {
       const pin = pinOf(body.pin || Deno.env.get('MANNA_INIT_PIN') || '');
       const guestPin = pinOf(body.guestPin || Deno.env.get('MANNA_GUEST_PIN') || '');
       if (!PIN_RE.test(pin)) {
-        return json({ ok: false, error: 'pin_format', message: '주선자 초기 비번은 숫자 4~8자리로 정해 주세요.' }, 400);
+        return json({ ok: false, error: 'pin_format', message: '주선자 초기 비번은 숫자 6~8자리로 정해 주세요.' }, 400);
       }
       if (!PIN_RE.test(guestPin)) {
-        return json({ ok: false, error: 'guest_pin_format', message: '손님 비번은 숫자 4~8자리로 정해 주세요.' }, 400);
+        return json({ ok: false, error: 'guest_pin_format', message: '손님 비번은 숫자 6~8자리로 정해 주세요.' }, 400);
       }
 
       const { count } = await admin
@@ -174,7 +174,7 @@ Deno.serve(async (req) => {
       const role = String(body.role ?? '주선자').trim() || '주선자';
       const pin = pinOf(body.pin);
       if (!name) return json({ ok: false, error: 'name_required', message: '이름을 입력해 주세요.' }, 400);
-      if (!PIN_RE.test(pin)) return json({ ok: false, error: 'pin_format', message: '비번은 숫자 4~8자리로 정해 주세요.' }, 400);
+      if (!PIN_RE.test(pin)) return json({ ok: false, error: 'pin_format', message: '비번은 숫자 6~8자리로 정해 주세요.' }, 400);
 
       const { data: rows, error: listErr } = await admin.from('agents').select('id');
       if (listErr) throw new Error(listErr.message);
@@ -198,7 +198,7 @@ Deno.serve(async (req) => {
       if (!isOwner) return json({ ok: false, error: 'forbidden', message: '방장만 할 수 있어요.' }, 403);
       const agentId = String(body.agentId ?? '').trim();
       const pin = pinOf(body.pin);
-      if (!PIN_RE.test(pin)) return json({ ok: false, error: 'pin_format', message: '비번은 숫자 4~8자리로 정해 주세요.' }, 400);
+      if (!PIN_RE.test(pin)) return json({ ok: false, error: 'pin_format', message: '비번은 숫자 6~8자리로 정해 주세요.' }, 400);
       if (!agentId) return json({ ok: false, error: 'agent_required' }, 400);
 
       if (agentId === 'guest') {
@@ -236,7 +236,7 @@ Deno.serve(async (req) => {
       }
       const currentPin = pinOf(body.currentPin);
       const pin = pinOf(body.pin);
-      if (!PIN_RE.test(pin)) return json({ ok: false, error: 'pin_format', message: '새 비번은 숫자 4~8자리로 정해 주세요.' }, 400);
+      if (!PIN_RE.test(pin)) return json({ ok: false, error: 'pin_format', message: '새 비번은 숫자 6~8자리로 정해 주세요.' }, 400);
       if (!publicKey) return json({ ok: false, error: 'server_not_configured' }, 500);
 
       // 현재 비번 확인 (서버에서 직접 로그인 시도)

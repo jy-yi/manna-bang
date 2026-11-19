@@ -592,7 +592,8 @@ asset_history(id bigint identity, asset_id→assets cascade, at date, by_name, b
 
 ### 9.5 계정 · 세션
 
-- UI는 그대로 **이름 선택 + 개인 비번**(손님은 `손님 입장` + 입장코드)이고, 내부는 `{id}@manna.local` / `guest@manna.local` + `signInWithPassword`.
+- UI는 그대로 **이름 선택 + 개인 비번**(손님은 `손님 입장` + 입장코드)이고, 내부는 `{id}@manna.local` / `guest@manna.local` + `signInWithPassword`. 비번 규칙은 **숫자 6~8자리**(Supabase Auth 최소 길이 6). 단, 기존 4~5자리 비번도 로그인은 그대로 되고 새로 정할 때만 6자리 이상을 요구한다.
+- 비번 생성 입력은 세 곳 모두 `^\d{6,8}$`로 검증한다: 게이트의 `doSetup()`(초기 계정), 방장 관리의 주선자 추가·비번 초기화(`data-adm` / `admPinInline`), 내 비번 변경(`pinGo`). Edge Function `manna-admin`의 `PIN_RE`도 같다.
 - **주선자 1시간**(localStorage `mannabang.auth.v2` + `expiresAt`), **손님 탭 닫기 전까지**(sessionStorage `mannabang.guest.v2`). supabase-js 자체 저장은 끄고(`persistSession:false`) 우리가 만료·토큰만 관리합니다.
 - 액세스 토큰이 만료되면 `refreshSession()`으로 갱신하고, 주선자는 1시간이 지나면 `signOut()` 후 게이트로 돌아갑니다.
 
@@ -604,8 +605,10 @@ asset_history(id bigint identity, asset_id→assets cascade, at date, by_name, b
 
 1. SQL Editor에서 `supabase/schema.sql` 실행 → `agents` 9명 시드 생성, `manna-photos` 비공개 버킷 생성
 2. `supabase functions deploy manna-admin --no-verify-jwt`
-3. 사이트 게이트 아래 **🛠 처음 계정 만들기 (방장)** → 주선자 초기 비번·손님 입장코드 입력 → bootstrap
+3. 사이트 주소에 `?setup=1`을 붙여 접속(`https://jy-yi.github.io/manna-bang/?setup=1`) → 게이트 아래 **🛠 처음 계정 만들기 (방장)** → 주선자 초기 비번·손님 입장코드(숫자 6~8자리) 입력 → bootstrap
 4. 종윤(ag1) 선택 + 초기 비번으로 입장 → `⚙️ 방장 관리`에서 각자 비번 초기화 후 개별 전달
+
+> `#setupOpen`(🛠 처음 계정 만들기)은 `bootGate()`가 기본으로 숨기고, `?setup=1`이 있을 때만 연다. 이미 계정이 있으면 서버 `already_bootstrapped` 403이 한 번 더 막는다. `doSetup()` 성공 시에도 다시 숨긴다.
 
 ### 9.8 샘플 모드
 
@@ -645,7 +648,7 @@ asset_history(id bigint identity, asset_id→assets cascade, at date, by_name, b
 
 | 우선순위 | 항목 | 비고 |
 | --- | --- | --- |
-| **사용자 작업** | `supabase/schema.sql` 실행 · `manna-admin` 배포 · 게이트의 **🛠 처음 계정 만들기**로 bootstrap | §9.7 순서. 이 세 가지 전에는 로그인이 동작하지 않는다 |
+| **사용자 작업** | `supabase/schema.sql` 실행 · `manna-admin` 배포 · `?setup=1`로 열고 **🛠 처음 계정 만들기**로 bootstrap | §9.7 순서. 이 세 가지 전에는 로그인이 동작하지 않는다 |
 | 중간 | `수락` 시 **`검토중`** 단계 추가 여부 결정 | 미정. 넣으면 §8.3 절차 |
 | 중간 | 손님 입장코드 공유 방식 | 지금은 하나의 공용 코드. 필요하면 1회용 초대 링크로 |
 | 낮음 | 한 매물이 여러 매칭에 걸릴 때 `status` 충돌 정리 | 서버도 마지막 조작 기준. 매칭에서 파생 계산 검토 |

@@ -109,6 +109,7 @@
     var m = String((e && (e.message || e.error_description || e.hint || e.details)) || e || '');
     if (/Invalid login credentials/i.test(m)) return '비밀번호가 맞지 않아요.';
     if (/Email not confirmed/i.test(m)) return '이 계정은 아직 활성화되지 않았어요. 방장에게 초기화를 요청해 주세요.';
+    if (/Password should be at least|weak_password|password.*6 characters/i.test(m)) return '비밀번호는 숫자 6~8자리로 정해 주세요.';
     if (/not_authenticated/i.test(m)) return '로그인이 필요해요.';
     if (/not_agent/i.test(m)) return '주선자 계정이 아니에요.';
     if (/forbidden|42501/i.test(m)) return '권한이 없어요.';

@@ -945,10 +945,10 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
       <div class="setup-box" id="setupBox" hidden>
         <p class="setup-t">🛠 처음 한 번만 설정해요. 아래 비번으로 주선자 9명 계정과 손님 계정이 만들어지고, 이후에는 방장이 ⚙️ 방장 관리에서 초기화할 수 있어요.</p>
         <div class="code-row" style="margin-top:7px">
-          <input id="setupPin" type="password" inputmode="numeric" maxlength="8" placeholder="주선자 초기 비번 (숫자 4~8)" autocomplete="off" aria-label="주선자 초기 비번">
+          <input id="setupPin" type="password" inputmode="numeric" maxlength="8" placeholder="주선자 초기 비번 (숫자 6~8)" autocomplete="off" aria-label="주선자 초기 비번">
         </div>
         <div class="code-row" style="margin-top:6px">
-          <input id="setupGuestPin" type="password" inputmode="numeric" maxlength="8" placeholder="손님 입장코드 (숫자 4~8)" autocomplete="off" aria-label="손님 입장코드">
+          <input id="setupGuestPin" type="password" inputmode="numeric" maxlength="8" placeholder="손님 입장코드 (숫자 6~8)" autocomplete="off" aria-label="손님 입장코드">
           <button type="button" class="btn-enter" id="setupGo">만들기</button>
         </div>
         <div class="gate-err" id="setupErr" role="status"></div>
@@ -1116,11 +1116,11 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
     <div class="admin-body">
       <div class="field">
         <label for="pinCur">지금 쓰는 비번</label>
-        <input id="pinCur" type="password" inputmode="numeric" maxlength="8" autocomplete="current-password" placeholder="숫자 4~8자리">
+        <input id="pinCur" type="password" inputmode="numeric" maxlength="8" autocomplete="current-password" placeholder="숫자 6~8자리">
       </div>
       <div class="field">
         <label for="pinNew">새 비번</label>
-        <input id="pinNew" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password" placeholder="숫자 4~8자리">
+        <input id="pinNew" type="password" inputmode="numeric" maxlength="8" autocomplete="new-password" placeholder="숫자 6~8자리">
       </div>
       <div class="form-err" id="pinErr" role="status"></div>
       <button type="button" class="btn mint" id="pinGo" style="justify-content:center;padding:12px">비번 바꾸기</button>
@@ -1135,7 +1135,7 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
             <input id="admEmoji" placeholder="🌿" maxlength="8" autocomplete="off" aria-label="이모지" style="flex:0 0 62px;text-align:center">
           </div>
           <div class="code-row">
-            <input id="admPin" placeholder="초기 비번 (숫자 4~8)" inputmode="numeric" maxlength="8" autocomplete="off" aria-label="새 주선자 초기 비번">
+            <input id="admPin" placeholder="초기 비번 (숫자 6~8)" inputmode="numeric" maxlength="8" autocomplete="off" aria-label="새 주선자 초기 비번">
             <button type="button" class="btn mint sm" id="admAdd" style="flex:0 0 auto">추가</button>
           </div>
         </div>
@@ -4058,6 +4058,9 @@ function exitToGate(){
   pwInput.value = '';
   gateErr.textContent = '';
   showGuestForm(false);
+  var so = document.getElementById('setupOpen'), sb = document.getElementById('setupBox');
+  if(so) so.hidden = true;
+  if(sb) sb.hidden = true;
   renderGateChips();
   document.body.style.overflow = '';
   try { history.replaceState(null, '', window.location.pathname); } catch(e){}
@@ -4122,8 +4125,8 @@ async function doSetup(){
   var gp = String(document.getElementById('setupGuestPin').value || '').replace(/\s/g, '');
   var err = document.getElementById('setupErr');
   err.textContent = '';
-  if(!/^\d{4,8}$/.test(pin)){ err.textContent = '주선자 초기 비번은 숫자 4~8자리로 정해 주세요.'; return; }
-  if(!/^\d{4,8}$/.test(gp)){ err.textContent = '손님 입장코드는 숫자 4~8자리로 정해 주세요.'; return; }
+  if(!/^\d{6,8}$/.test(pin)){ err.textContent = '주선자 초기 비번은 숫자 6~8자리로 정해 주세요.'; return; }
+  if(!/^\d{6,8}$/.test(gp)){ err.textContent = '손님 입장코드는 숫자 6~8자리로 정해 주세요.'; return; }
   if(!CLOUD){ err.textContent = '서버에 연결하지 못했어요.'; return; }
   var btn = document.getElementById('setupGo');
   btn.disabled = true; btn.textContent = '만드는 중…';
@@ -4132,6 +4135,7 @@ async function doSetup(){
     var list = await CLOUD.fetchAgents();
     setAgents(list);
     document.getElementById('setupBox').hidden = true;
+    var so = document.getElementById('setupOpen'); if(so) so.hidden = true;
     document.getElementById('setupPin').value = '';
     document.getElementById('setupGuestPin').value = '';
     gateAgent = 'ag1';
@@ -4707,7 +4711,7 @@ function renderAdminList(){
       return '<div class="adm-row">' +
         '<span class="adm-em">' + esc(ag.emoji) + '</span>' +
         '<span class="adm-nm">' + esc(ag.name) + '</span>' +
-        '<input class="adm-pin" id="admPinInline" inputmode="numeric" maxlength="8" placeholder="새 비번 4~8자리" data-id="' + ag.id + '">' +
+        '<input class="adm-pin" id="admPinInline" inputmode="numeric" maxlength="8" placeholder="새 비번 6~8자리" data-id="' + ag.id + '">' +
         '<button type="button" class="adm-btn go" data-adm="pin-ok" data-id="' + ag.id + '">확인</button>' +
         '<button type="button" class="adm-btn" data-adm="cancel">취소</button>' +
       '</div>';
@@ -4732,7 +4736,7 @@ function renderAdminList(){
   if(adminEdit.id === 'guest' && adminEdit.kind === 'pin'){
     rows.push('<div class="adm-row">' +
       '<span class="adm-em">👀</span><span class="adm-nm">손님 입장코드</span>' +
-      '<input class="adm-pin" id="admPinInline" inputmode="numeric" maxlength="8" placeholder="새 입장코드 4~8자리" data-id="guest">' +
+      '<input class="adm-pin" id="admPinInline" inputmode="numeric" maxlength="8" placeholder="새 입장코드 6~8자리" data-id="guest">' +
       '<button type="button" class="adm-btn go" data-adm="pin-ok" data-id="guest">확인</button>' +
       '<button type="button" class="adm-btn" data-adm="cancel">취소</button></div>');
   } else {
@@ -4775,7 +4779,7 @@ document.getElementById('admList').addEventListener('click', async function(e){
   if(act === 'pin-ok'){
     var input = document.getElementById('admPinInline');
     var pin = String(input ? input.value : '').replace(/\s/g, '');
-    if(!/^\d{4,8}$/.test(pin)){ if(err) err.textContent = '비번은 숫자 4~8자리로 정해 주세요.'; return; }
+    if(!/^\d{6,8}$/.test(pin)){ if(err) err.textContent = '비번은 숫자 6~8자리로 정해 주세요.'; return; }
     b.disabled = true;
     try {
       await CLOUD.admin('reset_pin', { agentId: id, pin: pin });
@@ -4814,7 +4818,7 @@ document.getElementById('pinGo').addEventListener('click', async function(){
   var err = document.getElementById('pinErr');
   err.textContent = '';
   if(!cur){ err.textContent = '지금 쓰는 비번을 입력해 주세요.'; return; }
-  if(!/^\d{4,8}$/.test(nw)){ err.textContent = '새 비번은 숫자 4~8자리로 정해 주세요.'; return; }
+  if(!/^\d{6,8}$/.test(nw)){ err.textContent = '새 비번은 숫자 6~8자리로 정해 주세요.'; return; }
   if(cur === nw){ err.textContent = '지금 비번과 다른 비번으로 정해 주세요.'; return; }
   if(!CLOUD){ err.textContent = '서버에 연결하지 못했어요.'; return; }
   var btn = this;
@@ -4839,7 +4843,7 @@ document.getElementById('admAdd').addEventListener('click', async function(){
   var err = document.getElementById('admErr');
   err.textContent = '';
   if(!name){ err.textContent = '이름을 입력해 주세요.'; return; }
-  if(!/^\d{4,8}$/.test(pin)){ err.textContent = '초기 비번은 숫자 4~8자리로 정해 주세요.'; return; }
+  if(!/^\d{6,8}$/.test(pin)){ err.textContent = '초기 비번은 숫자 6~8자리로 정해 주세요.'; return; }
   if(!CLOUD){ err.textContent = '서버에 연결하지 못했어요.'; return; }
   var btn = this;
   btn.disabled = true;
@@ -4871,12 +4875,16 @@ async function bootGate(){
   var note = document.getElementById('cloudNote');
   var setup = document.getElementById('setupOpen');
   document.getElementById('sampleBtn').hidden = false;
+  /* '처음 계정 만들기'는 기본으로 숨기고, 주소에 ?setup=1 이 있을 때만 보여 줍니다.
+     (이미 계정이 만들어졌는지는 서버 manna-admin 의 already_bootstrapped 403 가드가 판단) */
+  var wantSetup = false;
+  try { wantSetup = new URLSearchParams(window.location.search).get('setup') === '1'; } catch(e){ wantSetup = false; }
+  if(setup) setup.hidden = true;
   if(!CLOUD){
     if(note){ note.textContent = '⚠️ 서버에 연결하지 못했어요 · 샘플 모드로 둘러볼 수 있어요'; note.className = 'gate-note bad'; }
-    if(setup) setup.hidden = true;
     return;
   }
-  if(setup) setup.hidden = false;
+  if(setup) setup.hidden = !wantSetup;
   try {
     var list = await CLOUD.fetchAgents();
     if(list && list.length) setAgents(list);
