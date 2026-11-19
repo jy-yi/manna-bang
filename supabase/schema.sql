@@ -17,11 +17,11 @@
 -- ============================================================================
 
 -- ---------------------------------------------------------------------------
--- 0. 번호 발급기 (기존 프로토타입의 p31, mt7, rv101 규칙을 그대로 잇습니다)
+-- 0. 번호 발급기 (실사용 첫 매물·매칭·리뷰가 1번부터 시작합니다)
 -- ---------------------------------------------------------------------------
-create sequence if not exists public.asset_seq   start with 31;
-create sequence if not exists public.match_seq   start with 7;
-create sequence if not exists public.review_seq  start with 101;
+create sequence if not exists public.asset_seq   start with 1;
+create sequence if not exists public.match_seq   start with 1;
+create sequence if not exists public.review_seq  start with 1;
 
 -- ---------------------------------------------------------------------------
 -- 1. 테이블
