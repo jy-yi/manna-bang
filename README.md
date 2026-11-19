@@ -116,7 +116,7 @@
 
 **실전 모드 켜는 순서** (최초 1회)
 
-1. Supabase SQL Editor에서 [`supabase/schema.sql`](supabase/schema.sql) 실행
+1. Supabase SQL Editor에서 `schema.sql` 실행 (서버 정의 파일은 공개 저장소에 두지 않고 별도 보관)
 2. `supabase functions deploy manna-admin --no-verify-jwt`
 3. 사이트 주소에 `?setup=1`을 붙여 접속(예: `https://jy-yi.github.io/manna-bang/?setup=1`) → 게이트 아래 **🛠 처음 계정 만들기 (방장)** → 주선자 초기 비번·손님 입장코드(숫자 6~8자리) 입력
 4. 종윤으로 입장 → ⚙️ 방장 관리에서 각자 비번 초기화 후 전달
@@ -133,10 +133,6 @@ manna-bang/
 ├── cloud.js            # Supabase 연동 계층 (로그인·조회·쓰기·사진·방장)
 ├── vendor/
 │   └── supabase-js-2.119.1.min.js   # supabase-js v2 고정본
-├── supabase/
-│   ├── schema.sql      # 테이블·RLS·Storage·RPC (SQL Editor에 실행)
-│   ├── config.toml     # manna-admin 함수 설정
-│   └── functions/manna-admin/index.ts  # 방장 관리 Edge Function
 ├── og-image.png        # 공유 썸네일 1200×630
 ├── icon-512.png        # 앱 아이콘 512×512
 ├── apple-touch-icon.png# iOS 홈 화면 아이콘 180×180

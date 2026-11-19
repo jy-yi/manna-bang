@@ -45,7 +45,7 @@
 | --- | --- |
 | 저장소 | `jy-yi/manna-bang` (Public, 기본 브랜치 `main`) |
 | Pages | `status: built`, `source: main /`, `https_enforced: true`, 라이브 200 |
-| 파일 | `index.html`, `cloud.js`, `vendor/supabase-js-2.119.1.min.js`, `supabase/schema.sql`, `supabase/functions/manna-admin/index.ts`, `supabase/config.toml`, `og-image.png`(1200×630), `icon-512.png`, `apple-touch-icon.png`(180), `README.md`, `HANDOFF.md` |
+| 파일 | `index.html`, `cloud.js`, `vendor/supabase-js-2.119.1.min.js`, `og-image.png`(1200×630), `icon-512.png`, `apple-touch-icon.png`(180), `README.md`, `HANDOFF.md` · 서버 정의(`schema.sql`, `functions/manna-admin/index.ts`, `config.toml`)는 공개 저장소에 두지 않고 별도 보관 |
 | 외부 의존 | Pretendard Variable CDN (`cdn.jsdelivr.net`) 1개 + Supabase(`pzvlgehxokxpsinlshua`) |
 | 저장 키 | 실전: `mannabang.auth.v2`(주선자 세션+토큰), `mannabang.guest.v2`(손님) · 샘플: `mannabang.prototype.v3`, `mannabang.emoji.v1` |
 | 디버그 훅 | `window.__mannabang` — 콘솔에서 `state`, `demo`, `openAdmin()`, `filtered()` 등 확인 가능 |
@@ -537,9 +537,7 @@ popstate             → lightbox > emoji > newAsset > form > detail 순으로 �
 
 | 파일 | 역할 |
 | --- | --- |
-| `supabase/schema.sql` | 테이블·시퀀스·RLS·Storage 버킷·RPC 함수 전체. SQL Editor에 통째로 실행 |
-| `supabase/functions/manna-admin/index.ts` | 방장 관리 Edge Function (bootstrap / create_agent / reset_pin / toggle_agent / change_my_pin) |
-| `supabase/config.toml` | `manna-admin`의 `verify_jwt = false` 설정 |
+| `schema.sql` · `functions/manna-admin/index.ts` · `config.toml` | 서버 정의(SQL·Edge Function·함수 설정). **공개 저장소에는 두지 않고 별도 보관** — 2026-11-19 저장소 트리에서 제거(로컬 백업: `downloads/manna-bang-supabase-backup/`) |
 | `cloud.js` | 브라우저 쪽 Supabase 계층(`window.MannaCloud`). 로그인·조회·쓰기·사진·방장 호출 |
 | `vendor/supabase-js-2.119.1.min.js` | supabase-js v2 UMD 빌드 고정본 (CDN 장애 대비) |
 | `index.html` | `DEMO` 플래그로 샘플/실전 모드를 가름. 실전 모드에서는 모든 변경이 `MannaCloud`를 거친다 |
@@ -603,7 +601,7 @@ asset_history(id bigint identity, asset_id→assets cascade, at date, by_name, b
 
 ### 9.7 최초 배포 순서
 
-1. SQL Editor에서 `supabase/schema.sql` 실행 → `agents` 9명 시드 생성, `manna-photos` 비공개 버킷 생성
+1. SQL Editor에서 `schema.sql`(별도 보관) 실행 → `agents` 9명 시드 생성, `manna-photos` 비공개 버킷 생성
 2. `supabase functions deploy manna-admin --no-verify-jwt`
 3. 사이트 주소에 `?setup=1`을 붙여 접속(`https://jy-yi.github.io/manna-bang/?setup=1`) → 게이트 아래 **🛠 처음 계정 만들기 (방장)** → 주선자 초기 비번·손님 입장코드(숫자 6~8자리) 입력 → bootstrap
 4. 종윤(ag1) 선택 + 초기 비번으로 입장 → `⚙️ 방장 관리`에서 각자 비번 초기화 후 개별 전달
@@ -648,7 +646,7 @@ asset_history(id bigint identity, asset_id→assets cascade, at date, by_name, b
 
 | 우선순위 | 항목 | 비고 |
 | --- | --- | --- |
-| **사용자 작업** | `supabase/schema.sql` 실행 · `manna-admin` 배포 · `?setup=1`로 열고 **🛠 처음 계정 만들기**로 bootstrap | §9.7 순서. 이 세 가지 전에는 로그인이 동작하지 않는다 |
+| **사용자 작업** | `schema.sql`(별도 보관) 실행 · `manna-admin` 배포 · `?setup=1`로 열고 **🛠 처음 계정 만들기**로 bootstrap | §9.7 순서. 이 세 가지 전에는 로그인이 동작하지 않는다 |
 | 중간 | `수락` 시 **`검토중`** 단계 추가 여부 결정 | 미정. 넣으면 §8.3 절차 |
 | 중간 | 손님 입장코드 공유 방식 | 지금은 하나의 공용 코드. 필요하면 1회용 초대 링크로 |
 | 낮음 | 한 매물이 여러 매칭에 걸릴 때 `status` 충돌 정리 | 서버도 마지막 조작 기준. 매칭에서 파생 계산 검토 |
