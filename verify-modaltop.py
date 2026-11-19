@@ -283,6 +283,16 @@ with sync_playwright() as p:
           {"wm": gw["wmRect"], "gal": gw["galRect"]})
     check("손님 모드: 일괄 저장·공유 버튼 없음",
           page.eval_on_selector_all("#detailContent .g-tools .shot-btn", "els => els.length") == 0)
+    ctxmenu = page.evaluate("""() => {
+      const img = document.querySelector('#detailContent .slide.on img');
+      if(!img) return {noimg: true};
+      const ev = new MouseEvent('contextmenu', {bubbles: true, cancelable: true});
+      img.dispatchEvent(ev);
+      const cs = getComputedStyle(img);
+      return {prevented: ev.defaultPrevented, select: cs.userSelect, drag: cs.webkitUserDrag || cs.getPropertyValue('-webkit-user-drag')};
+    }""")
+    check("손님 모드: 사진 우클릭·길게누르기 저장 메뉴 차단", ctxmenu.get("prevented") is True, ctxmenu)
+    check("손님 모드: 사진 선택·드래그 불가", ctxmenu.get("select") == "none", ctxmenu)
     page.screenshot(path=SHOT3)
     print("screenshot:", SHOT3)
 
@@ -398,6 +408,19 @@ with sync_playwright() as p:
       return {before: no0, after: document.getElementById('lightboxNo').textContent};
     }""")
     check("한 손가락 스와이프는 여전히 사진을 넘김", one["before"] != one["after"], one)
+
+    # 주선자 모드에서는 우클릭 차단 없음
+    page.evaluate("() => { window.__mannabang.setMode('agent'); window.__mannabang.render(); }")
+    page.wait_for_timeout(300)
+    actx = page.evaluate("""() => {
+      const img = document.querySelector('#detailContent .slide.on img');
+      const ev = new MouseEvent('contextmenu', {bubbles: true, cancelable: true});
+      img.dispatchEvent(ev);
+      return {prevented: ev.defaultPrevented};
+    }""")
+    check("주선자 모드: 사진 우클릭 차단 없음", actx["prevented"] is False, actx)
+    page.evaluate("() => { window.__mannabang.setMode('guest'); window.__mannabang.render(); }")
+    page.wait_for_timeout(300)
 
     # 손님 모드 상세 갤러리 스와이프도 워터마크에 막히지 않는지
     page.evaluate("() => document.getElementById('lightboxClose').click()")
