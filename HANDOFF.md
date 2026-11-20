@@ -69,6 +69,15 @@
 - **손님 모드 사진 워터마크**: `.wm-layer`(SVG data URI 타일, `pointer-events:none`)를 상세 갤러리(`guest` 일 때만 렌더, `#detailWm`)와 라이트박스(`#lightboxWm`, `.lb-stage` 안)에 얹는다. 주선자 모드에는 렌더되지 않으며 탭·스와이프·핀치를 막지 않는다.
 - 검증: `verify-modaltop.py` — 모달 상단 4개 뷰포트 + 라이트박스 핀치(대조군 포함)·스와이프 + 워터마크 73항목. `python3 verify-modaltop.py local|deploy` (Playwright, `LD_LIBRARY_PATH=/workspace/.libs/root/usr/lib/x86_64-linux-gnu`).
 
+### 최근 변경 (2026-11-20, 식별 워터마크)
+
+- **워터마크 문구를 고정 문구 → 동적 식별로**: `만나방 · 외부 공유 금지` → **`만나방 · YYYY.MM.DD HH:MM · {기기} {브라우저} · #매물번호`** (예: `만나방 · 2026.11.20 09:46 · iPhone 카톡 · #03`). 랜덤 브라우저 ID는 넣지 않는다(사용자 결정).
+  - `wmStamp()` 열람 시각(0패딩), `wmDevice()` UA 판별 — 기기 `iPhone/iPad/Android/Mac/PC`, 브라우저 `카톡(KAKAOTALK) > 인스타 > 네이버 > 삼성인터넷 > 웨일 > Edge(EdgA/EdgiOS/Edg) > Chrome(CriOS/Chrome) > Safari > 브라우저` 순으로 검사(카톡·인스타 UA에도 Safari/Chrome 토큰이 있어 순서가 중요). iPadOS 13+ 사파리는 자신을 Macintosh 로 알리므로 `maxTouchPoints > 0` 이면 iPad 로 본다.
+  - `paintWm()` 이 매물 상세를 그릴 때(`renderDetail` 끝)와 라이트박스를 열 때(`openLightbox`) 시각·기기·번호를 새로 찍어 `.wm-layer` 의 `background-image`(인라인)로 넣는다. 손님 모드에서만 호출되고, 주선자 모드에서는 `#detailWm` 요소 자체가 없다.
+  - **타일 크기 자동 계산**: 문구가 길어져 고정 300×180 타일로는 대각선 글자가 경계에서 잘린다. `wmMeasure()` 가 canvas `measureText` 로 그 기기 폰트(`Apple SD Gothic Neo`→`Malgun Gothic`→`Noto Sans KR`)의 실제 폭을 재고, `wmSvg()` 가 -27° 기울인 글자의 외곽 상자 + 여백으로 `width`/`height` 를 잡는다. 흰색 0.62 + 그림자 0.16 은 그대로.
+  - SVG 는 `wmXml()` 로 `& < > " '` 를 이스케이프한 뒤 `encodeURIComponent` 로 data URI 를 만든다.
+- 검증: `verify-dynwm.py` — UA 14종 판별, 문구 포맷·현재 시각, 다시 열 때 시각 갱신(시계 고정), 타일 ≥ 기울인 글자 외곽(잘림 없음), 라이트박스, 주선자 모드 미노출, 이스케이프 등 138항목. `python3 verify-dynwm.py local|deploy`.
+
 ---
 
 ## 3. 파일 지도

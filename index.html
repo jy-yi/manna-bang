@@ -523,10 +523,10 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
 .g-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:5px;z-index:3}
 .g-dots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.55);transition:.2s}
 .g-dots i.on{background:#fff;width:16px;border-radius:99px}
-/* 손님 모드 사진 워터마크 — 사진 위에만 은은하게 깔리고, 탭·스와이프·핀치를 가로막지 않는다 */
+/* 손님 모드 사진 워터마크 — 사진 위에만 은은하게 깔리고, 탭·스와이프·핀치를 가로막지 않는다.
+   반복 타일 그림은 paintWm() 이 손님 모드에서만 넣는다(문구에 열람 시각·기기·매물번호가 들어가 매번 달라진다). */
 .wm-layer{position:absolute;inset:0;z-index:2;pointer-events:none;user-select:none;-webkit-user-select:none;
-  overflow:hidden;background-repeat:repeat;
-  background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMTgwIj48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgxNTAsOTApIHJvdGF0ZSgtMjcpIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iJ0FwcGxlIFNEIEdvdGhpYyBOZW8nLCdNYWxndW4gR290aGljJyxzYW5zLXNlcmlmIiBmb250LXNpemU9IjEzIiBmb250LXdlaWdodD0iODAwIiBsZXR0ZXItc3BhY2luZz0iMC4zIj48dGV4dCB5PSIxIiBmaWxsPSJyZ2JhKDU2LDM0LDI2LDAuMTYpIj7rp4zrgpjrsKkgwrcg7Jm467aAIOqzteycoCDquIjsp4A8L3RleHQ+PHRleHQgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjYyKSI+66eM64KY67CpIMK3IOyZuOu2gCDqs7XsnKAg6riI7KeAPC90ZXh0PjwvZz48L3N2Zz4=")}
+  overflow:hidden;background-repeat:repeat}
 .slide img,#lightboxImg{-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none}
 /* 주선자 전용 사진 일괄 저장·일괄 공유 (갤러리·라이트박스)
    사진 영역 좌상단 고정 — 우상단 닫기(×) 버튼과 겹치지 않게 왼쪽에 두고, 두 버튼이 한 줄에 들어온다. */
@@ -3016,6 +3016,102 @@ function doShare(){
   }
 }
 
+/* ---------------- 손님 모드 사진 워터마크 (동적 식별) --------------
+   손님에게만 사진 위에 「만나방 · 열람시각 · 기기 브라우저 · #매물번호」를 반복해 깐다.
+   캡처해 밖으로 돌려도 언제·어떤 기기로·어느 매물을 봤는지 남아 출처를 좁힐 수 있다.
+   - 랜덤 브라우저 ID는 넣지 않는다(사용자 결정).
+   - 상세 갤러리(#detailWm)·라이트박스(#lightboxWm)를 열 때마다 시각을 새로 찍는다.
+   - 주선자 모드에서는 요소 자체를 만들지 않고, 라이트박스도 hidden 으로 둔다. */
+function wm2(n){ return (n < 10 ? '0' : '') + n; }
+function wmStamp(d){
+  d = d || new Date();
+  return d.getFullYear() + '.' + wm2(d.getMonth() + 1) + '.' + wm2(d.getDate()) +
+    ' ' + wm2(d.getHours()) + ':' + wm2(d.getMinutes());
+}
+/* UA 문자열만 보고 기기·브라우저를 고른다. 판별 순서를 지켜야 한다
+   (카톡·인스타 UA에도 Safari/Chrome 토큰이 들어 있고, 안드로이드 크롬 UA에도 Safari 가 붙는다). */
+function wmDevice(){
+  var ua = navigator.userAgent || '';
+  /* iPadOS 13+ 사파리는 자신을 Macintosh 로 알린다 — 터치가 있으면 iPad 로 본다 */
+  var touch = (navigator.maxTouchPoints || 0) > 0;
+  var dev = /iPhone|iPod/i.test(ua) ? 'iPhone'
+    : /iPad/i.test(ua) ? 'iPad'
+    : (/Macintosh/i.test(ua) && touch) ? 'iPad'
+    : /Android/i.test(ua) ? 'Android'
+    : /Macintosh|Mac OS X/i.test(ua) ? 'Mac' : 'PC';
+  var br = /KAKAOTALK/i.test(ua) ? '카톡'
+    : /Instagram/i.test(ua) ? '인스타'
+    : /NAVER/i.test(ua) ? '네이버'
+    : /SamsungBrowser/i.test(ua) ? '삼성인터넷'
+    : /Whale/i.test(ua) ? '웨일'
+    : /EdgA|EdgiOS|Edg\//i.test(ua) ? 'Edge'
+    : /CriOS|Chrome|Chromium/i.test(ua) ? 'Chrome'
+    : /Safari/i.test(ua) ? 'Safari' : '브라우저';
+  return dev + ' ' + br;
+}
+function wmText(no){
+  return '만나방 · ' + wmStamp() + ' · ' + wmDevice() + ' · #' + (no || '00');
+}
+function wmXml(s){
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+/* 문구 실제 폭을 잰다 — 타일이 -27° 기울어진 글자의 외곽 상자보다 작으면
+   이웃 타일 글자와 겹치거나 타일 경계에서 글자가 뚝 잘린다.
+   기기마다 한글 폰트 폭이 달라서(아이폰·안드로이드·PC) canvas 로 그 기기 폰트 그대로 잰다. */
+var WM_FONT_STACK = "'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif";
+var WM_FONT_PX = 13, WM_LS = 0.3;
+var wmCtx = null;
+function wmMeasure(text){
+  try {
+    if(!wmCtx){
+      var cv = document.createElement('canvas');
+      wmCtx = cv.getContext('2d');
+    }
+    if(wmCtx){
+      wmCtx.font = '800 ' + WM_FONT_PX + 'px ' + WM_FONT_STACK;
+      var m = wmCtx.measureText(text);
+      if(m && m.width) return m.width + WM_LS * text.length;
+    }
+  } catch(e){}
+  var wf = 0;   /* 캔버스를 못 쓰는 환경은 글자 종류별 어림값으로 */
+  for(var i = 0; i < text.length; i++){
+    var c = text.charCodeAt(i);
+    var wide = (c >= 0x1100 && c <= 0x11FF) || (c >= 0x2E80 && c <= 0xD7A3);
+    wf += wide ? WM_FONT_PX : (c === 32 ? WM_FONT_PX * 0.34 : WM_FONT_PX * 0.58);
+  }
+  return wf + WM_LS * text.length;
+}
+function wmSvg(text){
+  var FONT = WM_FONT_PX, PAD_X = 26, PAD_Y = 18;
+  var w = wmMeasure(text);
+  var COS = Math.cos(Math.PI * 27 / 180), SIN = Math.sin(Math.PI * 27 / 180);
+  var lineH = FONT * 1.35;
+  var rotW = w * COS + lineH * SIN;          /* 기울인 글자의 가로 외곽 */
+  var rotH = w * SIN + lineH * COS;          /* 기울인 글자의 세로 외곽 */
+  var tw = Math.ceil(rotW + PAD_X * 2), th = Math.ceil(rotH + PAD_Y * 2);
+  var t = wmXml(text);
+  return '<svg xmlns="http://www.w3.org/2000/svg" width="' + tw + '" height="' + th + '">' +
+    '<g transform="translate(' + (tw / 2) + ',' + (th / 2) + ') rotate(-27)" text-anchor="middle"' +
+    ' font-family="' + WM_FONT_STACK + '"' +
+    ' font-size="' + FONT + '" font-weight="800" letter-spacing="' + WM_LS + '">' +
+    '<text y="1" fill="rgba(56,34,26,0.16)">' + t + '</text>' +
+    '<text fill="rgba(255,255,255,0.62)">' + t + '</text>' +
+    '</g></svg>';
+}
+/* 워터마크 판에 지금 시각·기기·매물번호를 새로 찍는다 */
+function paintWm(el, no){
+  if(!el) return;
+  /* 그림을 못 만들더라도 상세 화면이 멈추지 않게 감싼다 */
+  try {
+    var text = wmText(no);
+    el.setAttribute('data-wm', text);   /* 화면엔 안 보이고 검증·문의 대조용 */
+    el.style.backgroundImage = 'url("data:image/svg+xml;charset=utf-8,' +
+      encodeURIComponent(wmSvg(text)) + '")';
+    el.style.backgroundRepeat = 'repeat';
+  } catch(e){}
+}
+
 function renderDetail(){
   var a = getAsset(detailId);
   if(!a){ closeDetail(); return; }
@@ -3204,6 +3300,8 @@ function renderDetail(){
       footer +
     '</div>';
   bindGallerySwipe(document.getElementById('detailContent'));
+  /* 손님 모드: 갤러리를 그릴 때마다(매물을 열 때) 열람 시각을 새로 찍는다 */
+  if(guest && ph.length) paintWm(document.getElementById('detailWm'), assetNo(a));
 }
 
 /* ---------------- 브라우저 뒤로가기(popstate)·히스토리 연동 ----------------
@@ -3911,7 +4009,10 @@ function openLightbox(a, i){
   if(shBtn){ shBtn.hidden = !canShareAny(); if(!shBtn.hidden) shBtn.textContent = bulkShareLabel(ph.length); }
   document.getElementById('lightbox').hidden = false;
   var wm = document.getElementById('lightboxWm');
-  if(wm) wm.hidden = !isGuest();   /* 손님 모드에서만 워터마크 */
+  if(wm){
+    wm.hidden = !isGuest();   /* 손님 모드에서만 워터마크 */
+    if(!wm.hidden) paintWm(wm, assetNo(a));   /* 라이트박스를 열 때 열람 시각을 새로 찍는다 */
+  }
   if(!lightOpen){
     lightOpen = true;
     lightPushed = false;
@@ -5508,7 +5609,8 @@ window.__mannabang = {get state(){ return state; }, get mode(){ return MODE; }, 
   render:renderAll, filtered:filteredAssets, shareMessage:shareMessage, guestMessage:guestMessage, shareLink:shareLink,
   shareSpecLines:shareSpecLines, assetProfileText:assetProfileText, saveAllPhotos:saveAllPhotos, shareAllPhotos:shareAllPhotos, canShareMany:canShareMany,
   newAssetNotice:newAssetNotice, openNewAssetPop:openNewAssetPop, closeNewAssetPop:closeNewAssetPop,
-  openAdmin:openAdmin, closeAdmin:closeAdmin};
+  openAdmin:openAdmin, closeAdmin:closeAdmin,
+  wmText:wmText, wmSvg:wmSvg, wmXml:wmXml, wmDevice:wmDevice, wmStamp:wmStamp};   /* 워터마크 문구·타일 (검증용) */
 
 /* 인터넷이 없거나 CDN 로딩이 실패하면 샘플 모드만 열어 둔다.
    부팅 순서: ① 저장된 세션 복원(있으면 게이트를 거치지 않고 바로 앱) → ② 없을 때만 게이트 준비 */
