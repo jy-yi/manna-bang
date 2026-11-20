@@ -3746,9 +3746,9 @@ function shareBlob(a, idx, blob){
   });
 }
 /* ---------------- 사진 일괄 저장·공유 (주선자 전용) ----------------
-   안드로이드 크롬·삼성인터넷은 a.download 를 여러 번 눌러도 브라우저가 막지 않고,
    Supabase 비공개 버킷의 서명 URL 도 CORS(access-control-allow-origin: *)가 열려 있어
-   fetch → Blob → a.download 가 그대로 된다. 그래서 기본은 '0.3초 간격 순차 내려받기'.
+   fetch → Blob 까지는 그대로 된다. 다만 모바일 브라우저는 a.download 를 연달아 부르면
+   2번째부터 멀티 다운로드 차단으로 조용히 버리므로, 여러 장은 ZIP 하나로 묶어 1번만 내려받는다.
    아이폰·일부 브라우저처럼 다중 내려받기가 막히는 곳을 위해 여러 장 공유 버튼을 따로 둔다. */
 var bulkBusy = false;
 
@@ -3767,6 +3767,84 @@ function triggerDownload(blob, name){
   }, 4000);
   return true;
 }
+/* ---------------- ZIP 한 파일로 묶기 (Store-only, 외부 라이브러리 없음) --------------
+   모바일 브라우저(안드로이드 크롬·삼성인터넷·인앱)는 a.download 를 연달아 부르면
+   첫 파일만 내려받고 나머지를 조용히 막는다. 그래서 2장 이상은 ZIP 하나로 묶어
+   다운로드 버튼 클릭을 딱 1번만 일으킨다. 사진은 이미 압축돼 있어 store(무압축)로 담는다. */
+var crc32Table = null;
+function crc32Of(bytes){
+  if(!crc32Table){
+    crc32Table = new Int32Array(256);
+    for(var n = 0; n < 256; n++){
+      var c = n;
+      for(var k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      crc32Table[n] = c;
+    }
+  }
+  var crc = -1;
+  for(var i = 0; i < bytes.length; i++) crc = (crc >>> 8) ^ crc32Table[(crc ^ bytes[i]) & 0xFF];
+  return (crc ^ -1) >>> 0;
+}
+function dosDateTime(d){
+  return {
+    time: ((d.getHours() & 31) << 11) | ((d.getMinutes() & 63) << 5) | ((d.getSeconds() >> 1) & 31),
+    date: (((d.getFullYear() - 1980) & 127) << 9) | (((d.getMonth() + 1) & 15) << 5) | (d.getDate() & 31)
+  };
+}
+/* items: [{name:'만나방_매물01_1.jpg', blob:Blob}] → Promise<Blob(zip)> */
+function zipPhotoBlobs(items){
+  var enc = new TextEncoder();
+  return Promise.all(items.map(function(it){
+    return it.blob.arrayBuffer().then(function(ab){
+      return {name: it.name, bytes: new Uint8Array(ab)};
+    });
+  })).then(function(files){
+    var dt = dosDateTime(new Date());
+    var locals = [], centrals = [], offset = 0, cdSize = 0;
+    files.forEach(function(f){
+      var nameBytes = enc.encode(f.name), size = f.bytes.length, crc = crc32Of(f.bytes);
+      if(size > 0xFFFFFFFF || offset > 0xFFFFFFFF) throw new Error('zip-too-big');
+      var h = new Uint8Array(30 + nameBytes.length), dv = new DataView(h.buffer);
+      dv.setUint32(0, 0x04034b50, true);   /* local file header */
+      dv.setUint16(4, 20, true);           /* version needed */
+      dv.setUint16(6, 0x0800, true);       /* UTF-8 파일명 플래그 */
+      dv.setUint16(8, 0, true);            /* 0 = store */
+      dv.setUint16(10, dt.time, true);
+      dv.setUint16(12, dt.date, true);
+      dv.setUint32(14, crc, true);
+      dv.setUint32(18, size, true);        /* compressed size */
+      dv.setUint32(22, size, true);        /* uncompressed size */
+      dv.setUint16(26, nameBytes.length, true);
+      dv.setUint16(28, 0, true);           /* extra len */
+      h.set(nameBytes, 30);
+      var c = new Uint8Array(46 + nameBytes.length), cv = new DataView(c.buffer);
+      cv.setUint32(0, 0x02014b50, true);   /* central directory header */
+      cv.setUint16(4, 20, true);           /* version made by */
+      cv.setUint16(6, 20, true);           /* version needed */
+      cv.setUint16(8, 0x0800, true);
+      cv.setUint16(10, 0, true);
+      cv.setUint16(12, dt.time, true);
+      cv.setUint16(14, dt.date, true);
+      cv.setUint32(16, crc, true);
+      cv.setUint32(20, size, true);
+      cv.setUint32(24, size, true);
+      cv.setUint16(28, nameBytes.length, true);
+      cv.setUint32(42, offset, true);      /* local header offset */
+      c.set(nameBytes, 46);
+      locals.push(h, f.bytes);
+      centrals.push(c);
+      offset += h.length + size;
+      cdSize += c.length;
+    });
+    var eocd = new Uint8Array(22), ev = new DataView(eocd.buffer);
+    ev.setUint32(0, 0x06054b50, true);     /* end of central directory */
+    ev.setUint16(8, files.length, true);
+    ev.setUint16(10, files.length, true);
+    ev.setUint32(12, cdSize, true);
+    ev.setUint32(16, offset, true);        /* central directory offset */
+    return new Blob(locals.concat(centrals, [eocd]), {type: 'application/zip'});
+  });
+}
 /* 여러 장 파일 공유가 되는 브라우저인지 — 두 장짜리 더미 파일로 실제 지원 여부를 묻는다 */
 function canShareMany(){
   try {
@@ -3784,38 +3862,61 @@ function bulkSaveBtns(){
 function bulkSaveLabel(total){ return '📥 일괄 저장' + (total ? ' (' + total + '장)' : ''); }
 function bulkShareLabel(total){ return '📤 일괄 공유' + (total ? ' (' + total + '장)' : ''); }
 
+/* 1장은 이미지 파일 그대로, 2장 이상은 ZIP 하나로 묶어 다운로드 클릭을 1번만 한다. */
 function saveAllPhotos(){
   if(isGuest() || bulkBusy) return;
   var a = getAsset(detailId);
   if(!a) return;
   var ph = photosOf(a);
   if(!ph.length) return;
-  var total = ph.length, done = 0, failed = 0;
+  var total = ph.length;
   bulkBusy = true;
   var btns = bulkSaveBtns();          /* 갤러리 좌상단 + 라이트박스 버튼이 함께 진행 상황을 보여 준다 */
   btns.forEach(function(b){ b.disabled = true; });
   function label(txt){ btns.forEach(function(b){ b.textContent = txt; }); }
-  function finish(){
+  function finish(msg){
     bulkBusy = false;
     btns.forEach(function(b){ b.disabled = false; });
     label(bulkSaveLabel(total));
-    if(done && !failed) toast(total + '장을 저장했어요 📥');
-    else if(done) toast(done + '장 저장 · ' + failed + '장은 저장하지 못했어요. 그 사진은 길게 눌러 저장해 주세요');
-    else toast('사진을 저장하지 못했어요 · 사진을 길게 눌러 저장해 주세요');
+    if(msg) toast(msg);
   }
-  function step(i){
-    if(i >= total){ finish(); return; }
-    label('저장 중 ' + (i + 1) + '/' + total + '…');
+  function failAll(){ finish('사진을 저장하지 못했어요 · 사진을 길게 눌러 저장해 주세요'); }
+  function blobAt(i){
     var cached = photoBlobCache[ph[i]];
     var p = (cached && !cached.__bad) ? Promise.resolve(cached) : photoBlobOf(ph[i]);
-    p.then(function(blob){
-      if(blob && triggerDownload(blob, photoFileName(a, i, blob.type))) done++;
-      else failed++;
-    }).catch(function(){ failed++; }).then(function(){
-      setTimeout(function(){ step(i + 1); }, i + 1 < total ? 320 : 60);
-    });
+    return p.catch(function(){ return null; }).then(function(b){ return b || null; });
   }
-  step(0);
+  /* 한 장뿐이면 예전처럼 사진 파일 그대로 저장 */
+  if(total === 1){
+    label('저장 중 1/1…');
+    blobAt(0).then(function(blob){
+      if(!blob || !triggerDownload(blob, photoFileName(a, 0, blob.type))){ failAll(); return; }
+      finish('1장을 저장했어요 📥');
+    });
+    return;
+  }
+  /* 2장 이상 — 모두 받아 하나의 .zip 으로 묶고 다운로드는 1회 */
+  var got = new Array(total), ready = 0;
+  label('사진 받는 중 0/' + total + '…');
+  Promise.all(ph.map(function(src, i){
+    return blobAt(i).then(function(blob){
+      got[i] = blob;
+      ready++;
+      label('사진 받는 중 ' + ready + '/' + total + '…');
+    });
+  })).then(function(){
+    var files = [];
+    got.forEach(function(blob, i){ if(blob) files.push({name: photoFileName(a, i, blob.type), blob: blob}); });
+    if(!files.length){ failAll(); return; }
+    label('ZIP으로 묶는 중… (' + files.length + '장)');
+    return zipPhotoBlobs(files).then(function(zipBlob){
+      var zipName = '만나방_' + oneLine(shareAssetNo(a)).replace(/\s+/g, '') + '_사진' + files.length + '장.zip';
+      if(!triggerDownload(zipBlob, zipName)){ failAll(); return; }
+      var msg = files.length + '장 묶음(.zip)을 저장했어요 📥';
+      if(files.length < total) msg += ' · ' + (total - files.length) + '장은 받지 못해 빼고 담았어요';
+      finish(msg);
+    });
+  }).catch(function(){ failAll(); });
 }
 /* 이미 받아 둔(prewarmPhotos) 사진만으로 File 목록을 만든다 — 손가락을 떼기 전에
    navigator.share 를 불러야 하는 아이폰을 위해, 모자란 장이 있으면 null 을 돌려준다. */
