@@ -76,7 +76,8 @@
   - `paintWm()` 이 매물 상세를 그릴 때(`renderDetail` 끝)와 라이트박스를 열 때(`openLightbox`) 시각·기기·번호를 새로 찍어 `.wm-layer` 의 `background-image`(인라인)로 넣는다. 손님 모드에서만 호출되고, 주선자 모드에서는 `#detailWm` 요소 자체가 없다.
   - **타일 크기 자동 계산**: 문구가 길어져 고정 300×180 타일로는 대각선 글자가 경계에서 잘린다. `wmMeasure()` 가 canvas `measureText` 로 그 기기 폰트(`Apple SD Gothic Neo`→`Malgun Gothic`→`Noto Sans KR`)의 실제 폭을 재고, `wmSvg()` 가 -27° 기울인 글자의 외곽 상자 + 여백으로 `width`/`height` 를 잡는다. 흰색 0.62 + 그림자 0.16 은 그대로.
   - SVG 는 `wmXml()` 로 `& < > " '` 를 이스케이프한 뒤 `encodeURIComponent` 로 data URI 를 만든다.
-- 검증: `verify-dynwm.py` — UA 14종 판별, 문구 포맷·현재 시각, 다시 열 때 시각 갱신(시계 고정), 타일 ≥ 기울인 글자 외곽(잘림 없음), 라이트박스, 주선자 모드 미노출, 이스케이프 등 138항목. `python3 verify-dynwm.py local|deploy`.
+  - **줄 간격(타일 높이) 조정 — 2026-11-20 촘촘히**: 사진 한 장에 2줄만 보이던 것을 3~4줄로. 타일 세로 높이가 곧 줄 간격이라 기울기·글자·여백을 `WM_CFG` 한 곳에 모았다(`{font:12, ls:0.3, rot:15, padX:14, padY:4, lineH:1.35}`). 27°·13px·여백 18px = 타일 168px → 15°·12px·여백 4px = 타일 84~96px(휴대폰 375×300 갤러리에서 3.1~3.6줄, PC 720×360 에서 3.7~4.3줄). 기기명이 긴 UA(`Android 삼성인터넷`)는 문구가 길어 타일이 ~14% 높다. 줄 사이 여백은 2×`padY` 라 겹치지 않고, 글자가 타일 경계에서 잘리지 않는 조건(타일 ≥ 기울인 글자 외곽)은 그대로다. `window.__mannabang.wmCfg` 로 값을 바꿔 바로 확인할 수 있다.
+- 검증: `verify-dynwm.py` — UA 14종 판별, 문구 포맷·현재 시각, 다시 열 때 시각 갱신(시계 고정), 타일 ≥ 기울인 글자 외곽(잘림 없음) + 줄 사이 ≥6px + 갤러리 안 3~4줄(PC 포함), 라이트박스, 주선자 모드 미노출, 이스케이프 등 167항목. `python3 verify-dynwm.py local|deploy`.
 
 ---
 
