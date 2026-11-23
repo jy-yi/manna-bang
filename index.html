@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
 <title>만나방 · 프라이빗 소개팅 중개소</title>
 <meta name="theme-color" content="#FCF9F5">
 <meta name="description" content="만나방 — 지인 소개를 부동산 매물처럼 한눈에 보는 프라이빗 소개팅 중개 프로토타입. 🏘️ 오늘도 실매물 입주 중 · 💬 마음에 들면 만나방!">
@@ -731,7 +731,9 @@ input,select,textarea{font:inherit;color:inherit;letter-spacing:inherit}
   font-size:12.5px;font-weight:800;border:1.5px solid transparent;transition:.14s}
 .wadd button:hover{border-color:var(--mint)}
 .field label .lbl-sub{font-size:10.5px;font-weight:650;color:var(--muted)}
-.form-foot{display:flex;gap:8px;padding:6px 18px 18px;position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 72%,rgba(252,249,245,.2))}
+/* 하단 버튼 줄 — 본문이 뒤로 지나갈 때 글자가 비쳐 보이지 않게 불투명 배경 + 경계선(상세 시트 .dfooter 와 같은 방식) */
+.form-foot{display:flex;gap:8px;padding:10px 18px calc(14px + env(safe-area-inset-bottom));position:sticky;bottom:0;z-index:2;
+  background:var(--bg);border-top:1px solid var(--line);box-shadow:0 -10px 18px rgba(252,249,245,.92)}
 .form-foot .btn{flex:1;justify-content:center;padding:13px}
 
 /* 사진 등록 */
@@ -3369,34 +3371,83 @@ window.addEventListener('popstate', function(){
    가려지지 않았다). 모달을 열 때마다 실제 보이는 높이를 기준으로 다시 잡아 화면 위로 넘치지 않게 한다. */
 var SHEET_OVERLAYS = ['detailOverlay', 'formOverlay', 'adminOverlay', 'newAssetOverlay'];
 
-function visibleHeight(){
+function visibleViewport(){
   var vv = window.visualViewport;
-  var h = (vv && vv.height) ? vv.height : (window.innerHeight || document.documentElement.clientHeight || 0);
-  return Math.round(h || 0);
+  if(vv && vv.height){
+    return {h: Math.round(vv.height), top: Math.round(vv.offsetTop || 0)};
+  }
+  return {h: Math.round(window.innerHeight || document.documentElement.clientHeight || 0), top: 0};
 }
+function visibleHeight(){ return visibleViewport().h; }
 function fitSheet(ovId){
   var ov = document.getElementById(ovId);
   if(!ov || ov.hidden) return;
-  var h = visibleHeight();
-  if(!h) return;
+  var vp = visibleViewport();
+  if(!vp.h) return;
+  /* 시트(오버레이)를 '지금 보이는 영역'에 그대로 맞춘다.
+     소프트 키보드가 올라오면 브라우저는 레이아웃 뷰포트를 그대로 둔 채 보이는 영역만 줄이고,
+     포커스된 입력칸을 드러내려고 그 영역을 위로 민다(visualViewport.offsetTop > 0).
+     position:fixed 시트는 레이아웃 뷰포트에 붙어 있어서, 보이는 영역의 위치를 따라가지 않으면
+       · 시트 위쪽(제목·사진·×)이 화면 밖으로 잘리고
+       · 시트 아래로 앱 화면이 드러나며
+       · 하단 버튼이 본문 위에 떠 보인다(매력 태그 입력 때 깨져 보이던 현상).
+     top/height 를 보이는 영역값으로 맞추면 시트가 늘 눈에 보이는 곳에만 그려진다. */
+  ov.style.top = vp.top + 'px';
+  ov.style.height = vp.h + 'px';
   /* 시트는 보이는 높이의 92%까지만 — 위쪽에 여백을 남겨 상단 버튼이 화면 밖으로 나가지 않는다 */
-  ov.style.height = h + 'px';
   var m = ov.querySelector('.modal');
-  if(m) m.style.maxHeight = Math.max(220, Math.round(h * 0.92)) + 'px';
+  if(m) m.style.maxHeight = Math.max(180, Math.round(vp.h * 0.92)) + 'px';
+  revealSheetFocus(ov);
 }
-var sheetFitTimer = 0;
+/* 키보드·주소창이 바뀐 직후 포커스된 입력칸이 하단 버튼이나 키보드 뒤에 남지 않게 시트 안에서만 스크롤해 드러낸다. */
+function revealSheetFocus(ov){
+  var el = document.activeElement;
+  if(!el || !ov.contains(el)) return;
+  if(!/^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName)) return;
+  var m = ov.querySelector('.modal');
+  if(!m) return;
+  var foot = ov.querySelector('.form-foot') || ov.querySelector('.dfooter');
+  var footH = foot ? Math.round(foot.getBoundingClientRect().height) : 0;
+  var mr = m.getBoundingClientRect();
+  var r = el.getBoundingClientRect();
+  var pad = 12;
+  var bandTop = mr.top + pad;
+  var bandBottom = mr.bottom - footH - pad;   /* 하단 버튼 위까지만 보이는 자리 */
+  if(bandBottom - bandTop < 24) return;        /* 시트가 너무 짧으면 건드리지 않는다 */
+  var delta = 0;
+  if(r.bottom > bandBottom) delta = r.bottom - bandBottom;
+  if(r.top - delta < bandTop) delta = r.top - bandTop;
+  if(delta) m.scrollTop += Math.round(delta);
+}
+var sheetFitTimer = 0, sheetFitRaf = 0;
+function fitAllSheets(){
+  for(var i = 0; i < SHEET_OVERLAYS.length; i++) fitSheet(SHEET_OVERLAYS[i]);
+}
+/* 보이는 영역이 움직이는 동안에는 rAF로 묶어 바로바로 따라가고, 애니메이션이 끝난 뒤 한 번 더 맞춘다 */
+function refitSheetsNow(){
+  if(sheetFitRaf) return;
+  sheetFitRaf = requestAnimationFrame(function(){ sheetFitRaf = 0; fitAllSheets(); });
+}
 function refitSheets(){
+  refitSheetsNow();
   clearTimeout(sheetFitTimer);
-  sheetFitTimer = setTimeout(function(){
-    for(var i = 0; i < SHEET_OVERLAYS.length; i++) fitSheet(SHEET_OVERLAYS[i]);
-  }, 120);
+  sheetFitTimer = setTimeout(fitAllSheets, 160);
 }
-/* 주소창·키보드·회전으로 보이는 높이가 달라지면 열려 있는 시트도 다시 맞춘다 */
+/* 주소창·키보드·회전으로 보이는 영역이 달라지면(키보드가 올라오며 화면을 미는 것 포함) 열려 있는 시트도 다시 맞춘다 */
 window.addEventListener('resize', refitSheets);
 window.addEventListener('orientationchange', refitSheets);
 if(window.visualViewport && window.visualViewport.addEventListener){
   window.visualViewport.addEventListener('resize', refitSheets);
+  window.visualViewport.addEventListener('scroll', refitSheetsNow);
 }
+/* 입력칸을 눌러 키보드가 올라오는 경우 — 올라온 뒤(280ms) 그 칸이 하단 버튼·키보드 뒤에 남지 않게 한 번 더 맞춘다 */
+SHEET_OVERLAYS.forEach(function(ovId){
+  var ov = document.getElementById(ovId);
+  if(!ov || !ov.addEventListener) return;
+  ov.addEventListener('focusin', function(){
+    setTimeout(function(){ if(!ov.hidden) revealSheetFocus(ov); }, 280);
+  });
+});
 
 function openDetail(id){
   if(lightOpen) closeLightbox(true);
@@ -4403,8 +4454,9 @@ function openForm(id){
   formSmoke = a ? (a.smoke || '') : '';
   formDrink = a ? (a.drink || '') : '';
   formExtras = a ? (a.extras || []).map(function(e){ return {label:e.label, value:e.value}; }) : [];
-  /* 새 매물은 '결혼 생각 있는 분'을 기본으로 골라 두고, 기존 매물은 저장된 조건을 그대로 쓴다 */
-  formWants = a ? wantsOf(a) : ['결혼 생각 있는 분'];
+  /* 매물을 새로 등록할 때는 아무 조건도 미리 골라 두지 말고(11-23 사용자 요청: '결혼 생각 있는 분' 기본 선택 해제),
+     수정할 때는 저장된 조건을 그대로 쓴다. 칩 목록에는 그대로 남아 있어 필요할 때 눌러 고를 수 있다. */
+  formWants = a ? wantsOf(a) : [];
   wantHeightCustom = false;
   document.getElementById('f-wantInput').value = '';
   renderWantsChips();
@@ -4443,8 +4495,11 @@ function openForm(id){
   document.body.style.overflow = 'hidden';
   histEnter('form');
   var firstEl = document.getElementById('f-birth');
-  /* preventScroll — 포커스 때문에 폼이 스크롤되며 상단(제목·×)이 밀려나지 않게 */
+  /* preventScroll — 포커스 때문에 폼이 스크롤되며 상단(제목·×)이 밀려나지 않게.
+     휴대폰(터치 기기)에서는 자동 포커스를 하지 않는다 — 폼을 열자마자 소프트 키보드가 올라와
+     맨 위 사진 칸을 가리고 시트 높이가 줄어드는 원인이었다. 데스크톱에서만 첫 칸에 커서를 둔다. */
   setTimeout(function(){
+    if(window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
     try { firstEl.focus({preventScroll:true}); }
     catch(e){ try { firstEl.focus(); } catch(e2){} }
   }, 60);
